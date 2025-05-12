@@ -1,11 +1,11 @@
 // routes/worker.js (backend)
 const express = require('express');
 const FabricAssignment = require('../models/FabricAssignment');
-const auth = require('../middleware/auth');
+const { authMiddleware } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 // Update fabric assignment status
-router.put('/update-status/:assignmentId', auth.authMiddleware, async (req, res) => {
+router.put('/update-status/:assignmentId', authMiddleware, async (req, res) => {
   const { status } = req.body;
   const { assignmentId } = req.params;
 

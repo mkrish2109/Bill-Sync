@@ -1,6 +1,6 @@
 const User = require("../models/User");
 
-export const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
     try {
       const users = await User.find();
       res.json(users);
@@ -10,7 +10,7 @@ export const getAllUsers = async (req, res) => {
     }
   }
 
-export const getUserById = async (req, res) => {
+const getUserById = async (req, res) => {
     const { userId } = req.params;
     try {
       const user = await User.findById(userId);
@@ -24,7 +24,7 @@ export const getUserById = async (req, res) => {
     }
   }
 
-export const updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
     const { role } = req.body;
     
     try {
@@ -47,7 +47,7 @@ export const updateUser = async (req, res) => {
     }
   }
 
-export const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
     try {
       const user = await User.findByIdAndDelete(req.params.userId);
       if (!user) {
@@ -59,3 +59,10 @@ export const deleteUser = async (req, res) => {
       res.status(500).send("Server error");
     }
  }
+
+ module.exports = {
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+};

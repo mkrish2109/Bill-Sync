@@ -1,5 +1,5 @@
-const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
 const {
   sendVerificationEmail,
   sendResetPasswordEmail,
@@ -111,7 +111,7 @@ const login = async (req, res) => {
         role: tokenUser.role 
     });
 
-      console.log("Access Token: ", accessToken);
+      // console.log("Access Token: ", accessToken);
   
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
