@@ -20,7 +20,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div>
+    <div className="bg-gray-100 p-4 dark:bg-gray-800 dark:text-white">
       <h2>Dashboard</h2>
       <h3>Pending Payments</h3>
       <ul>

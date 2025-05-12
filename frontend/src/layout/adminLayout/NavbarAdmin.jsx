@@ -9,94 +9,172 @@ import {
   NavbarCollapse,
   NavbarLink,
   NavbarToggle,
+  TextInput,
 } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../services/apiServices";
 import { logoutUser } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import ThemeToggleButton from "../../components/comman/ThemeToggleButton";
 
-
- function NavUser() {
+function NavbarAdmin() {
   const dispatch = useDispatch();
-
-
-  const user = useSelector((store) => {
-
-    return store?.user.user;
-  });
+  const navigate = useNavigate();
+  const user = useSelector((store) => store?.user.user);
+  const [searchTerm, setSearchTerm] = useState("");
 
   async function handleLogOut() {
-    const response = await logout();
-    dispatch(logoutUser());
-    if (response.status === 200) {
-      toast.warning("Logout Successfully");
-    } else {
-      toast.error(response.message);
+    try {
+      const response = await logout();
+      dispatch(logoutUser());
+      if (response.status === 200) {
+        toast.warning("Logged out successfully");
+        navigate("/login");
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred during logout");
     }
   }
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+      setSearchTerm("");
+    }
+  };
+
   return (
-    <Navbar fluid  >
-      <NavbarBrand href="/">
-        <img src="/images/logo.png" className="mr-3 h-6 sm:h-9" alt="Tex Bill Logo" />
-        <span className="self-center whitespace-nowrap text-xl font-semibold text-[#44b8ff]">Tex Bill</span>
-      </NavbarBrand>
-      <div className="flex md:order-2">
-        <Dropdown 
+    <Navbar 
+      fluid 
+      className="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-40 border-b border-gray-200 dark:border-gray-700"
+    >
+      
+
+      {/* Search Bar */}
+      <form onSubmit={handleSearch} className="hidden md:flex items-center w-1/3 mx-auto">
+        <TextInput
+          type="text"
+          placeholder="Search..."
+          className="w-full rounded-md  text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 focus:border-[#44b8ff] focus:ring-[#44b8ff] border-gray-300 dark:border-gray-600"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </form>
+
+      <div className="flex md:order-2 gap-2 items-center">
+        <ThemeToggleButton />
+
+        <Dropdown
           arrowIcon={false}
           inline
           label={
-            <Avatar alt="User settings" img="/images/profile.png" rounded />
+            <Avatar
+              alt="User settings"
+              img={user?.profilePicture || "/images/profile.png"}
+              rounded
+              bordered
+              className="border-gray-300 dark:border-gray-600"
+            />
           }
+          className="z-50"
         >
-          <DropdownHeader>
-              <span className="block text-sm">
-                    {user ? user.fname : "John"}
-              </span>
-              <span className="block truncate text-sm font-medium">
-                {user ? user.email : "johnduo123@gmail.com"}
-              </span>
+          <DropdownHeader className="bg-white dark:bg-gray-800">
+            <span className="block text-sm font-semibold text-gray-800 dark:text-white">
+              {user ? `${user.fname} ${user.lname}` : "Guest"}
+            </span>
+            <span className="block truncate text-sm font-medium text-gray-500 dark:text-gray-300">
+              {user?.email || "Not logged in"}
+            </span>
           </DropdownHeader>
-          {
-            user?.role === "admin" ? (
-              <Link to="/admin/dashboard">
-                <DropdownItem>Dashboard</DropdownItem>
-              </Link>
-            ) : user?.role === "worker" ? (
-              <Link to="/worker/dashboard">
-                <DropdownItem>Dashboard</DropdownItem>
-              </Link>
-            ) : user?.role === "buyer" ? (
-              <Link to="/buyer/dashboard">
-                <DropdownItem>Dashboard</DropdownItem>
-              </Link>
-            ) : null
-          }
-          <DropdownItem>Settings</DropdownItem>
-          <DropdownItem>Earnings</DropdownItem>
-          <DropdownDivider />
-          {user ? (
-              <DropdownItem onClick={handleLogOut}>Sign out</DropdownItem>
-            ) : null}
-            {!user ? (
-              <Link to="/login">
-                <DropdownItem>Sign In</DropdownItem>
-              </Link>
-            ) : null}
+
+          {user && (
+            <>
+              {user.role === "admin" && (
+                <DropdownItem 
+                  className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                  onClick={() => navigate("/admin/dashboard")}
+                >
+                  Admin Dashboard
+                </DropdownItem>
+              )}
+              <DropdownItem 
+                className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                onClick={() => navigate("/settings")}
+              >
+                Settings
+              </DropdownItem>
+              <DropdownDivider className="border-gray-200 dark:border-gray-700" />
+              <DropdownItem 
+                className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                onClick={handleLogOut}
+              >
+                Sign out
+              </DropdownItem>
+            </>
+          )}
+
+          {!user && (
+            <>
+              <DropdownItem 
+                className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                onClick={() => navigate("/login")}
+              >
+                Sign in
+              </DropdownItem>
+              <DropdownItem 
+                className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                onClick={() => navigate("/register")}
+              >
+                Sign up
+              </DropdownItem>
+            </>
+          )}
         </Dropdown>
-        <NavbarToggle />
+
+        <NavbarToggle className="text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700" />
       </div>
-      <NavbarCollapse>
-        <NavbarLink href="#" active>
+
+      {/* <NavbarCollapse className="bg-white dark:bg-gray-900 md:bg-transparent">
+        <NavbarLink 
+          as={Link} 
+          to="/" 
+          className="text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff]"
+          activeClassName="text-[#44b8ff] dark:text-[#44b8ff]"
+        >
           Home
         </NavbarLink>
-        <NavbarLink href="#">About</NavbarLink>
-        <NavbarLink href="#">Services</NavbarLink>
-        <NavbarLink href="#">Pricing</NavbarLink>
-        <NavbarLink href="#">Contact</NavbarLink>
-      </NavbarCollapse>
+        <NavbarLink 
+          as={Link} 
+          to="/about" 
+          className="text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff]"
+          activeClassName="text-[#44b8ff] dark:text-[#44b8ff]"
+        >
+          About
+        </NavbarLink>
+        <NavbarLink 
+          as={Link} 
+          to="/services" 
+          className="text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff]"
+          activeClassName="text-[#44b8ff] dark:text-[#44b8ff]"
+        >
+          Services
+        </NavbarLink>
+        <NavbarLink 
+          as={Link} 
+          to="/contact" 
+          className="text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff]"
+          activeClassName="text-[#44b8ff] dark:text-[#44b8ff]"
+        >
+          Contact
+        </NavbarLink>
+      </NavbarCollapse> */}
     </Navbar>
   );
 }
 
-export default NavUser;
+export default NavbarAdmin;

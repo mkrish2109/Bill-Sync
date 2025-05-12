@@ -1,4 +1,3 @@
-import './App.css';
 import React from 'react';
 import { Provider } from 'react-redux';
 import Register from './pages/Register';
@@ -7,7 +6,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import Dashboard from './pages/Dashboard';
 import BillList from './components/BillList';
 import BillForm from './components/BillForm';
-import AdminDashboard from './components/AdminDashboard';
+import AdminDashboard from './components/admin/adminDashbord/AdminDashboard';
 import BuyerDashboard from './components/BuyerDashboard';
 import WorkerDashboard from './components/WorkerDashboard';
 import UserLayout from './layout/userLayout/UserLayout';
@@ -16,13 +15,17 @@ import UserAuthGuard from './guards/UserAuthGuard';
 import store from './redux/store';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from 'flowbite-react';
+import UsersListAdmin from './components/admin/usersListAdmin/UsersListAdmin';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import UserProfile from './pages/UserProfile';
 
 
 function App() {
+  const user = localStorage.getItem("user");
+  const role = localStorage.getItem("role");
+  console.log(role)
   const customTheme = createTheme({
-    navbar: {
-     
-    },
     button: {
       color: {
         primary: "bg-[#44b8ff] hover:bg-[#1f90bc] text-white ",
@@ -44,19 +47,30 @@ function App() {
   });
   return (
     <>
-    <ThemeProvider theme={customTheme}> 
+    {/* <ThemeProvider theme={customTheme}>  */}
       <Provider store={store}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<UserLayout />}>
-
-              <Route index element={<Dashboard />} />
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Register />} />
-              <Route path="verify-email" element={<VerifyEmail />} />
-              <Route path="bills" element={<BillList />} />
-              <Route path="create-bill" element={<BillForm />} />
-            </Route>
+            {role === "admin" ? (
+              <Route path="/" element={
+                <UserAuthGuard>
+                  <LayoutAdmin />
+                </UserAuthGuard>
+              }>
+                <Route index element={<AdminDashboard />} />
+              </Route>
+            ) : (
+              <Route path="/" element={<UserLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="login" element={<Login />} />
+                <Route path="register" element={<Register />} />
+                <Route path="verify-email" element={<VerifyEmail />} />
+                <Route path="bills" element={<BillList />} />
+                <Route path="create-bill" element={<BillForm />} />
+                <Route path="about" element={<AboutPage />} />
+                <Route path="contact" element={<ContactPage />} />
+              </Route>
+            )}
 
             {/* Admin Routes */}
             <Route
@@ -67,7 +81,10 @@ function App() {
                 </UserAuthGuard>
               }>
               <Route path="dashboard" element={<AdminDashboard />} />
-              {/* Add more admin routes here */}
+              <Route path="users" element={<UsersListAdmin />} />
+              <Route path="account" >
+                <Route path="profile" element={<UserProfile />} />
+              </Route>
             </Route>
 
             {/* Buyer Routes */}
@@ -79,7 +96,6 @@ function App() {
                 </UserAuthGuard>
               }>
               <Route path="dashboard" element={<BuyerDashboard />} />
-              {/* Add more buyer routes here */}
             </Route>
 
             {/* Worker Routes */}
@@ -91,12 +107,11 @@ function App() {
                 </UserAuthGuard>
               }>
               <Route path="dashboard" element={<WorkerDashboard />} />
-              {/* Add more worker routes here */}
             </Route>
           </Routes>
         </BrowserRouter>
       </Provider>
-    </ThemeProvider>
+    {/* </ThemeProvider> */}
   </>
   );
 }

@@ -15,10 +15,23 @@ export const verifyEmail = async (data) => {
 
 export const login = async (data) => {
     const response = await api.post("/auth/login", data);
-    return response.data; // payload will be available as .payload in thunk
+    return response.data;
   };
   
   export const logout = async () => {
     const response = await api.post("/auth/logout"); // or your logout logic
+    if (response.status !== 200) {
+      throw new Error("Failed to log out");
+    }
     return response.data;
   };
+
+export const getAllUsers = async () => {
+  const response = await api.get("/admin/users",{
+    withCredentials: true, 
+  });
+  if (response.status !== 200) {
+    throw new Error("Failed to fetch users");
+  }
+  return response.data; 
+}
