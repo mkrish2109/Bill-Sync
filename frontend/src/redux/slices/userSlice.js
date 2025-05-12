@@ -44,7 +44,7 @@ const userSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(loginUser.fulfilled, (state, action) => {
-      console.log("Login successful:", action.payload);
+      // console.log("Login successful:", action.payload);
       state.user = action.payload.data;
       state.loading = false;
       state.error = "";
@@ -60,6 +60,10 @@ const userSlice = createSlice({
     builder.addCase(logoutUser.fulfilled, (state, error) => {
       state.user = null;
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      state.loading = false;
+      state.error = "";
     });
   },
 });

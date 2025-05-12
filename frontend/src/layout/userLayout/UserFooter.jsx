@@ -7,23 +7,19 @@ import {
   BsInstagram,
   BsTwitter,
 } from "react-icons/bs";
+import { Logo } from "../../components/comman/Logo";
 
 function UserFooter() {
   return (
     <>
-      <Footer container className="rounded-none">
+      <Footer container className="rounded-none bg-gray-50 dark:bg-gray-900">
         <div className="w-full">
           <div className="grid w-full justify-between sm:flex sm:justify-between md:flex md:grid-cols-1">
             <div className="flex items-center">
-              <FooterBrand
-                src="/images/logo.png"
-                alt="Flowbite Logo"
-                name="Flowbite"
-                className="w-[50px] h-[50px] "
-              />
-              <h2 className="font-bold text-[#44b8ff] text-xl">
-                Tex Bill
-              </h2>
+              <FooterBrand href="#">
+                <Logo variant="full" size="lg" />
+              </FooterBrand>
+              
             </div>
             <div className="grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-6">
               <div>

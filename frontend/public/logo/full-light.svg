@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 36">
+  <rect x="2" y="2" width="32" height="32" rx="6" fill="#44b8ff" stroke="none"/>
+  <path d="M10 10V26H26V10H10ZM12 12H24V14H12V12ZM12 18H24V20H12V18Z" fill="white"/>
+  <path d="M16 12H20V20H16V12Z" fill="#44b8ff"/>
+  <text x="42" y="24" font-family="Inter" font-weight="700" font-size="20" fill="#111827">Tex <tspan fill="#44b8ff">Bill</tspan></text>
+</svg>
