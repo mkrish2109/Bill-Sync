@@ -1,16 +1,55 @@
-import React from "react";
+// layouts/LayoutAdmin.js
 import { Outlet } from "react-router-dom";
-import SildeBarUser from "./SildeBarUser";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Sidebar from "../SideBar";
+import NavUser from "./NavUser";
+import Backdrop from "../adminLayout/Backdrop";
+import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
 
-function LayoutUser() {
+const LayoutContent = () => {
+  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+
   return (
-    <div className="grid grid-cols-[200px_1fr]">
-      {/* <SildeBarUser /> */}
+    <div className="min-h-screen xl:flex bg-background-secondaryLight dark:bg-background-secondaryDark">
+      <ToastContainer 
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      
       <div>
-        <Outlet />
+        <Sidebar />
+        <Backdrop />
+      </div>
+      
+      <div
+        className={`flex-1 transition-all duration-300 ease-in-out ${
+          isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
+        } ${isMobileOpen ? "ml-0" : ""}`}
+      >
+        <NavUser />
+      <div className="p-4 mx-auto max-w-7xl md:p-6 dark:bg-background-secondaryDark">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
-}
+};
+
+const LayoutUser = () => {
+  return (
+    <SidebarProvider>
+      <LayoutContent />
+    </SidebarProvider>
+  );
+};
+
 
 export default LayoutUser;

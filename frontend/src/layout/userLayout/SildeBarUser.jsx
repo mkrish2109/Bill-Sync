@@ -1,4 +1,4 @@
-import { Sidebar } from "flowbite-react";
+import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems } from "flowbite-react";
 import React from "react";
 import { HiLocationMarker, HiShoppingBag, HiUser } from "react-icons/hi";
 import { Link } from "react-router-dom";
@@ -14,26 +14,26 @@ function SildeBarUser() {
     <Sidebar
       aria-label="Sidebar with multi-level dropdown example"
       className="w-50  ">
-      <Sidebar.Items>
-        <Sidebar.ItemGroup>
+      <SidebarItems>
+        <SidebarItemGroup>
           {links.map((value, index) => {
             return (
               <div className="flex flex-col " key={index}>
                 <Link to={value.url}>
-                  <Sidebar.Item base>
+                  <SidebarItem base>
                     <div className="flex items-center gap-2">
                       <div className="[&>svg]:text-xl [[&>svg]:text-gray-900">
                         {value.icon}
                       </div>
                       {value.name}
                     </div>
-                  </Sidebar.Item>
+                  </SidebarItem>
                 </Link>
               </div>
             );
           })}
-        </Sidebar.ItemGroup>
-      </Sidebar.Items>
+        </SidebarItemGroup>
+      </SidebarItems>
     </Sidebar>
   );
 }

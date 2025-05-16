@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../api";
+import { api } from "../helper/apiHelper";
 
 export default function Dashboard() {
   const [pendingBills, setPendingBills] = useState([]);
@@ -20,7 +20,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="bg-gray-100 p-4 dark:bg-gray-800 dark:text-white">
+    <div className="bg-gray-100 p-4 dark:bg-background-dark dark:text-text-dark">
       <h2>Dashboard</h2>
       <h3>Pending Payments</h3>
       <ul>

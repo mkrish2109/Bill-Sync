@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   HiChartPie, 
@@ -10,14 +10,14 @@ import {
 } from "react-icons/hi";
 import { FaUsersCog } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
+import { Logo } from "../../components/comman/Logo";
+import { useSidebar } from "../../context/SidebarContext";
 
 const mainItems = [
   { 
     name: "Dashboard", 
     icon: <HiChartPie className="text-xl" />, 
-    subItems: [
-      { name: "Ecommerce", path: "/admin/dashboard" }
-    ]
+    path: "/"
   },
   { 
     name: "Users", 
@@ -55,18 +55,28 @@ const otherItems = [
 ];
 
 function SidebarAdmin() {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { isExpanded, isMobileOpen, isHovered, setIsHovered,setIsExpanded,setIsMobileOpen } = useSidebar();
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const location = useLocation();
   const subMenuRefs = useRef({});
-  const [subMenuHeights, setSubMenuHeights] = useState({});
 
   const isActive = useCallback(
     (path) => location.pathname === path,
     [location.pathname]
   );
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMobileOpen && !event.target.closest('aside')) {
+        setIsMobileOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMobileOpen, setIsMobileOpen]);
 
   // Auto-expand submenu for current path
   useEffect(() => {
@@ -96,19 +106,6 @@ function SidebarAdmin() {
     }
   }, [location.pathname, isActive]);
 
-  // Calculate submenu heights when opened
-  useEffect(() => {
-    if (openSubmenu !== null) {
-      const key = `${openSubmenu.type}-${openSubmenu.index}`;
-      if (subMenuRefs.current[key]) {
-        setSubMenuHeights(prev => ({
-          ...prev,
-          [key]: subMenuRefs.current[key]?.scrollHeight || 0,
-        }));
-      }
-    }
-  }, [openSubmenu]);
-
   const toggleSubmenu = (index, menuType) => {
     setOpenSubmenu(prev => {
       if (prev?.type === menuType && prev.index === index) {
@@ -118,10 +115,16 @@ function SidebarAdmin() {
     });
   };
 
+  const getSubmenuHeight = (menuType, index) => {
+    const key = `${menuType}-${index}`;
+    return subMenuRefs.current[key]?.scrollHeight || 0;
+  };
+
   const renderNavItem = (item, index, menuType) => {
     const isSubmenuOpen = openSubmenu?.type === menuType && openSubmenu?.index === index;
     const hasActiveSubItem = item.subItems?.some(sub => isActive(sub.path));
     const isItemActive = isActive(item.path || '') || hasActiveSubItem;
+
 
     return (
       <li key={`${menuType}-${index}`}>
@@ -130,19 +133,19 @@ function SidebarAdmin() {
             onClick={() => toggleSubmenu(index, menuType)}
             className={`flex items-center w-full p-2 rounded-lg transition-colors group ${
               isSubmenuOpen || hasActiveSubItem
-                ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                ? 'bg-blue-50 dark:bg-blue-900/20 text-primary-light dark:text-primary-dark'
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
-            } ${!isExpanded && !isHovered ? 'justify-center' : 'justify-start'}`}
+            }              'justify-start'}`}
           >
             <span className={`${isSubmenuOpen || hasActiveSubItem
-              ? 'text-blue-600 dark:text-blue-400'
-              : 'group-hover:text-blue-600 dark:group-hover:text-blue-400'
+              ? 'text-primary-light dark:text-primary-dark'
+              : 'group-hover:text-primary-light dark:group-hover:text-primary-dark'
             }`}>
               {item.icon}
             </span>
             {(isExpanded || isHovered || isMobileOpen) && (
               <>
-                <span className="ml-3">{item.name}</span>
+                <span className="ml-3 group-hover:text-primary-light dark:group-hover:text-primary-dark">{item.name}</span>
                 <HiChevronDown 
                   className={`ml-auto transition-transform duration-200 ${
                     isSubmenuOpen ? 'rotate-180' : ''
@@ -157,13 +160,13 @@ function SidebarAdmin() {
               to={item.path}
               className={`flex items-center w-full p-2 rounded-lg transition-colors group ${
                 isItemActive
-                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                  ? 'bg-blue-50 dark:bg-blue-900/20 text-primary-light dark:text-primary-dark'
                   : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
-              } ${!isExpanded && !isHovered ? 'justify-center' : 'justify-start'}`}
+              }              'justify-start'}`}
             >
               <span className={`${isItemActive
-                ? 'text-blue-600 dark:text-blue-400'
-                : 'group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                ? 'text-primary-light dark:text-primary-dark'
+                : 'group-hover:text-primary-light dark:group-hover:text-primary-dark'
               }`}>
                 {item.icon}
               </span>
@@ -179,7 +182,7 @@ function SidebarAdmin() {
             ref={el => subMenuRefs.current[`${menuType}-${index}`] = el}
             className="overflow-hidden transition-all duration-300"
             style={{
-              height: isSubmenuOpen ? `${subMenuHeights[`${menuType}-${index}`] || 'auto'}` : '0px'
+              height: isSubmenuOpen ? `${getSubmenuHeight(menuType, index)}px` : '0px'
             }}
           >
             <ul className="py-1 pl-11 space-y-1">
@@ -189,7 +192,7 @@ function SidebarAdmin() {
                     to={subItem.path}
                     className={`block px-2 py-1.5 text-sm rounded-lg transition-colors ${
                       isActive(subItem.path)
-                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                        ? 'bg-blue-100 dark:bg-blue-900/30 text-primary-light dark:text-primary-dark font-medium'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                     }`}
                   >
@@ -203,41 +206,43 @@ function SidebarAdmin() {
       </li>
     );
   };
+    const getSidebarWidth = () => {
+    if (isMobileOpen) return 'w-64';
+    if (!isExpanded && !isHovered) return 'w-20';
+    return 'w-64';
+  };
 
   return (
-    <aside
-      className={`fixed top-0 left-0 h-screen z-50 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out
+     <aside
+      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${
           isExpanded || isMobileOpen
-            ? 'w-64'
+            ? "w-[290px]"
             : isHovered
-            ? 'w-64'
-            : 'w-20'
+            ? "w-[290px]"
+            : "w-[90px]"
         }
-        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}
       onMouseEnter={() => !isExpanded && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex flex-col h-full py-4">
-        <div className="px-4 mb-6">
-          <Link to="/" className="flex items-center">
+        <div className="px-0 mb-6">
+          <Link to="/" className={`flex items-center ${(isExpanded || isHovered || isMobileOpen) ? '': 'justify-center' } `}>
             {(isExpanded || isHovered || isMobileOpen) ? (
               <>
-                <HiOutlineViewGrid className="h-8 w-8 text-blue-600" />
-                <span className="ml-2 text-xl font-semibold dark:text-white">Admin Panel</span>
+                <Logo variant="full" size="lg" />
               </>
             ) : (
-              <HiOutlineViewGrid className="h-8 w-8 text-blue-600 mx-auto" />
+              <Logo variant='icon' className="h-10 w-" size='lg'/>
             )}
           </Link>
         </div>
 
         <div className="flex-1 overflow-y-auto px-2">
           <div className="mb-6">
-            <h2 className={`mb-2 text-xs uppercase text-gray-500 flex ${
-              !isExpanded && !isHovered ? 'justify-center' : 'justify-start px-2'
-            }`}>
+            <h2 className='b-2 text-xs uppercase text-gray-500 dark:text-gray-400 flex justify-start px-2'>
               {(isExpanded || isHovered || isMobileOpen) ? (
                 "Main Menu"
               ) : (
@@ -250,9 +255,7 @@ function SidebarAdmin() {
           </div>
 
           <div>
-            <h2 className={`mb-2 text-xs uppercase text-gray-500 flex ${
-              !isExpanded && !isHovered ? 'justify-center' : 'justify-start px-2'
-            }`}>
+            <h2 className='mb-2 text-xs uppercase text-gray-500 dark:text-gray-400 flex justify-start px-2'>
               {(isExpanded || isHovered || isMobileOpen) ? (
                 "Others"
               ) : (
@@ -264,22 +267,7 @@ function SidebarAdmin() {
             </ul>
           </div>
         </div>
-
-        <div className="px-4">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center justify-center w-full p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
-            {(isExpanded || isHovered || isMobileOpen) ? (
-              <>
-                <HiChevronDown className={`mr-2 transform ${isExpanded ? 'rotate-90' : '-rotate-90'}`} />
-                <span>Collapse</span>
-              </>
-            ) : (
-              <HiChevronDown className="transform -rotate-90" />
-            )}
-          </button>
-        </div>
+        
       </div>
     </aside>
   );

@@ -15,6 +15,7 @@ const authMiddleware = async (req, res, next) => {
     if (!req.user) {
       return sendErrorResponse(res, "Invalid token.", 401);
     }
+    // console.log(req.user);
     next();
   } catch (error) {
     sendErrorResponse(res, "Authentication failed.", 401);

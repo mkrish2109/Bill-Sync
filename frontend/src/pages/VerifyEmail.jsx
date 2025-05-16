@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { verifyEmail } from "../services/apiServices"; // Ensure this imports the correct verifyEmail function
 import { toast } from "react-toastify";
-import { api } from "../api";
+import { api } from "../helper/apiHelper";
 
 function VerifyEmail() {
   const navigate = useNavigate();

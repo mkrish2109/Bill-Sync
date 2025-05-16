@@ -1,120 +1,158 @@
 import { useEffect, useState } from "react";
-import AdminPageTitle from "../../comman/AdminPageTitle";
-import { useNavigate } from "react-router-dom";
-import { getAllUsers } from "../../../services/apiServices";
-import { Select } from "flowbite-react";
-import { api } from "../../../api";
+import { Select, Button, Spinner, Alert } from "flowbite-react";
+import { api } from "../../../helper/apiHelper";
 import { PageMeta } from "../../comman/PageMeta";
+import { getAllUsers } from "../../../services/apiServices";
+import { toast } from "react-toastify";
+import { HiTrash } from "react-icons/hi";
 
 function UsersListAdmin() {
-
-  function getImage(value) {
-    return "/images/profile.png";
-  }
-
-// Handle user delete
-async function handleDeleteUser(userId) {
-  try {
-    const res = await fetch(`/api/users/${userId}`, {
-      method: "DELETE",
-    });
-
-    if (!res.ok) throw new Error("Failed to delete user");
-
-    console.log("User deleted:", userId);
-  } catch (error) {
-    console.error("Delete error:", error);
-  }
-}
   const [users, setUsers] = useState([]);
-  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllUsers();
+      setUsers(data.map(user => ({
+        ...user,
+        fullName: `${user.fname} ${user.lname}`
+      })));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setError("Failed to load users. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    getAllUsers()
-      .then((data) => {
-        const processed = data.map((users) => ({
-          ...users,
-          fullName: `${users.fname} ${users.lname}`, // 👈 computed field
-        }));
-        setUsers(processed);
-      })
-      .catch((error) => {
-        console.error("Error fetching users:", error);
-      });
+    fetchUsers();
   }, []);
 
-    const handleRoleChange = async (userId, newRole) => {
-      console.log("User ID:", userId);
-      console.log("New Role:", newRole);
-      try {
-        await api.put(`/admin/update-role/${userId}`, { role: newRole }, {
-          headers: { "x-auth-token": localStorage.getItem("token") }
-        });
-        // Refresh users
-        setUsers(users.map(user => (user._id === userId ? { ...user, role: newRole } : user)));
-      } catch (error) {
-        console.error("Error updating role", error);
-      }
-    };
-  
-    async function handleDelete(id) {
-      const input = window.confirm("Are you sure you want to delete this?");
-      // if (input) {
-      //   // await deleteItem(id);
-      //   alert("Deleted successfully.");
-      //   const data = await getAllUsers();
-      //   const processed = data.data.map((user) => ({
-      //     ...user,
-      //     fullName: `${user.fname} ${user.lname}`,
-      //   }));
-      //   setItems(processed);
-      // }
+  const handleRoleChange = async (userId, newRole) => {
+    try {
+      await api.put(
+        `/admin/update-role/${userId}`, 
+        { role: newRole },
+        { withCredentials: true }
+      );
+      setUsers(users.map(user => 
+        user._id === userId ? { ...user, role: newRole } : user
+      ));
+    } catch (error) {
+      console.error("Error updating role", error);
+      setError("Failed to update user role");
     }
-console.log('items',users)
-  return (
-    <div>
-      <PageMeta
-              title="All Users | Tex Bill"
-              description="User profile dashboard for Tex Bill application"
-            />
-      <AdminPageTitle title="Users" />
-      <div className="mt-8">
-        {users.map((value) => (
-          <div key={value._id}>
-            <div className="flex items-center gap-2 py-2 border-b border-b-slate-300 dark:border-b-gray-700">
-              <div className="w-16 h-16 shrink-0 rounded-full border border-slate-300 dark:border-gray-600 overflow-hidden">
-                <img
-                  src={getImage()}
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="grow-[1]">
-                <h3 className="font-bold text-gray-800 dark:text-white">{value.fullName}</h3>
-              </div>
+  };
 
-              <div className="flex items-center gap-2">
-                {value.role === "admin" ? (
-                  <span className="text-sm text-green-600 dark:text-green-400 font-bold">
-                    Admin
-                  </span>
-                ) : (
-                  <Select
-                    className="w-24 dark:bg-gray-800 dark:text-white"
-                    value={value.role}
-                    onChange={(e) => handleRoleChange(value._id, e.target.value)}
-                  >
-                    <option value="buyer">Buyer</option>
-                    <option value="worker">Worker</option>
-                  </Select>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+  const handleDelete = async (userId) => {
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      try {
+        const response = await api.delete(`/admin/users/${userId}`, { withCredentials: true });
+        toast.success(response.message || "User deleted successfully");
+        setUsers(users.filter(user => user._id !== userId));
+      } catch (error) {
+        console.error("Delete error:", error);
+        setError("Failed to delete user");
+      }
+    }
+  };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spinner size="xl" />
       </div>
     );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4">
+        <Alert color="failure" onDismiss={() => setError(null)}>
+          {error}
+        </Alert>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <PageMeta
+        title="All Users | Tex Bill"
+        description="User profile dashboard for Tex Bill application"
+      />
+      
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800 lg:p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+            Users Management
+          </h3>
+        </div>
+
+        <div className="space-y-4">
+          {users.length === 0 ? (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              No users found
+            </div>
+          ) : (
+            users.map((user) => (
+              <div 
+                key={user._id}
+                className="p-4 flex items-center justify-between rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border border-gray-100 dark:border-gray-700"
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 h-12 w-12 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600">
+                    <img
+                      src="/images/profile.png"
+                      alt={user.fullName}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900 dark:text-white">
+                      {user.fullName}
+                    </h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {user.email}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  {user.role === "admin" ? (
+                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      Admin
+                    </span>
+                  ) : (
+                    <Select
+                      sizing="sm"
+                      className="w-32"
+                      value={user.role}
+                      onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                    >
+                      <option value="buyer">Buyer</option>
+                      <option value="worker">Worker</option>
+                    </Select>
+                  )}
+                  <Button
+                    pill
+                    size="xs"
+                    color="red"
+                    onClick={() => handleDelete(user._id)}
+                  >
+                    <HiTrash size= {16} />
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default UsersListAdmin;

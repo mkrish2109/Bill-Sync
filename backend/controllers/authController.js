@@ -18,9 +18,10 @@ const register = async (req, res) => {
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return sendErrorResponse(res, 'User already exists with this email.', 400);
-    }
+    const existingUserPhone = await User.findOne({ phone });
+    if (existingUser || existingUserPhone) {
+      return sendErrorResponse(res, 'User already exists.', 400);
+      }
 
     // Create a new user
     const isFirstUser = (await User.countDocuments()) === 0; // First user should be admin
@@ -121,7 +122,7 @@ const login = async (req, res) => {
   
       res
       .status(200)
-      .json({ success: true, token : accessToken , data: tokenUser, msg: "Logged in successfully." });
+      .json({ success: true, token : accessToken , data: tokenUser, message: "Logged in successfully." });
     } catch (error) {
       console.log("Error: ", error);
       sendErrorResponse(res, error.message);

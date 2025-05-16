@@ -1,4 +1,4 @@
-import { api } from "../api";
+import { api } from "../helper/apiHelper";
 
 export const verifyEmail = async (data) => {
   try {
@@ -25,6 +25,12 @@ export const login = async (data) => {
     }
     return response.data;
   };
+  
+
+export const getUserById = async (userId) => {
+  const res = await api.get(`/users/${userId}`);
+  return res.data;
+};
 
 export const getAllUsers = async () => {
   const response = await api.get("/admin/users",{
@@ -35,3 +41,4 @@ export const getAllUsers = async () => {
   }
   return response.data; 
 }
+
