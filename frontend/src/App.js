@@ -1,5 +1,8 @@
-import React from 'react';
-import { Provider } from 'react-redux';
+import React, { useEffect } from 'react';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { createTheme, ThemeProvider } from 'flowbite-react';
+
 import Register from './pages/Register';
 import Login from './pages/Login';
 import VerifyEmail from './pages/VerifyEmail';
@@ -12,107 +15,120 @@ import WorkerDashboard from './components/WorkerDashboard';
 import UserLayout from './layout/userLayout/UserLayout';
 import LayoutAdmin from './layout/adminLayout/LayoutAdmin';
 import UserAuthGuard from './guards/UserAuthGuard';
-import store from './redux/store';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { createTheme, ThemeProvider } from 'flowbite-react';
+import AdminAuthGuard from './guards/AdminAuthGuard';
 import UsersListAdmin from './components/admin/usersListAdmin/UsersListAdmin';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import UserProfile from './pages/UserProfile';
+import store from './redux/store';
+import { fetchUser, restoreUser } from './redux/slices/userSlice';
+import LoadingSpinner from './components/LoadingSpinner';
+import LayoutUser from './layout/userLayout/LayoutUser';
+import HomePage from './pages/HomePage';
 
+const AppRoutes = () => {
+const dispatch = useDispatch();
+  const { user, loading } = useSelector((state) => state.user);
+  const role = user?.role;
+
+  useEffect(() => {
+    dispatch(restoreUser());
+  }, []);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <Routes>
+      {role === "admin" ? (
+        <Route path="/" element={
+          <AdminAuthGuard>
+            <LayoutAdmin />
+          </AdminAuthGuard>
+        }>
+          <Route index element={<AdminDashboard />} />
+        </Route>
+      ) 
+      : (
+        <Route path="/" element={<UserLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="verify-email" element={<VerifyEmail />} />
+          <Route path="bills" element={<BillList />} />
+          <Route path="create-bill" element={<BillForm />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="contact" element={<ContactPage />} />
+        </Route>
+      )}
+
+      {/* Admin Routes */}
+      <Route
+        path="/admin"
+        element={
+          <AdminAuthGuard>
+            <LayoutAdmin />
+          </AdminAuthGuard>
+        }>
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<UsersListAdmin />} />
+        <Route path="account/profile" element={<UserProfile />} />
+      </Route>
+
+      {/* Buyer Routes */}
+      <Route
+        path="/buyer"
+        element={
+          <UserAuthGuard>
+            <LayoutUser />
+          </UserAuthGuard>
+        }>
+        <Route path="dashboard" element={<BuyerDashboard />} />
+        <Route path="account/profile" element={<UserProfile />} />
+      </Route>
+
+      {/* Worker Routes */}
+      <Route
+        path="/worker"
+        element={
+          <UserAuthGuard>
+            <LayoutUser />
+          </UserAuthGuard>
+        }>
+        <Route path="dashboard" element={<WorkerDashboard />} />
+        <Route path="account/profile" element={<UserProfile />} />
+      </Route>
+    </Routes>
+  );
+};
 
 function App() {
-  const user = localStorage.getItem("user");
-  const role = localStorage.getItem("role");
-  console.log(role)
   const customTheme = createTheme({
     button: {
       color: {
-        primary: "bg-[#44b8ff] hover:bg-[#1f90bc] text-white ",
+        primary:
+          "bg-primary-light text-white hover:bg-primary-hoverLight " +
+          "dark:bg-primary-dark dark:hover:bg-primary-hoverDark dark:text-white " +
+          "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light " +
+          "dark:focus:ring-primary-dark transition-colors duration-200",
+        secondary:
+          "bg-secondary-light text-white hover:bg-secondary-hoverLight " +
+          "dark:bg-secondary-dark dark:hover:bg-secondary-hoverDark dark:text-white " +
+          "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-light " +
+          "dark:focus:ring-secondary-dark transition-colors duration-200",
       },
     },
-    sidebar: {
-      item: {
-        base: "h-full flex items-center justify-center rounded-md p-2 hover:bg-[#2098e3] hover:text-black-900 hover:text-white",
-      },
-    },
-    collapse: {
-      base: "w-full md:block md:w-auto text-right md:text-left",
-      list: "mt-4 flex flex-col items-end md:items-center md:mt-0 md:flex-row md:space-x-8 md:text-sm md:font-medium",
-      hidden: {
-        on: "hidden",
-        off: ""
-      }
-    }
   });
+
   return (
-    <>
-    {/* <ThemeProvider theme={customTheme}>  */}
+    <ThemeProvider theme={customTheme}>
       <Provider store={store}>
         <BrowserRouter>
-          <Routes>
-            {role === "admin" ? (
-              <Route path="/" element={
-                <UserAuthGuard>
-                  <LayoutAdmin />
-                </UserAuthGuard>
-              }>
-                <Route index element={<AdminDashboard />} />
-              </Route>
-            ) : (
-              <Route path="/" element={<UserLayout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
-                <Route path="verify-email" element={<VerifyEmail />} />
-                <Route path="bills" element={<BillList />} />
-                <Route path="create-bill" element={<BillForm />} />
-                <Route path="about" element={<AboutPage />} />
-                <Route path="contact" element={<ContactPage />} />
-              </Route>
-            )}
-
-            {/* Admin Routes */}
-            <Route
-              path="/admin"
-              element={
-                <UserAuthGuard>
-                  <LayoutAdmin />
-                </UserAuthGuard>
-              }>
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="users" element={<UsersListAdmin />} />
-              <Route path="account" >
-                <Route path="profile" element={<UserProfile />} />
-              </Route>
-            </Route>
-
-            {/* Buyer Routes */}
-            <Route
-              path="/buyer"
-              element={
-                <UserAuthGuard>
-                  <UserLayout />
-                </UserAuthGuard>
-              }>
-              <Route path="dashboard" element={<BuyerDashboard />} />
-            </Route>
-
-            {/* Worker Routes */}
-            <Route
-              path="/worker"
-              element={
-                <UserAuthGuard>
-                  <UserLayout />
-                </UserAuthGuard>
-              }>
-              <Route path="dashboard" element={<WorkerDashboard />} />
-            </Route>
-          </Routes>
+          <AppRoutes />
         </BrowserRouter>
       </Provider>
-    {/* </ThemeProvider> */}
-  </>
+    </ThemeProvider>
   );
 }
 

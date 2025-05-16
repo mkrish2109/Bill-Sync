@@ -1,5 +1,5 @@
-import { Button, TextInput, Textarea, Card, Alert } from "flowbite-react";
-import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaCheckCircle } from "react-icons/fa";
+import { Button, TextInput, Textarea, Card, Alert, Spinner } from "flowbite-react";
+import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaCheckCircle, FaPaperPlane } from "react-icons/fa";
 import { useState } from "react";
 
 export default function ContactPage() {
@@ -9,20 +9,59 @@ export default function ContactPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+    if (!formData.message.trim()) newErrors.message = 'Message is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Form submission logic here
-    console.log(formData);
-    setSubmitted(true);
-    setFormData({ name: "", email: "", message: "" });
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('Form submitted:', formData);
+      setSubmitted(true);
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error('Submission error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null,
+      });
+    }
   };
 
   return (
@@ -48,144 +87,181 @@ export default function ContactPage() {
             Thank you for your message! We'll get back to you soon.
           </Alert>
         )}
-
-        <div className="grid md:grid-cols-2 gap-12">
-          {/* Contact Form */}
-          <Card className="dark:bg-gray-800">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
-              Send us a message
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Your Name
-                </label>
-                <TextInput
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="John Doe"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Your Email
-                </label>
-                <TextInput
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="john@example.com"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="message"
-                  className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Your Message
-                </label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  placeholder="Your message here..."
-                  rows={6}
-                  required
-                  value={formData.message}
-                  onChange={handleChange}
-                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
-                />
-              </div>
-
-              <Button
-                type="submit"
-                gradientDuoTone="cyanToBlue"
-                className="w-full"
-              >
-                Send Message
-              </Button>
-            </form>
-          </Card>
-
-          {/* Contact Info */}
-          <div className="space-y-8">
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
+            {/* Contact Form */}
             <Card className="dark:bg-gray-800">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
-                Contact Information
+                Send us a message
               </h2>
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <FaMapMarkerAlt className="w-6 h-6 text-[#44b8ff] dark:text-blue-400 mt-1 mr-4" />
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                      Address
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      123 Business Avenue<br />
-                      Tech City, TC 10001
-                    </p>
-                  </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Your Name *
+                  </label>
+                  <TextInput
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder="John Doe"
+                    value={formData.name}
+                    onChange={handleChange}
+                    color={errors.name ? "failure" : "gray"}
+                    helperText={errors.name && <span className="text-red-600">{errors.name}</span>}
+                  />
                 </div>
 
-                <div className="flex items-start">
-                  <FaPhone className="w-6 h-6 text-[#44b8ff] dark:text-blue-400 mt-1 mr-4" />
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                      Phone
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      +1 (555) 123-4567<br />
-                      Mon-Fri, 9am-5pm EST
-                    </p>
-                  </div>
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Your Email *
+                  </label>
+                  <TextInput
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="john@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    color={errors.email ? "failure" : "gray"}
+                    helperText={errors.email && <span className="text-red-600">{errors.email}</span>}
+                  />
                 </div>
 
-                <div className="flex items-start">
-                  <FaEnvelope className="w-6 h-6 text-[#44b8ff] dark:text-blue-400 mt-1 mr-4" />
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                      Email
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      info@texbill.com<br />
-                      support@texbill.com
-                    </p>
-                  </div>
+                <div>
+                  <label
+                    htmlFor="message"
+                    className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Your Message *
+                  </label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    placeholder="Your message here..."
+                    rows={6}
+                    value={formData.message}
+                    onChange={handleChange}
+                    color={errors.message ? "failure" : "gray"}
+                    helperText={errors.message && <span className="text-red-600">{errors.message}</span>}
+                  />
                 </div>
-              </div>
+
+                <Button
+                  type="submit"
+                  gradientDuoTone="cyanToBlue"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Spinner size="sm" className="mr-2" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <FaPaperPlane className="mr-2" />
+                      Send Message
+                    </>
+                  )}
+                </Button>
+              </form>
             </Card>
 
-            {/* Map */}
+            {/* Contact Info */}
+            <div className="space-y-4">
+              <Card className="dark:bg-gray-800">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+                  Contact Information
+                </h2>
+                <div className="space-y-6">
+                  <div className="flex items-start">
+                    <div className="p-3 rounded-full bg-blue-50 dark:bg-gray-700 mr-4">
+                      <FaMapMarkerAlt className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                        Address
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        203 Angle Square, Digital Valley<br />
+                        Surat, Gujarat 394105
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start">
+                    <div className="p-3 rounded-full bg-blue-50 dark:bg-gray-700 mr-4">
+                      <FaPhone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                        Phone
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        +1 (555) 123-4567<br />
+                        Mon-Fri, 9am-5pm EST
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start">
+                    <div className="p-3 rounded-full bg-blue-50 dark:bg-gray-700 mr-4">
+                      <FaEnvelope className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                        Email
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        info@example.com<br />
+                        support@example.com
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Business Hours */} 
+              <Card className="dark:bg-gray-800">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+                  Business Hours
+                </h2>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-300">Monday - Friday</span>
+                    <span className="font-medium text-gray-800 dark:text-white">9:00 AM - 5:00 PM</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-300">Saturday</span>
+                    <span className="font-medium text-gray-800 dark:text-white">10:00 AM - 2:00 PM</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-300">Sunday</span>
+                    <span className="font-medium text-gray-800 dark:text-white">Closed</span>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Map */}
+            </div>
+          </div>
             <Card className="p-0 overflow-hidden dark:bg-gray-800">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215209132873!2d-73.9878449245258!3d40.74844047138915!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1623251156839!5m2!1sen!2sus"
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14874.692024199153!2d72.8311!3d21.1702!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04e8466bcf6eb%3A0x6ab1d4013788d700!2s6VM7%2BJP%20Surat%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1715765634561!5m2!1sen!2sin"
                 width="100%"
-                height="300"
+                height="350"
                 style={{ border: 0 }}
                 allowFullScreen=""
                 loading="lazy"
                 className="dark:filter dark:brightness-75"
                 title="Office Location"
-              ></iframe>
+              />
             </Card>
-          </div>
-        </div>
       </div>
     </div>
   );

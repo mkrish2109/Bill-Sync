@@ -14,17 +14,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../services/apiServices";
 import { logoutUser } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
-import { useNavigate,Link, useLocation } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import ThemeToggleButton from "../../components/comman/ThemeToggleButton";
 import { Logo } from "../../components/comman/Logo";
 
-function NavbarAdmin() {
+// Custom NavLink component to properly handle active state
+const NavLink = ({ to, children, exact = false }) => {
+  const location = useLocation();
+  const isActive = exact 
+    ? location.pathname === to
+    : location.pathname.startsWith(to);
+
+  return (
+    <NavbarLink
+      as={Link}
+      to={to}
+      active={isActive}
+      className={`text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff] ${
+        isActive ? 'text-[#44b8ff] dark:text-[#44b8ff] font-medium' : ''
+      }`}
+    >
+      {children}
+    </NavbarLink>
+  );
+};
+
+function NavUser() {
   const dispatch = useDispatch();
   const user = useSelector((store) => store?.user.user);
-  const location = useLocation(); // Properly get location from React Router
   const navigate = useNavigate();
 
-  async function handleLogOut() {
+  const handleLogOut = async () => {
     try {
       const response = await logout();
       dispatch(logoutUser());
@@ -36,10 +56,76 @@ function NavbarAdmin() {
     } catch (error) {
       toast.error("An error occurred during logout");
     }
-  }
+  };
+
+  const renderUserDropdown = () => {
+    if (!user) {
+      return (
+        <>
+          <DropdownItem 
+            onClick={() => navigate('/login')}
+            className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            Sign in
+          </DropdownItem>
+          <DropdownItem 
+            onClick={() => navigate('/register')}
+            className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            Sign up
+          </DropdownItem>
+        </>
+      );
+    }
+
+    return (
+      <>
+        {user.role === "admin" && (
+          <DropdownItem 
+            onClick={() => navigate('/admin/dashboard')}
+            className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            Admin Dashboard
+          </DropdownItem>
+        )}
+        {user.role === "worker" && (
+          <DropdownItem 
+            onClick={() => navigate('/worker/dashboard')}
+            className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            Worker Dashboard
+          </DropdownItem>
+        )}
+        {user.role === "buyer" && (
+          <DropdownItem 
+            onClick={() => navigate('/buyer/dashboard')}
+            className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            Buyer Dashboard
+          </DropdownItem>
+        )}
+        <DropdownItem 
+          onClick={() => navigate('/settings')}
+          className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+        >
+          Settings
+        </DropdownItem>
+        <DropdownDivider className="border-gray-200 dark:border-gray-700" />
+        <DropdownItem 
+          onClick={handleLogOut}
+          className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+        >
+          Sign out
+        </DropdownItem>
+      </>
+    );
+  };
 
   return (
-    <Navbar fluid className="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-40 border-b border-gray-200 dark:border-gray-700">
+    <Navbar 
+      fluid 
+      className="bg-background-light dark:bg-background-dark shadow-md sticky top-0 z-40 border-b border-gray-200 dark:border-gray-700"
+    >
       <NavbarBrand href="/">
         <Logo variant="full" size="lg" />
       </NavbarBrand>
@@ -61,129 +147,28 @@ function NavbarAdmin() {
           }
           className="z-50"
         >
-          <DropdownHeader className="bg-white dark:bg-gray-800">
-            <span className="block text-sm font-semibold text-gray-800 dark:text-white">
+          <DropdownHeader className="bg-background-light dark:bg-background-dark">
+            <span className="block text-sm font-semibold text-gray-800 dark:text-text-dark">
               {user ? `${user.fname} ${user.lname}` : "Guest"}
             </span>
-            <span className="block truncate text-sm font-medium text-gray-500 dark:text-gray-300">
+            <span className="block truncate text-sm font-medium text-text-secondaryLight dark:text-gray-300">
               {user?.email || "Not logged in"}
             </span>
           </DropdownHeader>
           
-          {user && (
-            <>
-              {user.role === "admin" && (
-                <DropdownItem 
-                  className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-                  onClick={() => navigate('/admin/dashboard')}
-                >
-                  Admin Dashboard
-                </DropdownItem>
-              )}
-              {user.role === "worker" && (
-                <DropdownItem 
-                  className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-                  onClick={() => navigate('/worker/dashboard')}
-                >
-                  Worker Dashboard
-                </DropdownItem>
-              )}
-              {user.role === "buyer" && (
-                <DropdownItem 
-                  className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-                  onClick={() => navigate('/buyer/dashboard')}
-                >
-                  Buyer Dashboard
-                </DropdownItem>
-              )}
-              <DropdownItem 
-                className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-                onClick={() => navigate('/settings')}
-              >
-                Settings
-              </DropdownItem>
-              <DropdownDivider className="border-gray-200 dark:border-gray-700" />
-              <DropdownItem 
-                className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-                onClick={handleLogOut}
-              >
-                Sign out
-              </DropdownItem>
-            </>
-          )}
-          
-          {!user && (
-            <>
-              <DropdownItem 
-                className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-                onClick={() => navigate('/login')}
-              >
-                Sign in
-              </DropdownItem>
-              <DropdownItem 
-                className="text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-                onClick={() => navigate('/register')}
-              >
-                Sign up
-              </DropdownItem>
-            </>
-          )}
+          {renderUserDropdown()}
         </Dropdown>
         
-        <NavbarToggle className="text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700" />
+        <NavbarToggle className="text-text-secondaryLight hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700" />
       </div>
       
-      <NavbarCollapse className="bg-white dark:bg-gray-900 md:bg-transparent">
-        <Link to="/">
-          <NavbarLink 
-            href="/" 
-            active={location.pathname === '/'}
-            className="text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff]"
-            activeClassName="text-[#44b8ff] dark:text-[#44b8ff] font-medium"
-          >
-            Home
-          </NavbarLink>
-        </Link>
-        <Link to="/about">
-          <NavbarLink 
-            active={location.pathname === '/about'}
-            className="text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff]"
-            activeClassName="text-[#44b8ff] dark:text-[#44b8ff] font-medium"
-          >
-            About
-          </NavbarLink>
-        </Link>
-        <Link to="/services">
-          <NavbarLink 
-            href="/services" 
-            active={location.pathname === '/services'}
-            className="text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff]"
-            activeClassName="text-[#44b8ff] dark:text-[#44b8ff] font-medium"
-          >
-            Services
-          </NavbarLink>
-        </Link>
-        <Link to="/pricing">
-          <NavbarLink 
-            active={location.pathname === '/pricing'}
-            className="text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff]"
-            activeClassName="text-[#44b8ff] dark:text-[#44b8ff] font-medium"
-          >
-            Pricing
-          </NavbarLink>
-        </Link>
-        <Link to="/contact">
-          <NavbarLink 
-            active={location.pathname === '/contact'}
-            className="text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff] active:text-[#44b8ff] dark:active:text-[#44b8ff]"
-            activeClassName="text-[#44b8ff] dark:text-[#44b8ff] font-medium"
-            >
-            Contact
-          </NavbarLink>
-        </Link>
+      <NavbarCollapse className="bg-background-light dark:bg-background-dark md:bg-transparent">
+        <NavLink to="/" exact>Home</NavLink>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/contact">Contact</NavLink>
       </NavbarCollapse>
     </Navbar>
   );
 }
 
-export default NavbarAdmin;
+export default NavUser;

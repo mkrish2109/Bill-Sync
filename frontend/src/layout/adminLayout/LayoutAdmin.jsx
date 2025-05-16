@@ -1,15 +1,18 @@
-// LayoutAdmin.jsx
-import React from "react";
+// layouts/LayoutAdmin.js
 import { Outlet } from "react-router-dom";
 import NavbarAdmin from "./NavbarAdmin";
 import SidebarAdmin from "./SidebarAdmin";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Backdrop from "./Backdrop";
+import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
+import Sidebar from "../SideBar";
 
-function LayoutAdmin() {
+const LayoutContent = () => {
+  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <NavbarAdmin />
+    <div className="min-h-screen xl:flex bg-background-secondaryLight dark:bg-background-secondaryDark">
       <ToastContainer 
         position="top-right"
         autoClose={5000}
@@ -21,16 +24,32 @@ function LayoutAdmin() {
         draggable
         pauseOnHover
       />
-      <div className="flex pt-16">
-        <SidebarAdmin />
-        <main className="flex-1 p-4 overflow-x-hidden overflow-y-auto">
-          <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <Outlet />
-          </div>
-        </main>
+      
+      <div>
+        <Sidebar />
+        <Backdrop />
+      </div>
+      
+      <div
+        className={`flex-1 transition-all duration-300 ease-in-out ${
+          isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
+        } ${isMobileOpen ? "ml-0" : ""}`}
+      >
+        <NavbarAdmin />
+        <div className="p-4 mx-auto max-w-7xl md:p-6 dark:bg-background-secondaryDark">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
-}
+};
+
+const LayoutAdmin = () => {
+  return (
+    <SidebarProvider>
+      <LayoutContent />
+    </SidebarProvider>
+  );
+};
 
 export default LayoutAdmin;

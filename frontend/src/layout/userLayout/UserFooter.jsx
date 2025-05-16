@@ -12,7 +12,7 @@ import { Logo } from "../../components/comman/Logo";
 function UserFooter() {
   return (
     <>
-      <Footer container className="rounded-none bg-gray-50 dark:bg-gray-900">
+      <Footer container className="rounded-none bg-gray-50 dark:bg-background-dark">
         <div className="w-full">
           <div className="grid w-full justify-between sm:flex sm:justify-between md:flex md:grid-cols-1">
             <div className="flex items-center">

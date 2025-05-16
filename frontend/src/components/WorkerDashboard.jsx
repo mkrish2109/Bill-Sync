@@ -1,6 +1,6 @@
 // WorkerDashboard.jsx (frontend)
 import { useState, useEffect } from 'react';
-import { api } from '../api';
+import { api } from '../helper/apiHelper';
 
 export default function WorkerDashboard() {
   const [assignedFabrics, setAssignedFabrics] = useState([]);
