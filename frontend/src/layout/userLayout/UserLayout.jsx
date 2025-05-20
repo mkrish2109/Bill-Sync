@@ -1,9 +1,9 @@
 import React from "react";
-import NavUser from "./NavUser";
 import { Outlet, useLocation } from "react-router-dom";
 import UserFooter from "./UserFooter";
 import "react-toastify/dist/ReactToastify.css";
 import { Bounce, ToastContainer } from "react-toastify";
+import NavBar from "../NavBar";
 
 function UserLayout() {
   const { pathname } = useLocation();
@@ -12,7 +12,7 @@ function UserLayout() {
 
   return (
     <>
-      <NavUser />
+      <NavBar />
       <ToastContainer closeOnClick />
       <Outlet />
       {!isLoginRegister && <UserFooter />}

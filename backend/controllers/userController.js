@@ -2,6 +2,8 @@ const User = require("../models/User");
 const Address = require("../models/Address");
 const { validationResult } = require("express-validator");
 const { sendSuccessResponse } = require("../utils/serverUtils");
+const Worker = require("../models/Worker");
+const Buyer = require("../models/Buyer");
 
 // Admin Functions
 const getAllUsers = async (req, res) => {
@@ -16,16 +18,25 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
+    const user = await User.findById(req.params.userId).select("-password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json(user);
+
+    let additionalData = null;
+    if (user.role === 'worker') {
+      additionalData = await Worker.findOne({ userId: req.params.userId });
+    } else if (user.role === 'buyer') {
+      additionalData = await Buyer.findOne({ userId: req.params.userId }).populate('assignedFabrics');
+    }
+
+    res.json({ ...user.toObject(), additionalData });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
   }
 };
+
 
 const updateUserRole = async (req, res) => {
   const { role } = req.body;
@@ -40,13 +51,24 @@ const updateUserRole = async (req, res) => {
       return res.status(400).json({ message: "Invalid role" });
     }
 
+    // If changing from worker/buyer to another role, remove the specific profile
+    if (user.role === 'worker' && role !== 'worker') {
+      await Worker.findOneAndDelete({ userId: req.params.userId });
+    } else if (user.role === 'buyer' && role !== 'buyer') {
+      await Buyer.findOneAndDelete({ userId: req.params.userId });
+    }
+
     user.role = role;
     await user.save();
-    res.json({ message: "User role updated", user: {
-      _id: user._id,
-      email: user.email,
-      role: user.role
-    }});
+    
+    res.json({ 
+      message: "User role updated", 
+      user: {
+        _id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -58,6 +80,13 @@ const deleteUser = async (req, res) => {
     const user = await User.findByIdAndDelete(req.params.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+    
+    // Delete associated data based on role
+    if (user.role === 'worker') {
+      await Worker.findOneAndDelete({ userId: req.params.userId });
+    } else if (user.role === 'buyer') {
+      await Buyer.findOneAndDelete({ userId: req.params.userId });
     }
     
     // Also delete associated addresses
@@ -73,16 +102,22 @@ const deleteUser = async (req, res) => {
 
 // User Profile Functions
 const getUserProfile = async (req, res) => {
-  // console.log(req);
   try {
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.userId).select("-password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
     
     const address = await Address.findOne({ userId: req.user.userId, isDefault: true });
     
-    res.json({ user, address });
+    let additionalData = null;
+    if (user.role === 'worker') {
+      additionalData = await Worker.findOne({ userId: req.user.userId });
+    } else if (user.role === 'buyer') {
+      additionalData = await Buyer.findOne({ userId: req.user.userId }).populate('assignedFabrics');
+    }
+    
+    res.json({ user, address, additionalData });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

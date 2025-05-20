@@ -4,7 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../SideBar";
 import NavUser from "./NavUser";
-import Backdrop from "../adminLayout/Backdrop";
+import Backdrop from "../Backdrop";
 import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
 
 const LayoutContent = () => {

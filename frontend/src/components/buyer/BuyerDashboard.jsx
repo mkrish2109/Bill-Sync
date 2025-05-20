@@ -1,5 +1,5 @@
 // BuyerDashboard.jsx (frontend)
-import AssignWorkerForm from './AssignWorkerForm';
+import AssignWorkerForm from '../AssignWorkerForm';
 
 export default function BuyerDashboard() {
   // Example of a fabricId the buyer is working with

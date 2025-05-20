@@ -10,8 +10,7 @@ import Dashboard from './pages/Dashboard';
 import BillList from './components/BillList';
 import BillForm from './components/BillForm';
 import AdminDashboard from './components/admin/adminDashbord/AdminDashboard';
-import BuyerDashboard from './components/BuyerDashboard';
-import WorkerDashboard from './components/WorkerDashboard';
+import WorkerDashboard from './components/worker/WorkerDashboard';
 import UserLayout from './layout/userLayout/UserLayout';
 import LayoutAdmin from './layout/adminLayout/LayoutAdmin';
 import UserAuthGuard from './guards/UserAuthGuard';
@@ -25,6 +24,12 @@ import { fetchUser, restoreUser } from './redux/slices/userSlice';
 import LoadingSpinner from './components/LoadingSpinner';
 import LayoutUser from './layout/userLayout/LayoutUser';
 import HomePage from './pages/HomePage';
+import BuyerDashboard from './components/buyer/BuyerDashboard';
+import AddFabricForm from './components/buyer/AddFabricForm';
+import EditFabricForm from './components/buyer/EditFabricForm';
+import FabricDetail from './components/buyer/FabricDetail';
+import WorkerFabricList from './components/worker/WorkerFabricList';
+import BuyerFabricList from './components/buyer/BuyerFabricList';
 
 const AppRoutes = () => {
 const dispatch = useDispatch();
@@ -84,6 +89,11 @@ const dispatch = useDispatch();
             <LayoutUser />
           </UserAuthGuard>
         }>
+        <Route path="fabrics" element={<BuyerFabricList />} />
+        <Route path="fabrics/add" element={<AddFabricForm />} />
+        <Route path="fabrics/edit/:id" element={<EditFabricForm />} />
+        <Route path="fabrics/:id" element={<FabricDetail />} />
+        
         <Route path="dashboard" element={<BuyerDashboard />} />
         <Route path="account/profile" element={<UserProfile />} />
       </Route>
@@ -97,6 +107,8 @@ const dispatch = useDispatch();
           </UserAuthGuard>
         }>
         <Route path="dashboard" element={<WorkerDashboard />} />
+        <Route path="fabrics/:id" element={<FabricDetail />} />
+        <Route path="tasks" element={<WorkerFabricList />} />
         <Route path="account/profile" element={<UserProfile />} />
       </Route>
     </Routes>

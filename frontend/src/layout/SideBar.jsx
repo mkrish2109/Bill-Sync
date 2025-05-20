@@ -8,7 +8,8 @@ import {
   HiOutlineViewGrid,
   HiOutlineDotsHorizontal,
   HiCog,
-  HiDocumentText
+  HiDocumentText,
+  HiOutlineViewGridAdd
 } from "react-icons/hi";
 import { FaUsersCog, FaTools } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
@@ -104,12 +105,20 @@ const menuConfigurations = {
         icon: <HiChartPie className="text-xl" />, 
         path: "/buyer/dashboard"
       },
-      { 
-        name: "Orders", 
-        icon: <MdShoppingCart className="text-xl" />, 
-        subItems: [
-          { name: "My Orders", path: "/buyer/orders" },
-          { name: "History", path: "/buyer/history" }
+      // { 
+      //   name: "Orders", 
+      //   icon: <MdShoppingCart className="text-xl" />, 
+      //   subItems: [
+      //     { name: "My Orders", path: "/buyer/orders" },
+      //     { name: "History", path: "/buyer/history" }
+      //   ]
+      // },
+      {
+        name:"Fabric",
+        icon:<HiOutlineViewGridAdd className="text-xl" />,
+        subItems:[
+          {name:"All Fabric",path:"/buyer/fabrics"},
+          {name:"Add Fabric",path:"/buyer/fabrics/add"}
         ]
       },
       { 

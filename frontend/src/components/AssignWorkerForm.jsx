@@ -12,7 +12,7 @@ export default function AssignWorkerForm({ fabricId }) {
     // Fetch available workers (You can filter by role: 'worker')
     const fetchWorkers = async () => {
       try {
-        const response = await api.get('/users?role=worker');
+        const response = await api.get(`/buyers`);
         setWorkers(response.data);
       } catch (error) {
         console.error('Error fetching workers', error);

@@ -1,18 +1,19 @@
 // WorkerDashboard.jsx (frontend)
 import { useState, useEffect } from 'react';
-import { api } from '../helper/apiHelper';
+import { api } from '../../helper/apiHelper';
+import { PageMeta } from '../comman/PageMeta';
 
 export default function WorkerDashboard() {
   const [assignedFabrics, setAssignedFabrics] = useState([]);
 
   useEffect(() => {
     const fetchAssignedFabrics = async () => {
-      try {
-        const response = await api.get('/worker/assigned-fabrics');
-        setAssignedFabrics(response.data);
-      } catch (error) {
-        console.error('Error fetching assigned fabrics', error);
-      }
+      // try {
+      //   const response = await api.get('/worker/assigned-fabrics');
+      //   setAssignedFabrics(response.data);
+      // } catch (error) {
+      //   console.error('Error fetching assigned fabrics', error);
+      // }
     };
     fetchAssignedFabrics();
   }, []);
@@ -32,6 +33,7 @@ export default function WorkerDashboard() {
 
   return (
     <div>
+      <PageMeta title="Worker Dashboard" />
       <h2>Worker Dashboard</h2>
       <ul>
         {assignedFabrics.map((assignment) => (
