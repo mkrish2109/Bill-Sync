@@ -4,7 +4,7 @@ import NavbarAdmin from "./NavbarAdmin";
 import SidebarAdmin from "./SidebarAdmin";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Backdrop from "./Backdrop";
+import Backdrop from "../Backdrop";
 import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
 import Sidebar from "../SideBar";
 

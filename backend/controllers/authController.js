@@ -6,6 +6,8 @@ const {
 } = require("../utils/emailUtils");
 const { sendSuccessResponse, sendErrorResponse } = require("../utils/serverUtils");
 const { getCryptoToken, getJWT, getTokenUser } = require("../utils/tokenUtils");
+const Worker = require("../models/Worker");
+const Buyer = require("../models/Buyer");
 
 // Register user
 const register = async (req, res) => {
@@ -21,7 +23,7 @@ const register = async (req, res) => {
     const existingUserPhone = await User.findOne({ phone });
     if (existingUser || existingUserPhone) {
       return sendErrorResponse(res, 'User already exists.', 400);
-      }
+    }
 
     // Create a new user
     const isFirstUser = (await User.countDocuments()) === 0; // First user should be admin
@@ -39,9 +41,33 @@ const register = async (req, res) => {
 
     await user.save();
 
-    // Send verification email
+    // Create worker or buyer profile based on role
+    const userId = user._id;
+
+    if (user.role === 'worker') {
+      const worker = new Worker({
+        _id: userId, // <=== Use same _id
+        userId,
+        name: `${user.fname} ${user.lname}`,
+        contact: user.phone,
+        skills: [],
+        experience: ''
+      });
+      await worker.save();
+    } else if (user.role === 'buyer') {
+      const buyer = new Buyer({
+        _id: userId, // <=== Use same _id
+        userId,
+        name: `${user.fname} ${user.lname}`,
+        contact: user.phone,
+        company: '',
+        preferences: []
+      });
+      await buyer.save();
+    }
+
     await sendVerificationEmail(email, verificationToken);
-(res, "Account created & verification email sent.");
+    sendSuccessResponse(res, "Account created & verification email sent.");
   } catch (error) {
     sendErrorResponse(res, error.message);
   }

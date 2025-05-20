@@ -1,4 +1,4 @@
-import FabricAssignment from "../models/FabricAssignment";
+const FabricAssignment = require('../models/FabricAssignment');
 
 export const fabricAssignment =  async (req, res) => {
   const { fabricId, workerId } = req.body;

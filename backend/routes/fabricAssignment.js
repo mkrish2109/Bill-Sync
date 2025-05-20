@@ -1,13 +1,13 @@
 // routes/fabricAssignment.js (backend)
 const express = require('express');
-const FabricAssignment = require('../models/FabricAssignment');
-const User = require('../models/User');
-const { fabricAssignment } = require('../controllers/fabricAssignment');
 const { authMiddleware } = require('../middleware/authMiddleware');
+const { getAssignmentHistory } = require('../controllers/fabric/commonController');
+const { updateFabric } = require('../controllers/fabric/buyerController');
 
 const router = express.Router();
 
 // Assign worker to fabric
-router.post('/assign-worker', authMiddleware,fabricAssignment);
+// router.post('/assign-worker', authMiddleware,fabricAssignment);
+
 
 module.exports = router;
