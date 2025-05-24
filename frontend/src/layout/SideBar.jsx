@@ -16,7 +16,7 @@ import { IoLogOut } from "react-icons/io5";
 import { MdWork, MdShoppingCart } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useSidebar } from "../context/SidebarContext";
-import { Logo } from "../components/comman/Logo";
+import { Logo } from "../components/common/Logo";
 
 // Role-based menu configurations
 const menuConfigurations = {
@@ -71,10 +71,11 @@ const menuConfigurations = {
       { 
         name: "Tasks", 
         icon: <MdWork className="text-xl" />, 
-        subItems: [
-          { name: "My Tasks", path: "/worker/tasks" },
-          { name: "Completed", path: "/worker/completed" }
-        ]
+        path: "/worker/tasks"
+        // subItems: [
+        //   { name: "My Tasks", path: "/worker/tasks" },
+        //   { name: "Completed", path: "/worker/completed" }
+        // ]
       },
       { 
         name: "Account", 

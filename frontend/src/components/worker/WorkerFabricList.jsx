@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { api } from '../../helper/apiHelper';
-import FabricList from '../comman/list/FabricList';
 import { confirmAlert } from 'react-confirm-alert';
+import { FabricList } from '../fabrics/FabricList';
 
 const WorkerFabricList = () => {
   const [fabrics, setFabrics] = useState([]);
@@ -11,22 +11,31 @@ const WorkerFabricList = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const { user } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    const fetchWorkerFabrics = async () => {
-      try {
-        const response = await api.get('/workers/fabrics');
-        const filteredFabrics = statusFilter === 'all' 
-          ? response.data.data 
-          : response.data.data.filter(fabric => fabric.assignmentStatus === statusFilter);
-        
-        setFabrics(filteredFabrics);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
+  const fetchWorkerFabrics = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/workers/fabrics');
+      const allFabrics = response.data.data.map(item => ({
+        ...item.fabric,
+        buyer: item.buyer,
+        worker: item.worker,
+        assignmentStatus: item.assignmentStatus,
+        assignmentId: item.assignmentId,
+        assignedAt: item.assignedAt,
+      }));
+      const filteredFabrics = statusFilter === 'all'
+        ? allFabrics
+        : allFabrics.filter(fabric => fabric.assignmentStatus === statusFilter);
 
+      setFabrics(filteredFabrics);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchWorkerFabrics();
   }, [statusFilter]);
 
@@ -39,13 +48,9 @@ const WorkerFabricList = () => {
           label: 'Yes',
           onClick: async () => {
             try {
-              await api.put(`/workers/update-status/${assignmentId}`, { status: newStatus });
-              setFabrics(fabrics.map(fabric => {
-                if (fabric._id === fabricId) {
-                  return { ...fabric, assignmentStatus: newStatus };
-                }
-                return fabric;
-              }));
+              await api.put(`/assignments/update-status/${assignmentId}`, { status: newStatus });
+              // Reload the data after status update
+              await fetchWorkerFabrics();
             } catch (err) {
               setError(err.message);
             }

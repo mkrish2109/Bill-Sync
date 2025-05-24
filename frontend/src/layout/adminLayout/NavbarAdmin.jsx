@@ -13,10 +13,10 @@ import { logoutUser } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
-import ThemeToggleButton from "../../components/comman/ThemeToggleButton";
-import { Logo } from "../../components/comman/Logo";
+import ThemeToggleButton from "../../components/common/ThemeToggleButton";
+import { Logo } from "../../components/common/Logo";
 import { useSidebar } from "../../context/SidebarContext";
-import SideBarToggle from "../../components/comman/SideBarToggle";
+import SideBarToggle from "../../components/common/SideBarToggle";
 
 const NavbarAdmin = () => {
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();

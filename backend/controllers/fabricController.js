@@ -124,7 +124,7 @@ const getAllFabrics = async (req, res) => {
                 populate: [
                     {
                         path: 'workerId',
-                        select: 'name contact skills experience'
+                        select: 'name contact experience'
                     },
                     {
                         path: 'buyerId',

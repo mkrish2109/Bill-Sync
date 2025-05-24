@@ -16,10 +16,10 @@ import { logoutUser } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useCallback, useMemo } from "react";
-import ThemeToggleButton from "../../components/comman/ThemeToggleButton";
-import SideBarToggle from "../../components/comman/SideBarToggle";
+import ThemeToggleButton from "../../components/common/ThemeToggleButton";
+import SideBarToggle from "../../components/common/SideBarToggle";
 import { useSidebar } from "../../context/SidebarContext";
-import { Logo } from "../../components/comman/Logo";
+import { Logo } from "../../components/common/Logo";
 
 // Custom NavLink component to properly handle active state
 const NavLink = ({ to, children, exact = false }) => {

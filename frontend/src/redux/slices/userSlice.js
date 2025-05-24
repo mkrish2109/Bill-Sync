@@ -14,7 +14,6 @@ export const loginUser = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const res = await login(data);
-      toast.success(res.message);
       return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || { message: err.message });

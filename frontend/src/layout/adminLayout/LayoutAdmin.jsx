@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Backdrop from "../Backdrop";
 import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
 import Sidebar from "../SideBar";
+import AppNavbar from "../AppNavbar";
 
 const LayoutContent = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
@@ -35,7 +36,7 @@ const LayoutContent = () => {
           isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
         } ${isMobileOpen ? "ml-0" : ""}`}
       >
-        <NavbarAdmin />
+        <AppNavbar variant="admin" showSidebarToggle={true} />
         <div className="p-4 mx-auto max-w-7xl md:p-6 dark:bg-background-secondaryDark">
           <Outlet />
         </div>

@@ -1,270 +1,105 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { api } from '../../helper/apiHelper';
+import FabricForm from '../fabrics/FabricForm';
+import LoadingSpinner from '../common/LoadingSpinner';
+import { StatusBadge } from '../common/StatusBadge';
 
-const EditFabricForm = () => {
-  const navigate = useNavigate();
+const EditFabricForm = ({ fabricId, onClose, onSuccess }) => {
   const { id } = useParams();
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    unit: 'meters',
-    quantity: 0,
-    unitPrice: 0,
-    imageUrl: '',
-    workerId: ''
-  });
   const [workers, setWorkers] = useState([]);
-  const [currentAssignments, setCurrentAssignments] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [currentAssignment, setCurrentAssignment] = useState(null);
+  const [initialData, setInitialData] = useState(null);
   const [error, setError] = useState('');
   const [isFetching, setIsFetching] = useState(true);
 
-  // Fetch fabric data and workers on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch fabric data
-        const fabricResponse = await api.get(`/fabrics/${id}`);
+        const fabricResponse = await api.get(`/fabrics/test/${fabricId || id}`);
         const fabric = fabricResponse.data.data;
-        
+
         // Fetch workers
         const workersResponse = await api.get('/workers/all');
         setWorkers(workersResponse.data.data);
 
-        // Set form data
-        setFormData({
+        // Get the first assigned worker ID if exists
+        const workerId = fabric.worker?.[0]?.id || '';
+
+        // Set initial data for form
+        setInitialData({
           name: fabric.name,
           description: fabric.description,
           unit: fabric.unit,
           quantity: fabric.quantity,
           unitPrice: fabric.unitPrice,
           imageUrl: fabric.imageUrl,
-          workerId: fabric.assignments?.[0]?.workerId?._id || ''
+          workerId: workerId
         });
 
-        // Set current assignments
-        setCurrentAssignments(fabric.assignments || []);
-
+        // Set current assignment with worker details
+        const assignment = fabric.assignments?.[0];
+        if (assignment) {
+          setCurrentAssignment({
+            ...assignment,
+            worker: fabric?.worker?.[0]
+          });
+        }
       } catch (err) {
+        console.error('Error fetching data:', err);
         setError(err.response?.data?.error || 'Failed to fetch fabric data');
       } finally {
         setIsFetching(false);
       }
     };
     fetchData();
-  }, [id]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const response = await api.put(`/fabrics/${id}`, formData);
-      if (response.data.success) {
-        // Handle assignment if workerId is selected
-        if (formData.workerId) {
-          const isAlreadyAssigned = currentAssignments.some(
-            assignment => assignment.workerId?._id === formData.workerId
-          );
-          
-          if (!isAlreadyAssigned) {
-            await api.post('/fabrics/assign', {
-              fabricId: id,
-              workerId: formData.workerId
-            });
-          }
-        }
-        
-        navigate('/buyer/fabrics');
-      }
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to update fabric');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [fabricId]);
 
   if (isFetching) {
-    return <div className="container mx-auto px-4 py-8 max-w-2xl">Loading...</div>;
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-2xl bg-surface-light dark:bg-surface-dark">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-error-base/10 border border-error-base text-error-base px-4 py-3 rounded mb-4">
+        {error}
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">Edit Fabric</h1>
-      
-      {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
-
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        {/* Current Assignments */}
-        {currentAssignments.length > 0 && (
-          <div className="mb-4 p-4 bg-gray-50 rounded">
-            <h3 className="font-bold mb-2">Current Assignments</h3>
-            <ul className="list-disc pl-5">
-              {currentAssignments.map((assignment, index) => (
-                <li key={index} className="mb-1">
-                  {assignment.workerId?.name || 'Unknown worker'} 
-                  <span className="text-sm text-gray-600 ml-2">({assignment.status})</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Add/Change Worker Assignment */}
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="workerId">
-            {currentAssignments.length > 0 ? 'Change Worker Assignment' : 'Assign to Worker'} (Optional)
-          </label>
-          <select
-            id="workerId"
-            name="workerId"
-            value={formData.workerId}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          >
-            <option value="">Select Worker (Optional)</option>
-            {workers.map(worker => (
-              <option key={worker._id} value={worker._id}>
-                {worker.name} ({worker.skills?.join(', ') || 'No skills specified'})
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-            Fabric Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-        </div>
-        
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            rows="3"
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="unit">
-              Unit
-            </label>
-            <select
-              id="unit"
-              name="unit"
-              value={formData.unit}
-              onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
-            >
-              <option value="meters">Meters</option>
-              <option value="yards">Yards</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="quantity">
-              Quantity
-            </label>
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              min="0"
-              step="0.01"
-              value={formData.quantity}
-              onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="unitPrice">
-              Unit Price ($)
-            </label>
-            <input
-              type="number"
-              id="unitPrice"
-              name="unitPrice"
-              min="0"
-              step="0.01"
-              value={formData.unitPrice}
-              onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="imageUrl">
-            Image URL
-          </label>
-          <input
-            type="url"
-            id="imageUrl"
-            name="imageUrl"
-            value={formData.imageUrl}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-          {formData.imageUrl && (
-            <div className="mt-2">
-              <img 
-                src={formData.imageUrl} 
-                alt="Preview" 
-                className="h-32 object-contain border rounded"
-              />
+    <div className="space-y-6">
+      {currentAssignment && (
+        <div className="container mx-auto max-w-2xl">
+          <div className="mb-6 p-4 bg-surface-elevatedLight dark:bg-surface-elevatedDark rounded-lg shadow-card dark:shadow-card-dark">
+            <h3 className="font-bold text-lg text-text-light dark:text-text-dark mb-3">
+              Current Assignment
+            </h3>
+            <div className="text-sm flex gap-2 items-center text-text-secondaryLight dark:text-text-secondaryDark">
+              <div className="font-medium">Assigned Worker:</div>
+              <div className="flex gap-2 items-center">
+                {currentAssignment.worker?.name || 'Unknown worker'} 
+                <StatusBadge status={currentAssignment.status} />
+              </div>
             </div>
-          )}
+          </div>
         </div>
-
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
-          >
-            {loading ? 'Updating...' : 'Update Fabric'}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/buyer/fabrics')}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+      )}
+      
+      <FabricForm 
+        initialData={initialData}
+        isEditing={true}
+        fabricId={fabricId}
+        workers={workers}
+        onSuccessRedirect="/buyer/fabrics"
+        onClose={onClose}
+        onSuccess={onSuccess}
+      />
     </div>
   );
 };

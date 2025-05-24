@@ -27,7 +27,6 @@ export default function UserAddressCard({ address, onUpdate }) {
       setLoading(true);
       const response = await api.put("/user/profile/address", formData);
      if (response.status === 200) {
-       console.log(response.data);
        onUpdate(response.data.data);
        toast.success("Address updated successfully");
        closeModal();

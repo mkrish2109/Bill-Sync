@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { PageMeta } from "../components/comman/PageMeta";
-import PageBreadcrumb from "../components/comman/PageBreadcrumb";
+import { PageMeta } from "../components/common/PageMeta";
+import PageBreadcrumb from "../components/common/PageBreadcrumb";
 import UserMetaCard from "../components/UserProfile/UserMetaCard";
 import UserInfoCard from "../components/UserProfile/UserInfoCard";
 import UserAddressCard from "../components/UserProfile/UserAddressCard";
@@ -22,7 +22,6 @@ export default function UserProfile() {
     const fetchProfileData = async () => {
       try {
         setLoading(true);
-        console.log("api tesdt")
         const response = await api.get("/user/profile");
 
         setProfileData({

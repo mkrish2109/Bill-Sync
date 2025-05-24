@@ -11,12 +11,12 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { PageMeta } from "../components/comman/PageMeta";
-import GradientHero from "../components/comman/GradientHero";
-import SectionHeader from "../components/comman/SectionHeader";
-import AnimatedCard from "../components/comman/AnimatedCard";
-import StepItem from "../components/comman/StepItem";
-import StatItem from "../components/comman/StatItem";
+import { PageMeta } from "../components/common/PageMeta";
+import GradientHero from "../components/common/GradientHero";
+import SectionHeader from "../components/common/SectionHeader";
+import AnimatedCard from "../components/common/AnimatedCard";
+import StepItem from "../components/common/StepItem";
+import StatItem from "../components/common/StatItem";
 
 const HomePage = () => {
   const navigate = useNavigate();

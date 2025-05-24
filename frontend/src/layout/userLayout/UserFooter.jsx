@@ -7,7 +7,7 @@ import {
   BsInstagram,
   BsTwitter,
 } from "react-icons/bs";
-import { Logo } from "../../components/comman/Logo";
+import { Logo } from "../../components/common/Logo";
 
 function UserFooter() {
   return (

@@ -9,7 +9,6 @@ const workerSchema = new mongoose.Schema({
   },
   name: { type: String, required: true },
   contact: { type: String, required: true },
-  skills: [String],
   experience: String,
   createdAt: { type: Date, default: Date.now }
 });

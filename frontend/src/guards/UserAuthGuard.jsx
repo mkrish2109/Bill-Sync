@@ -2,7 +2,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import LoadingSpinner from "../components/LoadingSpinner"; // Create or import a loading component
+import LoadingSpinner from "../components/common/LoadingSpinner"; // Create or import a loading component
 
 function UserAuthGuard({ children }) {
   const { user, loading } = useSelector((store) => store.user);

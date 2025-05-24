@@ -4,6 +4,8 @@ import UserFooter from "./UserFooter";
 import "react-toastify/dist/ReactToastify.css";
 import { Bounce, ToastContainer } from "react-toastify";
 import NavBar from "../NavBar";
+import { SidebarProvider } from "../../context/SidebarContext";
+import AppNavbar from "../AppNavbar";
 
 function UserLayout() {
   const { pathname } = useLocation();
@@ -11,12 +13,20 @@ function UserLayout() {
   const isLoginRegister = pathname === "/login" || pathname === "/register";
 
   return (
-    <>
-      <NavBar />
-      <ToastContainer closeOnClick />
+    <SidebarProvider>
+      <AppNavbar variant="default" />
+      <ToastContainer position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover />
       <Outlet />
       {!isLoginRegister && <UserFooter />}
-    </>
+    </SidebarProvider>
   );
 }
 

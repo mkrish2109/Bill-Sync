@@ -5,6 +5,7 @@ import UserSocialLinks from "./UserSocialLinks";
 import Modal from "../ui/modal/Modal";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { EditMetaProfile } from "./EditModals";
 
 export default function UserMetaCard({ user,address, onUpdate }) {
   const { isOpen, openModal, closeModal } = useModal();
@@ -103,92 +104,15 @@ export default function UserMetaCard({ user,address, onUpdate }) {
         </div>
       </div>
 
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px]">
-        <div className="relative w-full overflow-y-auto rounded-3xl bg-background-light p-4 dark:bg-background-dark lg:p-11">
-          <div className="px-2 pr-14">
-            <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-text-dark/90">
-              Edit Profile Information
-            </h4>
-            <p className="mb-6 text-sm text-text-secondaryLight dark:text-gray-400 lg:mb-7">
-              Update your profile picture and basic information.
-            </p>
-          </div>
-          <form className="flex flex-col">
-            <div className="h-[450px] overflow-y-auto px-2 pb-3">
-              <div className="mt-7">
-                <div className="flex flex-col items-center mb-6">
-                  <div className="relative w-24 h-24 mb-4 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
-                    <img 
-                      src={formData.image[0] ? URL.createObjectURL(formData.image[0]) : user?.image?.[0] || "/images/profile.png"} 
-                      alt="Preview" 
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <label className="cursor-pointer">
-                    <span className="text-sm font-medium text-primary">Change Photo</span>
-                    <input 
-                      type="file" 
-                      name="image"
-                      accept="image/*"
-                      onChange={handleChange}
-                      className="hidden"
-                      disabled={loading}
-                    />
-                  </label>
-                </div>
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div className="col-span-2 lg:col-span-1">
-                    <label className="block mb-2 text-sm font-medium text-gray-800 dark:text-text-dark/90">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      name="fname"
-                      value={formData.fname}
-                      onChange={handleChange}
-                      disabled={loading}
-                      className="w-full px-3 py-2 text-gray-800 bg-white border border-gray-200 rounded-lg dark:bg-gray-900 dark:border-gray-800 dark:text-white"
-                    />
-                  </div>
-                  <div className="col-span-2 lg:col-span-1">
-                    <label className="block mb-2 text-sm font-medium text-gray-800 dark:text-text-dark/90">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      name="lname"
-                      value={formData.lname}
-                      onChange={handleChange}
-                      disabled={loading}
-                      className="w-full px-3 py-2 text-gray-800 bg-white border border-gray-200 rounded-lg dark:bg-gray-900 dark:border-gray-800 dark:text-white"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-              <Button 
-                color="secondary" 
-                size="sm" 
-                variant="outline" 
-                onClick={closeModal}
-                disabled={loading}
-              >
-                Close
-              </Button>
-              <Button 
-                color="secondary" 
-                size="sm" 
-                onClick={handleSave}
-                disabled={loading}
-                isProcessing={loading}
-              >
-                Save Changes
-              </Button>
-            </div>
-          </form>
-        </div>
-      </Modal>
+      <EditMetaProfile
+        isOpen={isOpen}
+        onClose={closeModal}
+        onSave={handleSave}
+        formData={formData}
+        handleChange={handleChange}
+        loading={loading}
+        user={user}
+      />
     </>
   );
 }

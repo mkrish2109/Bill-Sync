@@ -1,8 +1,8 @@
 import { Button, TextInput, Textarea, Card, Alert, Spinner } from "flowbite-react";
 import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaCheckCircle, FaPaperPlane } from "react-icons/fa";
 import { useState } from "react";
-import { PageMeta } from "../components/comman/PageMeta";
-import SectionHeader from "../components/comman/SectionHeader";
+import { PageMeta } from "../components/common/PageMeta";
+import SectionHeader from "../components/common/SectionHeader";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -40,7 +40,6 @@ export default function ContactPage() {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log('Form submitted:', formData);
       setSubmitted(true);
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
