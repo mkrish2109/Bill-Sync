@@ -18,7 +18,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Line, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from 'chart.js';
-import AdminPageTitle from "../../comman/AdminPageTitle";
+import AdminPageTitle from "../../common/AdminPageTitle";
 
 ChartJS.register(...registerables);
 

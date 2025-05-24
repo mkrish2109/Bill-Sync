@@ -28,7 +28,7 @@ function VerifyEmail() {
         if (response.success) {
           toast.success(response.message);
         } else {
-          console.log("Verification failed: ", response.message);
+          console.warn("Verification failed: ", response.message);
           toast.error(response.message);
         }
         // if (!response.

@@ -1,25 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../helper/apiHelper';
-import FabricList from '../comman/list/FabricList';
 import { confirmAlert } from 'react-confirm-alert';
+import { FabricList } from '../fabrics/FabricList';
 
 const BuyerFabricList = () => {
-  const [fabrics, setFabrics] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [fabricData, setFabricData] = useState({
+    fabrics: [],
+    loading: true,
+    error: null
+  });
+
+  const fetchFabrics = async () => {
+    try {
+      setFabricData(prev => ({ ...prev, loading: true }));
+      const response = await api.get('/buyers/fabrics');
+      
+      const flattenedData = response.data.data.map(item => ({
+        ...item.fabric,
+        buyer: item.buyer,
+        worker: item.worker || null,
+        assignmentCount: item.assignmentCount
+      }));
+
+      setFabricData({
+        fabrics: flattenedData,
+        loading: false,
+        error: null
+      });
+    } catch (err) {
+      setFabricData({
+        fabrics: [],
+        loading: false,
+        error: err.message
+      });
+    }
+  };
 
   useEffect(() => {
-    const fetchFabrics = async () => {
-      try {
-        const response = await api.get('/buyers/fabrics');
-        setFabrics(response.data.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
     fetchFabrics();
   }, []);
 
@@ -33,9 +50,15 @@ const BuyerFabricList = () => {
           onClick: async () => {
             try {
               await api.delete(`/buyers/fabrics/${id}`);
-              setFabrics(fabrics.filter(fabric => fabric._id !== id));
+              setFabricData(prev => ({
+                ...prev,
+                fabrics: prev.fabrics.filter(fabric => fabric._id !== id)
+              }));
             } catch (err) {
-              setError(err.message);
+              setFabricData(prev => ({
+                ...prev,
+                error: err.message
+              }));
             }
           }
         },
@@ -46,13 +69,27 @@ const BuyerFabricList = () => {
     });
   };
 
+  const handleFabricUpdate = (updatedFabric) => {
+    setFabricData(prev => ({
+      ...prev,
+      fabrics: prev.fabrics.map(fabric => 
+        fabric._id === updatedFabric._id ? {
+          ...fabric,
+          ...updatedFabric,
+          worker: updatedFabric.worker !== undefined ? updatedFabric.worker : fabric.worker
+        } : fabric
+      )
+    }));
+  };
+
   return (
     <FabricList
-      fabrics={fabrics}
-      loading={loading}
-      error={error}
+      fabrics={fabricData.fabrics}
+      loading={fabricData.loading}
+      error={fabricData.error}
       viewType="buyer"
       onDelete={handleDelete}
+      onUpdate={handleFabricUpdate}
       showAddButton={true}
     />
   );

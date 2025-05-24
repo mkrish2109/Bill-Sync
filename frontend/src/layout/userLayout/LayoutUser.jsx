@@ -6,6 +6,8 @@ import Sidebar from "../SideBar";
 import NavUser from "./NavUser";
 import Backdrop from "../Backdrop";
 import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
+import NavBar from "../NavBar";
+import AppNavbar from "../AppNavbar";
 
 const LayoutContent = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
@@ -34,7 +36,7 @@ const LayoutContent = () => {
           isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
         } ${isMobileOpen ? "ml-0" : ""}`}
       >
-        <NavUser />
+        <AppNavbar variant="default" showSidebarToggle={true} />
       <div className="p-4 mx-auto max-w-7xl md:p-6 dark:bg-background-secondaryDark">
           <Outlet />
         </div>

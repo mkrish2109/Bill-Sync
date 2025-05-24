@@ -7,7 +7,9 @@ const getAllFabricsForWorker = async (req, res) => {
   try {
     const { userId } = req.user;
 
-    const assignments = await FabricAssignment.find({ workerId: userId })
+    const assignments = await FabricAssignment.find({
+      'workerId': userId
+    })
       .populate({
         path: 'fabricId',
         populate: {
@@ -21,16 +23,23 @@ const getAllFabricsForWorker = async (req, res) => {
       });
 
     const workerFabrics = assignments.map(assignment => {
-      const fabric = assignment.fabricId;
+      const fabric = assignment.fabricId?.toObject?.() || {};
+      const buyer = fabric.buyerId || {};
+      const worker = assignment.workerId || {};
+
+      // Remove buyer from fabric to avoid duplication
+      delete fabric.buyerId;
+
       return {
-        ...fabric.toObject(),
+        fabric,
+        buyer,
+        worker,
         assignmentStatus: assignment.status,
         assignedAt: assignment.createdAt,
         assignmentId: assignment._id,
-        worker: assignment.workerId
+        statusHistory: assignment.statusHistory
       };
-    });
-
+    }).filter(Boolean);
     res.status(200).json({
       success: true,
       count: workerFabrics.length,

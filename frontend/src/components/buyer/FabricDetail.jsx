@@ -26,7 +26,7 @@ import {
   FaHistory, 
   FaExchangeAlt 
 } from 'react-icons/fa';
-import LoadingSpinner from '../LoadingSpinner';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 // Reusable components
 const ErrorAlert = ({ error, onDismiss }) => (
@@ -297,7 +297,7 @@ const FabricDetails = () => {
           label: 'Yes',
           onClick: async () => {
             try {
-              await api.put(`/workers/update-status/${fabric.assignmentId}`, { 
+              await api.put(`/assignments/update-status/${fabric.assignmentId}`, { 
                 status: newStatus 
               });
               
@@ -358,35 +358,35 @@ const FabricDetails = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="mb-6 flex justify-between items-center">
-  {/* Back Button */}
-  <Button
-    onClick={() => navigate(-1)}
-    className="bg-secondary-light text-text-invertedLight hover:bg-secondary-hoverLight dark:bg-secondary-dark dark:hover:bg-secondary-hoverDark transition-colors duration-200 shadow focus:ring-2 focus:ring-secondary-light dark:focus:ring-secondary-dark"
-  >
-    <FaArrowLeft className="mr-2" /> Back
-  </Button>
-
-  {user.role === 'buyer' && (
-    <div className="flex space-x-2">
-      {/* Edit Button */}
-      <Link to={`/fabrics/edit/${fabric._id}`}>
+        {/* Back Button */}
         <Button
-          className="bg-warning-base text-warning-text hover:bg-warning-hover dark:bg-warning-base dark:hover:bg-warning-hover transition-colors duration-200 shadow focus:ring-2 focus:ring-warning-base"
+          onClick={() => navigate(-1)}
+          className="bg-secondary-light text-text-invertedLight hover:bg-secondary-hoverLight dark:bg-secondary-dark dark:hover:bg-secondary-hoverDark transition-colors duration-200 shadow focus:ring-2 focus:ring-secondary-light dark:focus:ring-secondary-dark"
         >
-          <FaEdit className="mr-2" /> Edit
+          <FaArrowLeft className="mr-2" /> Back
         </Button>
-      </Link>
 
-      {/* Delete Button */}
-      <Button
-        onClick={handleDelete}
-        className="bg-error-base text-error-text hover:bg-error-hover dark:bg-error-base dark:hover:bg-error-hover transition-colors duration-200 shadow focus:ring-2 focus:ring-error-base"
-      >
-        <FaTrash className="mr-2" /> Delete
-      </Button>
-    </div>
-  )}
-</div>
+        {user.role === 'buyer' && (
+          <div className="flex space-x-2">
+            {/* Edit Button */}
+            <Link to={`/fabrics/edit/${fabric._id}`}>
+              <Button
+                className="bg-warning-base text-warning-text hover:bg-warning-hover dark:bg-warning-base dark:hover:bg-warning-hover transition-colors duration-200 shadow focus:ring-2 focus:ring-warning-base"
+              >
+                <FaEdit className="mr-2" /> Edit
+              </Button>
+            </Link>
+
+            {/* Delete Button */}
+            <Button
+              onClick={handleDelete}
+              className="bg-error-base text-error-text hover:bg-error-hover dark:bg-error-base dark:hover:bg-error-hover transition-colors duration-200 shadow focus:ring-2 focus:ring-error-base"
+            >
+              <FaTrash className="mr-2" /> Delete
+            </Button>
+          </div>
+        )}
+      </div>
 
 
 
@@ -400,7 +400,7 @@ const FabricDetails = () => {
               className="w-full h-64 object-cover rounded-lg border border-border-light dark:border-border-dark shadow-sm"
               onError={(e) => {
                 e.target.onerror = null; 
-                e.target.src = '/placeholder-fabric.jpg';
+                e.target.src = '/images/placeholder-fabric.jpg';
               }}
             />
           </div>

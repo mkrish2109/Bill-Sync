@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const userRouter = require('./routes/userRouter');
 const fabricRouter = require("./routes/fabricRouters");
+const uploadRoutes = require('./routes/upload');
 
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
@@ -17,8 +18,7 @@ app.use('/api', userRouter);
 app.use('/api/auth', require('./routes/authRouter'));
 app.use('/api/fabrics', fabricRouter);
 app.use('/api/assignments', require('./routes/fabricAssignment'));
-
-
+app.use('/api/upload', uploadRoutes);
 
 require('./cron/paymentReminder')(); // Start the cron job
 

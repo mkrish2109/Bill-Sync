@@ -1,4 +1,3 @@
-
 const Fabric = require("../../models/Fabric");
 
 // Shared logic that can be used by both buyers and workers
@@ -13,7 +12,6 @@ const getFabricById = async (req, res) => {
             path: 'workerId',
             select: 'name contact'
           },
-          // Only populate changedBy if it exists in statusHistory
           {
             path: 'statusHistory.changedBy',
             select: 'name role',
@@ -31,34 +29,41 @@ const getFabricById = async (req, res) => {
 
     const fabricObj = fabric.toObject();
     
+    // Remove assignments array to avoid duplication
+    // delete fabricObj.assignments;
+    
     if (fabric.assignments && fabric.assignments.length > 0) {
-       fabricObj.workers = fabric.assignments.map(assignment => ({
-        ...(assignment.workerId?.toObject() || {}),
-        status: assignment.status,
-        assignedAt: assignment.createdAt,
-        assignmentId: assignment._id,
-        // Include status history if needed
-        history: assignment.statusHistory || []
+      // Create workers array with only necessary data
+      fabricObj.worker = fabric.assignments.map(assignment => ({
+        id: assignment.workerId?._id,
+        name: assignment.workerId?.name,
+        contact: assignment.workerId?.contact,
       }));
-
-      if (req.user.role === 'buyer') {
-        fabricObj.assignmentId = fabric.assignments[0]._id;
-        fabricObj.assignmentStatus = fabric.assignments[0].status;
-        fabricObj.statusHistory = fabric.assignments[0].statusHistory || [];
-      }
-      if (req.user.role === 'worker') {
-        const userAssignment = fabric.assignments.find(a => 
-          a.workerId?._id.toString() === req.user.userId
-        );
-        
-        if (userAssignment) {
-          fabricObj.assignmentStatus = userAssignment.status;
-          fabricObj.assignmentId = userAssignment._id;
-          fabricObj.assignedAt = userAssignment.createdAt;
-          fabricObj.statusHistory = userAssignment.statusHistory || [];
-        }
-      }
+      fabricObj.buyer = fabric.buyerId || {};
     }
+      delete fabricObj.assignments?.[0]?.workerId;
+      delete fabricObj.assignments?.[0]?.statusHistory;
+
+      
+
+      // Add role-specific data
+      // if (req.user.role === 'buyer') {
+      //   const firstAssignment = fabric.assignments[0];
+      //   fabricObj.statusHistory = firstAssignment.statusHistory || [];
+      // }
+      
+      // if (req.user.role === 'worker') {
+      //   const userAssignment = fabric.assignments.find(a => 
+      //     a.workerId?._id.toString() === req.user.userId
+      //   );
+        
+      //   if (userAssignment) {
+      //     fabricObj.assignmentStatus = userAssignment.status;
+      //     fabricObj.assignmentId = userAssignment._id;
+      //     fabricObj.assignedAt = userAssignment.createdAt;
+      //     fabricObj.statusHistory = userAssignment.statusHistory || [];
+      //   }
+      // }
 
     res.status(200).json({
       success: true,
@@ -123,12 +128,16 @@ const getFabricWithHistory = async (req, res) => {
       }));
 
       // For buyers and workers, include relevant assignment info
-      const relevantAssignment = req.user.role === 'worker' 
-        ? fabric.assignments.find(a => a.workerId?._id.toString() === req.user.userId)
-        : fabric.assignments[0];
+      let relevantAssignment;
+      if (req.user.role === 'worker') {
+        relevantAssignment = fabric.assignments.find(assignment => 
+          assignment.workerId?._id.toString() === req.user.userId
+        );
+      } else {
+        relevantAssignment = fabric.assignments[0];
+      }
 
       if (relevantAssignment) {
-        fabricObj.assignmentId = relevantAssignment._id;
         fabricObj.assignmentStatus = relevantAssignment.status;
         fabricObj.assignedAt = relevantAssignment.createdAt;
         fabricObj.statusHistory = (relevantAssignment.statusHistory || [])
@@ -156,5 +165,4 @@ const getFabricWithHistory = async (req, res) => {
 module.exports = {
   getFabricById,
   getFabricWithHistory
-
 };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Select, Button, Spinner, Alert } from "flowbite-react";
 import { api } from "../../../helper/apiHelper";
-import { PageMeta } from "../../comman/PageMeta";
+import { PageMeta } from "../../common/PageMeta";
 import { getAllUsers } from "../../../services/apiServices";
 import { toast } from "react-toastify";
 import { HiTrash } from "react-icons/hi";

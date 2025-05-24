@@ -55,27 +55,22 @@ const createFabric = async (req, res) => {
 
     let assignment = null;
     if (workerId) {
-      const worker = await Worker.findById(workerId);
-      if (!worker) {
-        console.warn(`Worker with ID ${workerId} not found, skipping assignment`);
-      } else {
-        assignment = new FabricAssignment({
-          fabricId: savedFabric._id,
-          buyerId,
-          workerId,
-          status: 'assigned'
-        });
+      // Create worker assignment
+      assignment = new FabricAssignment({
+        fabricId: savedFabric._id,
+        buyerId,
+        workerId:workerId
+      });
 
-        await assignment.save();
+      await assignment.save();
 
-        await Fabric.findByIdAndUpdate(savedFabric._id, {
-          $push: { assignments: assignment._id }
-        });
+      await Fabric.findByIdAndUpdate(savedFabric._id, {
+        $push: { assignments: assignment._id }
+      });
 
-        await Buyer.findByIdAndUpdate(buyerId, {
-          $push: { assignedFabrics: assignment._id }
-        });
-      }
+      await Buyer.findByIdAndUpdate(buyerId, {
+        $push: { assignedFabrics: assignment._id }
+      });
     }
 
     res.status(201).json({
@@ -105,7 +100,7 @@ const getAllFabricsForBuyer = async (req, res) => {
         populate: [
           {
             path: 'workerId',
-            select: 'name contact skills experience'
+            select: 'name contact experience'
           },
           {
             path: 'buyerId',
@@ -121,22 +116,31 @@ const getAllFabricsForBuyer = async (req, res) => {
 
     const fabrics = await Fabric.find({ buyerId: userId })
       .populate(populateOptions);
-    
+        
     const buyerFabrics = fabrics.map(fabric => {
       const fabricObj = fabric.toObject();
-      const workers = fabric.assignments?.map(assignment => ({
+      const buyer = fabricObj.buyerId || {};
+      
+      const worker1 = fabric.assignments?.map(assignment => ({
         id: assignment.workerId?._id,
         name: assignment.workerId?.name,
         contact: assignment.workerId?.contact,
         status: assignment.status,
-        assignedAt: assignment.createdAt
       })) || [];
+      const worker = worker1[0] || {};
+      const assignments = fabric.assignments?.[0]?.toObject() || [];
       
-      return {
-        ...fabricObj,
-        workers: workers,
-        assignmentCount: workers.length
-      };
+          delete fabricObj.buyerId;
+          delete fabricObj.workerId;
+          delete fabricObj.assignments;
+
+          return {
+            fabric: fabricObj,
+            buyer,
+            worker,
+            assignments,
+            hasAssignment: !!worker
+          };
     });
 
     res.status(200).json({
@@ -156,10 +160,21 @@ const getAllFabricsForBuyer = async (req, res) => {
 // Update fabric (buyer only)
 const updateFabric = async (req, res) => {
   try {
-    const { quantity, unitPrice, ...otherFields } = req.body;
+    const { 
+      name, 
+      description, 
+      unit, 
+      quantity, 
+      unitPrice, 
+      imageUrl,
+      workerId,
+      buyerId,
+      ...rest
+    } = req.body;
+    
     const { id } = req.params;
-    const userId = req.user.userId; // Assuming you have user in request
-
+    const userId = req.user.userId;
+    
     // First get the current fabric document
     const fabric = await Fabric.findById(id);
     if (!fabric) {
@@ -172,24 +187,84 @@ const updateFabric = async (req, res) => {
     // Store the original document for change tracking
     const originalDoc = fabric.toObject();
     
-    let updateFields = { ...otherFields };
+    // Prepare update fields - only include actual fabric fields
+    const updateFields = {};
     
-    if (quantity || unitPrice) {
-      const newQuantity = quantity || fabric.quantity;
-      const newUnitPrice = unitPrice || fabric.unitPrice;
+    // Only update fields that are provided in the request
+    if (name !== undefined) updateFields.name = name;
+    if (description !== undefined) updateFields.description = description;
+    if (unit !== undefined) updateFields.unit = unit;
+    if (imageUrl !== undefined) updateFields.imageUrl = imageUrl;
+    
+    // Handle quantity and unitPrice together for totalPrice calculation
+    if (quantity !== undefined || unitPrice !== undefined) {
+      const newQuantity = quantity !== undefined ? quantity : fabric.quantity;
+      const newUnitPrice = unitPrice !== undefined ? unitPrice : fabric.unitPrice;
+      updateFields.quantity = newQuantity;
+      updateFields.unitPrice = newUnitPrice;
       updateFields.totalPrice = newQuantity * newUnitPrice;
-      
-      if (quantity) updateFields.quantity = quantity;
-      if (unitPrice) updateFields.unitPrice = unitPrice;
+    }
+    
+    // Check if the fabric belongs to the user
+    if (fabric.buyerId.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        error: 'You do not have permission to update this fabric'
+      });
     }
 
-    // Find what fields are being changed
+    // Handle worker assignment if workerId is provided
+    if (workerId !== undefined) {
+      const currentAssignment = await FabricAssignment.findOne({ fabricId: id });
+      
+      if (currentAssignment) {
+        if (workerId) {
+          // Update existing assignment with new worker
+          await FabricAssignment.findByIdAndUpdate(currentAssignment._id, {
+              workerId,
+              status: 'assigned'
+          });
+        } else {
+          // Remove assignment if workerId is empty
+          await FabricAssignment.findByIdAndDelete(currentAssignment._id);
+          await Fabric.findByIdAndUpdate(id, {
+            $pull: { assignments: currentAssignment._id }
+          });
+          await Buyer.findByIdAndUpdate(userId, {
+            $pull: { assignedFabrics: currentAssignment._id }
+          });
+        }
+      } else if (workerId) {
+        // Create new assignment
+        const newAssignment = new FabricAssignment({
+          fabricId: id,
+          buyerId: userId,
+          workerId,
+          status: 'assigned'
+        });
+
+        await newAssignment.save();
+
+        await Fabric.findByIdAndUpdate(id, {
+          $push: { assignments: newAssignment._id }
+        });
+
+        await Buyer.findByIdAndUpdate(userId, {
+          $push: { assignedFabrics: newAssignment._id }
+        });
+      }
+    }
+
+    // Find what fields are being changed - only track actual fabric fields
     const modifiedFields = {};
-    Object.keys(updateFields).forEach(key => {
-      if (JSON.stringify(originalDoc[key]) !== JSON.stringify(updateFields[key])) {
-        modifiedFields[key] = {
-          previousValue: originalDoc[key],
-          newValue: updateFields[key]
+    Object.keys(updateFields).forEach((field) => {
+      // Skip tracking imageUrl changes
+      if (field === 'imageUrl') return;
+      
+      if (originalDoc[field] !== updateFields[field]) {
+        modifiedFields[field] = {
+          previousValue: originalDoc[field],
+          newValue: updateFields[field]
         };
       }
     });
@@ -203,19 +278,47 @@ const updateFabric = async (req, res) => {
       changedAt: new Date()
     }));
 
-    // Add to change history
+    // Add to change history if there are changes
     if (changeEntries.length > 0) {
       updateFields.$push = {
         changeHistory: { $each: changeEntries }
       };
     }
 
+    // Update the fabric with all changes
     const updatedFabric = await Fabric.findByIdAndUpdate(
       id,
       updateFields,
       { new: true, runValidators: true }
-    ).populate('changeHistory.changedBy', 'name role');
+    ).populate([
+      { path: 'changeHistory.changedBy', select: 'name role' },
+      { 
+        path: 'assignments',
+        populate: {
+          path: 'workerId',
+          select: 'name contact'
+        }
+      }
+    ]);
 
+    // Convert assignments array to object and extract worker info
+    const assignment = updatedFabric.assignments?.[0]?.toObject() || {};
+    const worker = assignment.workerId || {};
+    const workerInfo = {
+      name: worker.name,
+      contact: worker.contact,
+      experience: worker.experience,
+      status : assignment.status
+      };
+    // console.log(assignment.status);
+    // Remove assignments array and add assignment and worker as direct properties
+    const fabricObj = updatedFabric.toObject();
+    delete fabricObj.assignments;
+    delete fabricObj.worker;
+    delete fabricObj.changeHistory;
+    fabricObj.worker = workerInfo;
+
+    console.log(fabricObj.worker);
     if (!updatedFabric) {
       return res.status(404).json({
         success: false,
@@ -225,7 +328,7 @@ const updateFabric = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: updatedFabric,
+      data: fabricObj,
       changes: changeEntries
     });
   } catch (error) {
@@ -275,52 +378,10 @@ const deleteFabric = async (req, res) => {
   }
 };
 
-
-// Assign fabric to worker (buyer only)
-const assignFabricToWorker = async (req, res) => {
-  try {
-    const { fabricId, workerId } = req.body;
-    const buyerId = req.user.userId;
-
-    const fabric = await Fabric.findOne({ _id: fabricId, buyerId });
-    if (!fabric) {
-      return res.status(404).json({
-        success: false,
-        error: 'Fabric not found or does not belong to you'
-      });
-    }
-    
-    const assignment = new FabricAssignment({
-      fabricId,
-      buyerId,
-      workerId,
-      status: 'assigned'
-    });
-    
-    const savedAssignment = await assignment.save();
-    
-    // Update fabric with assignment reference
-    await Fabric.findByIdAndUpdate(fabricId, {
-      $push: { assignments: savedAssignment._id }
-    });
-
-    res.status(201).json({
-      success: true,
-      data: savedAssignment
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      error: error.message
-    });
-  }
-};
-
 module.exports = {
   createFabric,
   getAllFabricsForBuyer,
   updateFabric,
   deleteFabric,
-  assignFabricToWorker,
   getFabricById: commonController.getFabricById
 };

@@ -50,7 +50,6 @@ const register = async (req, res) => {
         userId,
         name: `${user.fname} ${user.lname}`,
         contact: user.phone,
-        skills: [],
         experience: ''
       });
       await worker.save();

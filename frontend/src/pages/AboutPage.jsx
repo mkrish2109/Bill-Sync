@@ -12,13 +12,13 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { PageMeta } from "../components/comman/PageMeta";
-import GradientHero from "../components/comman/GradientHero";
-import SectionHeader from "../components/comman/SectionHeader";
-import AnimatedCard from "../components/comman/AnimatedCard";
-import TeamMemberCard from "../components/comman/TeamMemberCard";
-import TechStackItem from "../components/comman/TechStackItem";
-import StatItem from "../components/comman/StatItem";
+import { PageMeta } from "../components/common/PageMeta";
+import GradientHero from "../components/common/GradientHero";
+import SectionHeader from "../components/common/SectionHeader";
+import AnimatedCard from "../components/common/AnimatedCard";
+import TeamMemberCard from "../components/common/TeamMemberCard";
+import TechStackItem from "../components/common/TechStackItem";
+import StatItem from "../components/common/StatItem";
 
 const AboutPage = () => {
   const navigate = useNavigate();

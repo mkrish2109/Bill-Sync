@@ -10,7 +10,22 @@ const validateName = (name) => {
 };
 
 const validatePhone = (phone) => {
-  return /^[0-9]{10,15}$/.test(phone);
+  // Remove all non-digit characters for validation
+  const digitsOnly = phone.replace(/\D/g, '');
+  
+  // Check if the cleaned number has 10 digits
+  if (digitsOnly.length !== 10) {
+    return false;
+  }
+
+  // Optional: Check if the original format matches common patterns
+  const commonFormats = [
+    /^\(\d{3}\)\s\d{3}-\d{4}$/,  // (123) 456-7890
+    /^\d{3}-\d{3}-\d{4}$/,       // 123-456-7890
+    /^\d{10}$/                   // 1234567890
+  ];
+
+  return commonFormats.some(format => format.test(phone));
 };
 
 const validateBio = (bio) => {
@@ -47,7 +62,7 @@ export default function UserInfoCard({ user, onUpdate }) {
         break;
       case 'phone':
         if (value && !validatePhone(value)) {
-          error = "Please enter a valid phone number (10-15 digits)";
+          error = "Please enter a valid phone number (e.g., (123) 456-7890)";
         }
         break;
       case 'bio':
@@ -130,8 +145,8 @@ export default function UserInfoCard({ user, onUpdate }) {
   const personalInfo = [
     { label: "First Name", value: user?.fname, name: "fname" },
     { label: "Last Name", value: user?.lname, name: "lname" },
-    { label: "Email address", value: user?.email, name: "email" },
-    { label: "Phone", value: user?.phone, name: "phone" },
+    { label: "Email address", value: user?.email, name: "email" ,type:"email" },
+    { label: "Phone", value: user?.phone, name: "phone",type:"tel" },
     { label: "Bio", value: user?.bio || "Not specified", name: "bio" }
   ];
 
