@@ -1,5 +1,3 @@
-import { Select } from 'flowbite-react';
-import React from 'react';
 import { FaCalendarAlt, FaUser, FaBuilding, FaPhone } from 'react-icons/fa';
 import { StatusBadge } from '../common/StatusBadge';
 

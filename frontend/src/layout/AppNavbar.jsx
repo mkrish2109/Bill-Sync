@@ -45,7 +45,6 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
   const user = useSelector((store) => store?.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
   
   const [searchTerm, setSearchTerm] = useState("");
   const inputRef = useRef(null);

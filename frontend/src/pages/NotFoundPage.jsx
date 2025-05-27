@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaHome, FaSearch, FaHeadset } from "react-icons/fa";
+import { FaHome, FaHeadset } from "react-icons/fa";
 
 export default function NotFoundPage() {
   return (

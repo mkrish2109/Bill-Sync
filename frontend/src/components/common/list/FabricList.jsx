@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { FaEye, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import LoadingSpinner from '../LoadingSpinner';
+import { ErrorAlert } from '../Alert';
 
 const FabricList = ({
   fabrics,
@@ -15,7 +16,7 @@ const FabricList = ({
   showAddButton = false
 }) => {
   if (loading) return <LoadingSpinner />;
-  if (error) return <div className="bg-error-base/10 text-error-base p-4 rounded">Error: {error}</div>;
+  if (error) return <ErrorAlert error={error}/>;
 
   const statusColors = {
     assigned: 'bg-primary-light/20 text-primary-light dark:bg-primary-dark/20 dark:text-primary-dark',

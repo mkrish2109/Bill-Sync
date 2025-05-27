@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaBox, FaCalendarAlt, FaCheckCircle, FaClock } from 'react-icons/fa';
-import { statusColors } from '../../utils/colors';
 import { StatusBadge } from '../common/StatusBadge';
 
 const AssignmentCard = ({ assignment, onClick, onStatusUpdate }) => {

@@ -3,10 +3,8 @@ import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../SideBar";
-import NavUser from "./NavUser";
 import Backdrop from "../Backdrop";
 import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
-import NavBar from "../NavBar";
 import AppNavbar from "../AppNavbar";
 
 const LayoutContent = () => {

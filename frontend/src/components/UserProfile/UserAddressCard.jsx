@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Button } from "flowbite-react";
 import { EditAddressModal } from "./EditModals";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { api } from "../../helper/apiHelper";
 

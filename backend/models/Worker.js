@@ -7,10 +7,40 @@ const workerSchema = new mongoose.Schema({
     required: true,
     unique: true 
   },
-  name: { type: String, required: true },
-  contact: { type: String, required: true },
-  experience: String,
-  createdAt: { type: Date, default: Date.now }
+  name: { 
+    type: String, 
+    required: true 
+  },
+  contact: { 
+    type: String, 
+    required: true 
+  },
+  experience: { 
+    type: String 
+  },
+  skills: [String],
+  receivedRequests: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Request'
+  }],
+  connectedBuyers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Buyer'
+  }],
+  createdAt: { 
+    type: Date, 
+    default: Date.now 
+  },
+  updatedAt: { 
+    type: Date, 
+    default: Date.now 
+  }
+});
+
+// Update timestamp before saving
+workerSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 module.exports = mongoose.model('Worker', workerSchema);

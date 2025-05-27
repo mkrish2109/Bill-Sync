@@ -2,7 +2,7 @@
 const express = require('express');
 const FabricAssignment = require('../models/FabricAssignment');
 const { authMiddleware } = require('../middleware/authMiddleware');
-const { getallWorkers } = require('../controllers/workerController');
+const { getallWorkers, getReceivedRequests } = require('../controllers/workerController');
 const { getAllFabricsForWorker, updateAssignmentStatus } = require('../controllers/fabric/workerController');
 const router = express.Router();
 
@@ -14,7 +14,6 @@ router.put('/update-status/:assignmentId', authMiddleware, updateAssignmentStatu
 router.get('/fabrics', authMiddleware, getAllFabricsForWorker);
 
 router.get("/all",authMiddleware, getallWorkers);
-
 
 
 module.exports = router;

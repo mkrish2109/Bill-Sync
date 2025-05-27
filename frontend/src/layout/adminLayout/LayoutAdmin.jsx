@@ -1,7 +1,5 @@
 // layouts/LayoutAdmin.js
 import { Outlet } from "react-router-dom";
-import NavbarAdmin from "./NavbarAdmin";
-import SidebarAdmin from "./SidebarAdmin";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Backdrop from "../Backdrop";

@@ -127,7 +127,7 @@ const FabricDetails = () => {
     });
   };
 
-  if (loading) return <LoadingSpinner fullScreen />;
+  if (loading) return <LoadingSpinner />;
   if (error) return <ErrorAlert error={error} onDismiss={() => setError(null)} />;
   if (!fabric) return <div className="text-center py-8 text-text-light dark:text-text-dark">Fabric not found</div>;
 

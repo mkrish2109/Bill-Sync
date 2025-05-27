@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login, logout, getUserById } from "../../services/apiServices";
-import { toast } from "react-toastify";
 
 // Shared fetch logic
 const fetchUserData = async (userId) => {
@@ -14,6 +13,7 @@ export const loginUser = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const res = await login(data);
+      console.log(res);
       return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || { message: err.message });
@@ -92,6 +92,7 @@ const userSlice = createSlice({
         state.isAuthenticated = true;
 
         localStorage.setItem("userId", action.payload.data.userId);
+        localStorage.setItem("role",action.payload.data.role)
         localStorage.setItem("tokenExpiry", expiry);
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -135,6 +136,7 @@ const userSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state) => {
         localStorage.removeItem("userId");
+        localStorage.removeItem("role");
         localStorage.removeItem("tokenExpiry");
         state.loading = false;
         state.user = null;

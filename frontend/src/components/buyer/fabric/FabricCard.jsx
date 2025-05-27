@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaBox, FaUser, FaCalendarAlt } from 'react-icons/fa';
-import { statusColors } from '../../../utils/colors';
 import { StatusBadge } from '../../common/StatusBadge';
 
 const FabricCard = ({ fabric, onClick }) => {

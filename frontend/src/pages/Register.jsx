@@ -69,8 +69,10 @@ function Register() {
     
     try {
       const response = await api.post('/auth/register', form);
-      toast.success("Registration successful! Please login.");
-      navigate('/login');
+      if (response.success) {
+        toast.success("Registration successful! Please login.");
+        navigate('/login');
+      }
     } catch (error) {
       console.error("Registration error:", error);
       toast.error(error.response?.data?.message || "Registration failed");

@@ -2,7 +2,6 @@ const Fabric = require("../models/Fabric");
 const Buyer = require("../models/Buyer"); 
 const FabricAssignment = require("../models/FabricAssignment");
 const Worker = require("../models/Worker");
-const User = require("../models/User");
 
 // Create a new fabric
 const createFabric = async (req, res) => {

@@ -5,7 +5,6 @@ import {
   HiUser, 
   HiShoppingBag, 
   HiChevronDown,
-  HiOutlineViewGrid,
   HiOutlineDotsHorizontal
 } from "react-icons/hi";
 import { FaUsersCog } from "react-icons/fa";
@@ -55,7 +54,7 @@ const otherItems = [
 ];
 
 function SidebarAdmin() {
-  const { isExpanded, isMobileOpen, isHovered, setIsHovered,setIsExpanded,setIsMobileOpen } = useSidebar();
+  const { isExpanded, isMobileOpen, isHovered, setIsHovered,setIsMobileOpen } = useSidebar();
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const location = useLocation();
   const subMenuRefs = useRef({});
@@ -206,11 +205,11 @@ function SidebarAdmin() {
       </li>
     );
   };
-    const getSidebarWidth = () => {
-    if (isMobileOpen) return 'w-64';
-    if (!isExpanded && !isHovered) return 'w-20';
-    return 'w-64';
-  };
+  //   const getSidebarWidth = () => {
+  //   if (isMobileOpen) return 'w-64';
+  //   if (!isExpanded && !isHovered) return 'w-20';
+  //   return 'w-64';
+  // };
 
   return (
      <aside
