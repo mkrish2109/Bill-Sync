@@ -2,6 +2,10 @@ import React, { useEffect } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from 'flowbite-react';
+import { SocketProvider } from './contexts/SocketContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
+import { Toaster } from 'react-hot-toast';
 
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -141,9 +145,16 @@ function App() {
   return (
     <ThemeProvider theme={customTheme}>
       <Provider store={store}>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <AuthProvider>
+          <SocketProvider>
+            <NotificationProvider>
+              <BrowserRouter>
+                <AppRoutes />
+                <Toaster position="top-right" />
+              </BrowserRouter>
+            </NotificationProvider>
+          </SocketProvider>
+        </AuthProvider>
       </Provider>
     </ThemeProvider>
   );

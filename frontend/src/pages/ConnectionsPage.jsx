@@ -71,7 +71,6 @@ const ConnectionsPage = () => {
       setLoading(true);
       const response = await api.get('/requests/connections');
       if(response.data.success){
-        console.log(response?.data?.data?.connections)
         setConnections(response?.data?.data?.connections);
         setFilteredConnections(response?.data?.data?.connections);
       }

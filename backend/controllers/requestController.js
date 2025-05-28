@@ -2,12 +2,23 @@ const Request = require('../models/Request');
 const Worker = require('../models/Worker');
 const Buyer = require('../models/Buyer');
 const { sendErrorResponse, sendSuccessResponse, sendDataResponse } = require('../utils/serverUtils');
+const { createNotification } = require('./notificationController');
 
 // Send request from buyer to worker
 exports.sendRequest = async (req, res) => {
   try {
     const { senderId, receiverId, message } = req.body;
     const io = req.app.get('io');
+    
+    // Validate required fields
+    if (!senderId || !receiverId) {
+      return sendErrorResponse(res, 'Sender ID and receiver ID are required', 400);
+    }
+    
+    if (!io) {
+      console.error('Socket.io instance not found');
+      return sendErrorResponse(res, 'Server error: Socket.io not initialized', 500);
+    }
     
     // Verify sender is a buyer and receiver is a worker
     const [sender, receiver] = await Promise.all([
@@ -16,11 +27,16 @@ exports.sendRequest = async (req, res) => {
     ]);
     
     if (!sender) {
-      return sendErrorResponse(res, 'Only buyers can send requests to workers', 400);
+      return sendErrorResponse(res, 'Buyer not found', 404);
     }
     
     if (!receiver) {
       return sendErrorResponse(res, 'Worker not found', 404);
+    }
+
+    if (!receiver.userId) {
+      console.error('Worker has no userId:', receiver);
+      return sendErrorResponse(res, 'Invalid worker data', 400);
     }
     
     // Check for existing pending/accepted request
@@ -61,15 +77,42 @@ exports.sendRequest = async (req, res) => {
       })
     ]);
 
-    // Emit new request event to receiver
-    io.to(receiverId.toString()).emit('newRequest', {
+    // Get the worker's userId for socket room
+    const workerRoomId = receiver.userId.toString();
+    
+    // Prepare the notification data
+    const notificationData = {
       request: newRequest,
-      sender: sender
-    });
+      senderName: sender.name,
+      sender: sender,
+      type: 'request',
+      message: `New request from ${sender.name}`
+    };
+
+    // Store notification in database
+    await createNotification(
+      receiver.userId,
+      'request',
+      notificationData.message,
+      notificationData
+    );
+
+    // Check if the worker's room exists
+    const workerRoom = io.sockets.adapter.rooms.get(workerRoomId);
+    if (!workerRoom) {
+      console.warn(`Worker's room ${workerRoomId} not found. Worker might be offline.`);
+    }
+    
+    // Emit the notification to the worker's room
+    io.to(workerRoomId).emit('new_request', notificationData);
     
     sendDataResponse(res, newRequest, 201);
   } catch (error) {
-    sendErrorResponse(res, error.message);
+    console.error('Error in sendRequest:', error);
+    if (error.name === 'ValidationError') {
+      return sendErrorResponse(res, `Invalid request data: ${error.message}`, 400);
+    }
+    sendErrorResponse(res, 'Failed to send request', 500);
   }
 };
 
@@ -79,11 +122,15 @@ exports.acceptRequest = async (req, res) => {
     const { requestId } = req.params;
     const userId = req.user.userId;
     const io = req.app.get('io');
+
+    if (!requestId) {
+      return sendErrorResponse(res, 'Request ID is required', 400);
+    }
     
     // First find the worker by userId
     const worker = await Worker.findOne({ userId });
     if (!worker) {
-      return sendErrorResponse(res, 'Only workers can accept requests', 403);
+      return sendErrorResponse(res, 'Worker not found', 404);
     }
     
     const request = await Request.findById(requestId)
@@ -117,10 +164,40 @@ exports.acceptRequest = async (req, res) => {
       })
     ]);
 
-    // Emit request accepted event to sender
-    io.to(request.sender.toString()).emit('requestAccepted', {
+    // Get the buyer's and worker's userIds for socket rooms
+    const [buyerDoc, workerDoc] = await Promise.all([
+      Buyer.findById(request.sender),
+      Worker.findById(request.receiver._id)
+    ]);
+
+    if (!buyerDoc || !workerDoc) {
+      return sendErrorResponse(res, 'Failed to find user documents', 500);
+    }
+
+    // Create notification for buyer
+    const buyerNotificationData = {
       request,
+      status: 'accepted',
+      workerName: worker.name,
       worker: request.receiver
+    };
+
+    // Store notification in database
+    await createNotification(
+      buyerDoc.userId,
+      'status_update',
+      `Your request was accepted by ${worker.name}`,
+      buyerNotificationData
+    );
+
+    // Emit request status update to both sender and receiver
+    io.to(buyerDoc.userId.toString()).emit('request_status_update', buyerNotificationData);
+    
+    io.to(workerDoc.userId.toString()).emit('request_status_update', {
+      request,
+      status: 'accepted',
+      buyerName: request.sender.name,
+      buyer: request.sender
     });
     
     sendDataResponse(res, {
@@ -129,7 +206,11 @@ exports.acceptRequest = async (req, res) => {
       worker: request.receiver
     });
   } catch (error) {
-    sendErrorResponse(res, error.message);
+    console.error('Error in acceptRequest:', error);
+    if (error.name === 'CastError') {
+      return sendErrorResponse(res, 'Invalid request ID', 400);
+    }
+    sendErrorResponse(res, 'Failed to accept request', 500);
   }
 };
 
@@ -139,11 +220,15 @@ exports.rejectRequest = async (req, res) => {
     const { requestId } = req.params;
     const userId = req.user.userId;
     const io = req.app.get('io');
+
+    if (!requestId) {
+      return sendErrorResponse(res, 'Request ID is required', 400);
+    }
     
     // First find the worker by userId
     const worker = await Worker.findOne({ userId });
     if (!worker) {
-      return sendErrorResponse(res, 'Only workers can reject requests', 403);
+      return sendErrorResponse(res, 'Worker not found', 404);
     }
     
     const request = await Request.findById(requestId)
@@ -166,15 +251,45 @@ exports.rejectRequest = async (req, res) => {
     request.status = 'rejected';
     await request.save();
 
-    // Emit request rejected event to sender
-    io.to(request.sender.toString()).emit('requestRejected', {
+    // Get the buyer's userId for socket room
+    const buyerDoc = await Buyer.findById(request.sender);
+    if (!buyerDoc) {
+      return sendErrorResponse(res, 'Buyer not found', 404);
+    }
+
+    // Create notification for buyer
+    const buyerNotificationData = {
       request,
+      status: 'rejected',
+      workerName: worker.name,
       worker: worker
+    };
+
+    // Store notification in database
+    await createNotification(
+      buyerDoc.userId,
+      'status_update',
+      `Your request was rejected by ${worker.name}`,
+      buyerNotificationData
+    );
+
+    // Emit request status update to both sender and receiver
+    io.to(buyerDoc.userId.toString()).emit('request_status_update', buyerNotificationData);
+    
+    io.to(worker.userId.toString()).emit('request_status_update', {
+      request,
+      status: 'rejected',
+      buyerName: request.sender.name,
+      buyer: request.sender
     });
     
     sendDataResponse(res, { request });
   } catch (error) {
-    sendErrorResponse(res, error.message);
+    console.error('Error in rejectRequest:', error);
+    if (error.name === 'CastError') {
+      return sendErrorResponse(res, 'Invalid request ID', 400);
+    }
+    sendErrorResponse(res, 'Failed to reject request', 500);
   }
 };
 
@@ -182,6 +297,10 @@ exports.rejectRequest = async (req, res) => {
 exports.getUserRequests = async (req, res) => {
   try {
     const userId = req.user.userId;
+    
+    if (!userId) {
+      return sendErrorResponse(res, 'User ID is required', 400);
+    }
     
     // Check if user is a worker or buyer
     const [worker, buyer] = await Promise.all([
@@ -215,7 +334,8 @@ exports.getUserRequests = async (req, res) => {
         : await Buyer.findById(userModel._id).populate('connectedWorkers', 'name contact')
     });
   } catch (error) {
-    sendErrorResponse(res, error.message);
+    console.error('Error in getUserRequests:', error);
+    sendErrorResponse(res, 'Failed to fetch user requests', 500);
   }
 };
 
@@ -224,6 +344,10 @@ exports.getConnections = async (req, res) => {
   try {
     const userId = req.user.userId;
     
+    if (!userId) {
+      return sendErrorResponse(res, 'User ID is required', 400);
+    }
+    
     // Check if user is a worker or buyer
     const [worker, buyer] = await Promise.all([
       Worker.findOne({ userId }).populate('connectedBuyers', 'name contact'),
@@ -231,15 +355,16 @@ exports.getConnections = async (req, res) => {
     ]);
     
     if (!worker && !buyer) {
-      return res.status(404).json({ message: 'User not found' });
+      return sendErrorResponse(res, 'User not found', 404);
     }
     
-    res.json({
+    sendDataResponse(res, {
       connections: worker ? worker.connectedBuyers : buyer.connectedWorkers,
       userType: worker ? 'Worker' : 'Buyer'
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error in getConnections:', error);
+    sendErrorResponse(res, 'Failed to fetch connections', 500);
   }
 };
 
@@ -247,6 +372,10 @@ exports.getConnections = async (req, res) => {
 exports.getConnectedUsers = async (req, res) => {
   try {
     const userId = req.user.userId;
+    
+    if (!userId) {
+      return sendErrorResponse(res, 'User ID is required', 400);
+    }
     
     // Check if user is a worker or buyer
     const [worker, buyer] = await Promise.all([
@@ -303,6 +432,7 @@ exports.getConnectedUsers = async (req, res) => {
       connections: connectionsWithHistory
     });
   } catch (error) {
-    sendErrorResponse(res, error.message);
+    console.error('Error in getConnectedUsers:', error);
+    sendErrorResponse(res, 'Failed to fetch connected users', 500);
   }
 };

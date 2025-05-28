@@ -18,21 +18,19 @@ export const useRequests = (userType) => {
       setLoading(true);
       setError(null);
       const response = await getUserRequests();
-      console.log('API Response:', response);
       
       if (response?.data?.success) {
         const { sentRequests = [], receivedRequests = [] } = response.data.data || {};
-        console.log('Parsed Requests:', { sentRequests, receivedRequests });
         setRequests({
           sent: sentRequests || [],
           received: receivedRequests || []
         });
       } else {
-        setError(response?.data?.message || 'Failed to fetch requests');
+        const errorMsg = response?.data?.message || 'Failed to fetch requests';
+        setError(errorMsg);
         setRequests({ sent: [], received: [] });
       }
     } catch (err) {
-      console.error('Error fetching user requests:', err);
       setError(err.response?.data?.message || 'Failed to fetch requests');
       setRequests({ sent: [], received: [] });
     } finally {
@@ -61,7 +59,6 @@ export const useRequests = (userType) => {
         throw new Error(errorMsg);
       }
     } catch (err) {
-      console.error('Error accepting request:', err);
       setError(err.response?.data?.message || 'Failed to accept request');
       throw err;
     }
@@ -88,7 +85,6 @@ export const useRequests = (userType) => {
         throw new Error(errorMsg);
       }
     } catch (err) {
-      console.error('Error rejecting request:', err);
       setError(err.response?.data?.message || 'Failed to reject request');
       throw err;
     }
@@ -104,7 +100,7 @@ export const useRequests = (userType) => {
     error,
     acceptRequest: handleAcceptRequest,
     rejectRequest: handleRejectRequest,
-    refresh: fetchUserRequests
+    refetchRequests: fetchUserRequests
   };
 };
 
@@ -129,7 +125,6 @@ export const useAvailableWorkers = () => {
         setAvailableUsers([]);
       }
     } catch (err) {
-      console.error('Error fetching available workers:', err);
       setError(err.response?.data?.message || 'Failed to fetch available workers');
       setAvailableUsers([]);
     } finally {
@@ -156,7 +151,6 @@ export const useAvailableWorkers = () => {
         throw new Error(errorMsg);
       }
     } catch (err) {
-      console.error('Error sending request:', err);
       setError(err.response?.data?.message || 'Failed to send request');
       throw err;
     }
@@ -171,6 +165,6 @@ export const useAvailableWorkers = () => {
     loading,
     error,
     sendRequest: handleSendRequest,
-    refresh: fetchAvailableUsers
+    refetchUsers: fetchAvailableUsers
   };
 };

@@ -1,25 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import AvailableUsersList from '../components/AvailableUsersList';
 import { useAvailableWorkers } from '../hooks/useRequests';
 import { FaSearch, FaSort } from 'react-icons/fa';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { ErrorAlert } from '../components/common/Alert';
+import { useSocket } from '../contexts/SocketContext';
 
 const NetworkPage = () => {
   const role = localStorage.getItem('role');
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('name'); // 'name' or 'experience'
+  const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
+  const { socket, isConnected } = useSocket();
+  const listenersSetRef = useRef(false);
 
   const {
     availableUsers,
     loading,
     error,
-    sendRequest
+    sendRequest,
+    refetchUsers
   } = useAvailableWorkers();
-console.log(availableUsers)
+
+  const handleWorkerUpdate = useCallback((data) => {
+    refetchUsers();
+  }, [refetchUsers]);
+
+  const handleNewWorker = useCallback((data) => {
+    refetchUsers();
+  }, [refetchUsers]);
+
+  useEffect(() => {
+    if (!socket || !isConnected) {
+      console.warn('Socket not available or not connected in NetworkPage');
+      return;
+    }
+
+    if (listenersSetRef.current) {
+      return;
+    }
+    
+    // Listen for worker availability updates and new registrations
+    socket.on('worker_availability_update', handleWorkerUpdate);
+    socket.on('new_worker_registered', handleNewWorker);
+    listenersSetRef.current = true;
+
+    return () => {
+      if (socket && listenersSetRef.current) {
+        socket.off('worker_availability_update', handleWorkerUpdate);
+        socket.off('new_worker_registered', handleNewWorker);
+        listenersSetRef.current = false;
+      }
+    };
+  }, [socket, isConnected, handleWorkerUpdate, handleNewWorker]);
+
   // Filter and sort users
   const filteredUsers = (availableUsers?.filter(user => 
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -54,6 +90,14 @@ console.log(availableUsers)
     } else {
       setSortBy(type);
       setSortOrder('asc');
+    }
+  };
+
+  const handleSendRequest = async (workerId) => {
+    try {
+      await sendRequest(workerId);
+    } catch (error) {
+      console.error('Failed to send request:', error);
     }
   };
 
@@ -128,7 +172,7 @@ console.log(availableUsers)
         <AvailableUsersList
           users={paginatedUsers}
           userType={role}
-          onSendRequest={sendRequest}
+          onSendRequest={handleSendRequest}
           loading={loading}
           error={error}
         />

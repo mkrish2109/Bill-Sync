@@ -91,9 +91,19 @@ const userSlice = createSlice({
         state.message = action.payload.message;
         state.isAuthenticated = true;
 
+        // Store user data and token
         localStorage.setItem("userId", action.payload.data.userId);
-        localStorage.setItem("role",action.payload.data.role)
+        localStorage.setItem("role", action.payload.data.role);
         localStorage.setItem("tokenExpiry", expiry);
+        localStorage.setItem("token", action.payload.token);
+        
+        // Log for debugging
+        console.log('Stored token:', action.payload.token);
+        console.log('Stored user data:', {
+          userId: action.payload.data.userId,
+          role: action.payload.data.role,
+          expiry
+        });
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

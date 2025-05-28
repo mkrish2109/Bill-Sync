@@ -20,6 +20,8 @@ import ThemeToggleButton from "../components/common/ThemeToggleButton";
 import SideBarToggle from "../components/common/SideBarToggle";
 import { useSidebar } from "../context/SidebarContext";
 import { Logo } from "../components/common/Logo";
+import NotificationDropdown from "../components/NotificationDropdown";
+import NotificationBell from "../components/NotificationBell";
 
 const NavLink = ({ to, children, exact = false, className = "" }) => {
   const location = useLocation();
@@ -32,7 +34,7 @@ const NavLink = ({ to, children, exact = false, className = "" }) => {
       as={Link}
       to={to}
       active={isActive}
-      className={`text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff] text-sm ${
+      className={`text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff] text-sm py-2 px-3 w-full text-center md:w-auto ${
         isActive ? "text-[#44b8ff] dark:text-[#44b8ff] font-medium" : ""
       } ${className}`}
     >
@@ -150,17 +152,19 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
           </NavbarBrand>
 
           {variant === "default" && (
-            <NavbarCollapse className="bg-background-light dark:bg-background-dark md:bg-transparent">
-              <NavLink to="/" exact>
-                Home
-              </NavLink>
-              <NavLink to="/about">About</NavLink>
-              <NavLink to="/contact">Contact</NavLink>
+            <NavbarCollapse className="bg-background-light dark:bg-background-dark md:bg-transparent w-full md:w-auto absolute md:relative top-full left-0 right-0 border-b border-gray-200 dark:border-gray-700 md:border-none">
+              <div className="flex flex-col md:flex-row items-center py-2 md:py-0">
+                <NavLink to="/" exact>
+                  Home
+                </NavLink>
+                <NavLink to="/about">About</NavLink>
+                <NavLink to="/contact">Contact</NavLink>
+              </div>
             </NavbarCollapse>
           )}
 
           {variant === "admin" && (
-            <div className="hidden lg:block">
+            <div className="hidden md:block">
               <form onSubmit={handleSearch}>
                 <div className="relative">
                   <span className="absolute -translate-y-1/2 pointer-events-none left-4 top-1/2">
@@ -184,7 +188,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
                     ref={inputRef}
                     type="text"
                     placeholder="Search or type command..."
-                    className="h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-background-dark dark:text-text-dark/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
+                    className="h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-background-dark dark:text-text-dark/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 md:w-[300px] lg:w-[430px]"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -203,6 +207,8 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
 
           <div className="flex md:order-2 gap-2 items-center">
             <ThemeToggleButton />
+            
+            {user && <NotificationBell />}
 
             <Dropdown
               arrowIcon={false}
@@ -234,6 +240,40 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
             )}
           </div>
         </div>
+
+        {/* Mobile Search Bar */}
+        {variant === "admin" && (
+          <div className="w-full px-3 py-2 md:hidden">
+            <form onSubmit={handleSearch}>
+              <div className="relative">
+                <span className="absolute -translate-y-1/2 pointer-events-none left-4 top-1/2">
+                  <svg
+                    className="fill-gray-500 dark:fill-gray-400"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M3.04175 9.37363C3.04175 5.87693 5.87711 3.04199 9.37508 3.04199C12.8731 3.04199 15.7084 5.87693 15.7084 9.37363C15.7084 12.8703 12.8731 15.7053 9.37508 15.7053C5.87711 15.7053 3.04175 12.8703 3.04175 9.37363ZM9.37508 1.54199C5.04902 1.54199 1.54175 5.04817 1.54175 9.37363C1.54175 13.6991 5.04902 17.2053 9.37508 17.2053C11.2674 17.2053 13.003 16.5344 14.357 15.4176L17.177 18.238C17.4699 18.5309 17.9448 18.5309 18.2377 18.238C18.5306 17.9451 18.5306 17.4703 18.2377 17.1774L15.418 14.3573C16.5365 13.0033 17.2084 11.2669 17.2084 9.37363C17.2084 5.04817 13.7011 1.54199 9.37508 1.54199Z"
+                      fill=""
+                    />
+                  </svg>
+                </span>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-background-dark dark:text-text-dark/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </form>
+          </div>
+        )}
       </div>
     </Navbar>
   );

@@ -318,7 +318,6 @@ const updateFabric = async (req, res) => {
     delete fabricObj.changeHistory;
     fabricObj.worker = workerInfo;
 
-    console.log(fabricObj.worker);
     if (!updatedFabric) {
       return res.status(404).json({
         success: false,

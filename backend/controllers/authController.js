@@ -107,7 +107,6 @@ const verifyEmail = async (req, res) => {
 
 // Login user
 const login = async (req, res) => {
-  console.log("jhdgsuygye")
     try {
       const { email, password } = req.body;
   
