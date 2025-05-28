@@ -2,11 +2,14 @@ import React, { useEffect } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from 'flowbite-react';
+import { SocketProvider } from './contexts/SocketContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
+import { Toaster } from 'react-hot-toast';
 
 import Register from './pages/Register';
 import Login from './pages/Login';
 import VerifyEmail from './pages/VerifyEmail';
-import Dashboard from './pages/Dashboard';
 import BillList from './components/BillList';
 import BillForm from './components/BillForm';
 import AdminDashboard from './components/admin/adminDashbord/AdminDashboard';
@@ -20,7 +23,7 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import UserProfile from './pages/UserProfile';
 import store from './redux/store';
-import { fetchUser, restoreUser } from './redux/slices/userSlice';
+import { restoreUser } from './redux/slices/userSlice';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import LayoutUser from './layout/userLayout/LayoutUser';
 import HomePage from './pages/HomePage';
@@ -33,15 +36,18 @@ import FabricDetails from './components/fabrics/FabricDetails';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import NotFoundPage from './pages/NotFoundPage';
+import NetworkPage from './pages/NetworkPage';
+import RequestsPage from './pages/RequestsPage';
+import ConnectionsPage from './pages/ConnectionsPage';
 
 const AppRoutes = () => {
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.user);
   const role = user?.role;
 
   useEffect(() => {
     dispatch(restoreUser());
-  }, []);
+  }, [dispatch]);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -49,24 +55,23 @@ const dispatch = useDispatch();
 
   return (
     <Routes>
-        <Route path="/" element={<UserLayout />}>
-          <Route index element={
-            role === "admin" 
-              ? <Navigate to="/admin/dashboard" /> 
-              : <HomePage />
-          } />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="forgot-password" element={<ForgotPassword />} />
-          <Route path="reset-password" element={<ResetPassword />} />
-          <Route path="verify-email" element={<VerifyEmail />} />
-          <Route path="bills" element={<BillList />} />
-          <Route path="create-bill" element={<BillForm />} />
-          <Route path="about" element={<AboutPage />} />
-          <Route path="contact" element={<ContactPage />} />
-          <Route path="*" element={<NotFoundPage/>} />
-        </Route>
-
+      <Route path="/" element={<UserLayout />}>
+        <Route index element={
+          role === "admin" 
+            ? <Navigate to="/admin/dashboard" /> 
+            : <HomePage />
+        } />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="reset-password" element={<ResetPassword />} />
+        <Route path="verify-email" element={<VerifyEmail />} />
+        <Route path="bills" element={<BillList />} />
+        <Route path="create-bill" element={<BillForm />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="contact" element={<ContactPage />} />
+        <Route path="*" element={<NotFoundPage/>} />
+      </Route>
 
       {/* Admin Routes */}
       <Route
@@ -89,12 +94,14 @@ const dispatch = useDispatch();
             <LayoutUser />
           </UserAuthGuard>
         }>
+        <Route path="dashboard" element={<BuyerDashboard />} />
+        <Route path="network" element={<NetworkPage />} />
+        <Route path="requests" element={<RequestsPage />} />
+        <Route path="connections" element={<ConnectionsPage />} />
         <Route path="fabrics" element={<BuyerFabricList />} />
         <Route path="fabrics/add" element={<AddFabricForm />} />
         <Route path="fabrics/edit/:id" element={<EditFabricForm />} />
         <Route path="fabrics/:id" element={<FabricDetails />} />
-        
-        <Route path="dashboard" element={<BuyerDashboard />} />
         <Route path="account/profile" element={<UserProfile />} />
       </Route>
 
@@ -107,6 +114,8 @@ const dispatch = useDispatch();
           </UserAuthGuard>
         }>
         <Route path="dashboard" element={<WorkerDashboard />} />
+        <Route path="requests" element={<RequestsPage />} />
+        <Route path="connections" element={<ConnectionsPage />} />
         <Route path="fabrics/:id" element={<FabricDetails />} />
         <Route path="tasks" element={<WorkerFabricList />} />
         <Route path="account/profile" element={<UserProfile />} />
@@ -136,9 +145,16 @@ function App() {
   return (
     <ThemeProvider theme={customTheme}>
       <Provider store={store}>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <AuthProvider>
+          <SocketProvider>
+            <NotificationProvider>
+              <BrowserRouter>
+                <AppRoutes />
+                <Toaster position="top-right" />
+              </BrowserRouter>
+            </NotificationProvider>
+          </SocketProvider>
+        </AuthProvider>
       </Provider>
     </ThemeProvider>
   );

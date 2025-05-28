@@ -4,15 +4,10 @@ import {
   FaChartLine, 
   FaShieldAlt, 
   FaHandshake,
-  FaFileInvoiceDollar,
-  FaUserPlus,
-  FaMoneyBillWave,
-  FaSyncAlt
-} from "react-icons/fa";
+} from "../components/common/Icons";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { PageMeta } from "../components/common/PageMeta";
-import GradientHero from "../components/common/GradientHero";
 import SectionHeader from "../components/common/SectionHeader";
 import AnimatedCard from "../components/common/AnimatedCard";
 import StepItem from "../components/common/StepItem";
@@ -26,18 +21,8 @@ const HomePage = () => {
       <PageMeta title="Home" />
       <div className="bg-background-light dark:bg-background-dark min-h-screen">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-blue-500 to-cyan-400 dark:from-blue-700 dark:to-cyan-600 text-white pt-20 overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                  <pattern id="grid-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <circle cx="10" cy="10" r="1" fill="white" opacity="0.2"/>
-                  </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#grid-pattern)"/>
-              </svg>
-          </div>
-          <div className="container mx-auto px-4 flex flex-col md:flex-row items-center relative z-10">
+        <section className="relative bg-gradient-to-r from-blue-500 to-cyan-400 dark:from-blue-700 dark:to-cyan-600 text-white py-20 overflow-hidden">
+          <div className="container mx-auto px-4 flex flex-col md:flex-row items-center relative ">
             <div className="md:w-1/2 mb-10 md:mb-0">
               <motion.h1 
                 initial={{ opacity: 0, y: -20 }}
@@ -62,7 +47,7 @@ const HomePage = () => {
                 className="flex flex-col sm:flex-row gap-4"
               >
                 <Button 
-                  gradientDuoTone="cyanToBlue" 
+                  // gradientDuoTone="cyanToBlue" 
                   size="xl"
                   onClick={() => navigate('/register')}
                   className="w-full sm:w-auto group"
@@ -328,7 +313,7 @@ const HomePage = () => {
             />
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button 
-                gradientDuoTone="cyanToBlue" 
+                // gradientDuoTone="cyanToBlue" 
                 size="xl"
                 onClick={() => navigate('/register')}
                 className="mx-2 mb-4 group"
@@ -339,7 +324,7 @@ const HomePage = () => {
               </Button>
               <Button 
                 outline 
-                gradientDuoTone="cyanToBlue"
+                // gradientDuoTone="cyanToBlue"
                 size="xl"
                 onClick={() => navigate('/contact')}
                 className="mx-2 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"

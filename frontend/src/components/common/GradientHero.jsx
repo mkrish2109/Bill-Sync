@@ -17,7 +17,7 @@ const GradientHero = ({
   className = ""
 }) => {
   return (
-    <section className={`relative py-20 px-4 text-center bg-gradient-to-r ${gradientFrom} ${gradientTo} dark:${darkGradientFrom} dark:${darkGradientTo} text-white overflow-hidden ${className}`}>
+    <section className={`relative z-0 px-4 text-center bg-gradient-to-r from-blue-500 to-cyan-400 dark:from-blue-700 dark:to-cyan-600 text-white py-20 overflow-hidden`}>
       <div className="absolute inset-0 opacity-10">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -53,7 +53,7 @@ const GradientHero = ({
         >
           {primaryButtonText && (
             <Button
-              gradientDuoTone="cyanToBlue"
+              // gradientDuoTone="cyanToBlue"
               size="xl"
               className="group"
               onClick={primaryButtonAction}

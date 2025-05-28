@@ -1,11 +1,11 @@
 const connect = require("../db/connect");
 
-const start = async (app) => {
-  const PORT = 5000;  // Adjust the port as necessary
+const start = async (server) => {
+  const PORT = process.env.PORT || 5000;
   try {
     await connect();
     console.log("Database connected successfully!");
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {

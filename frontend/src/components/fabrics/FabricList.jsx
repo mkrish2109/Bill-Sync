@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaEye, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 import { FabricCard } from './FabricCard';
 import { ErrorAlert } from '../common/Alert';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -20,7 +20,7 @@ export const FabricList = ({
 }) => {
 
 
-  if (loading) return <LoadingSpinner />;
+  if (loading ) return <LoadingSpinner />;
   if (error) return <ErrorAlert error={error} />;
 
   return (

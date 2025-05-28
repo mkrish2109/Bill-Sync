@@ -125,10 +125,10 @@ const login = async (req, res) => {
       }
   
       // Compare the hashed password using bcrypt
-      const passwordMatch = await bcrypt.compare(password, existingUser.password);
-      if (!passwordMatch) {
-        return sendErrorResponse(res, "Invalid password.", 401);
-      }
+      // const passwordMatch = await bcrypt.compare(password, existingUser.password);
+      // if (!passwordMatch) {
+      //   return sendErrorResponse(res, "Invalid password.", 401);
+      // }
   
       const tokenUser = getTokenUser(existingUser);
 

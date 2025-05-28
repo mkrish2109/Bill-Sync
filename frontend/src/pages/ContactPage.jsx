@@ -108,8 +108,12 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={handleChange}
                   color={errors.name ? "failure" : "gray"}
-                  helperText={errors.name && <span className="text-red-600">{errors.name}</span>}
                 />
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+                    {errors.name}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -127,8 +131,12 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={handleChange}
                   color={errors.email ? "failure" : "gray"}
-                  helperText={errors.email && <span className="text-red-600">{errors.email}</span>}
                 />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -146,13 +154,16 @@ export default function ContactPage() {
                   value={formData.message}
                   onChange={handleChange}
                   color={errors.message ? "failure" : "gray"}
-                  helperText={errors.message && <span className="text-red-600">{errors.message}</span>}
                 />
+                {errors.message && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+                    {errors.message}
+                  </p>
+                )}
               </div>
 
               <Button
                 type="submit"
-                gradientDuoTone="cyanToBlue"
                 className="w-full"
                 disabled={isSubmitting}
               >

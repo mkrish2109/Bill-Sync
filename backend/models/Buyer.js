@@ -19,7 +19,22 @@ const buyerSchema = new mongoose.Schema({
     ref: 'Fabric' 
   }],
   preferences: [String],
-  createdAt: { type: Date, default: Date.now }
+  sentRequests: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Request'
+  }],
+  connectedWorkers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Worker'
+  }],
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+// Update timestamp before saving
+buyerSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 module.exports = mongoose.model('Buyer', buyerSchema);

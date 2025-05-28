@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useCallback } from 'react';
 import { api } from '../../helper/apiHelper';
 import { confirmAlert } from 'react-confirm-alert';
 import { FabricList } from '../fabrics/FabricList';
@@ -9,9 +8,8 @@ const WorkerFabricList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
-  const { user } = useSelector((state) => state.user);
 
-  const fetchWorkerFabrics = async () => {
+  const fetchWorkerFabrics = useCallback(async () => {
     try {
       setLoading(true);
       const response = await api.get('/workers/fabrics');
@@ -33,11 +31,11 @@ const WorkerFabricList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
 
   useEffect(() => {
     fetchWorkerFabrics();
-  }, [statusFilter]);
+  }, [fetchWorkerFabrics]);
 
   const handleStatusUpdate = async (fabricId, assignmentId, newStatus) => {
     confirmAlert({

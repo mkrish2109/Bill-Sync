@@ -4,6 +4,7 @@ import { api } from '../../helper/apiHelper';
 import FabricForm from '../fabrics/FabricForm';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { StatusBadge } from '../common/StatusBadge';
+import { ErrorAlert } from '../common/Alert';
 
 const EditFabricForm = ({ fabricId, onClose, onSuccess }) => {
   const { id } = useParams();
@@ -16,13 +17,19 @@ const EditFabricForm = ({ fabricId, onClose, onSuccess }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsFetching(true);
         // Fetch fabric data
         const fabricResponse = await api.get(`/fabrics/test/${fabricId || id}`);
         const fabric = fabricResponse.data.data;
 
-        // Fetch workers
-        const workersResponse = await api.get('/workers/all');
-        setWorkers(workersResponse.data.data);
+        // Fetch connected workers
+        const workersResponse = await api.get('/requests/connections');
+        if (workersResponse.data.success) {
+          const connectedWorkers = workersResponse.data.data.connections.map(
+            connection => connection.user
+          );
+          setWorkers(connectedWorkers);
+        }
 
         // Get the first assigned worker ID if exists
         const workerId = fabric.worker?.[0]?.id || '';
@@ -47,14 +54,13 @@ const EditFabricForm = ({ fabricId, onClose, onSuccess }) => {
           });
         }
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err.response?.data?.error || 'Failed to fetch fabric data');
+        setError(err.response?.data?.message || 'Failed to fetch data');
       } finally {
         setIsFetching(false);
       }
     };
     fetchData();
-  }, [fabricId]);
+  }, [fabricId, id]);
 
   if (isFetching) {
     return (
@@ -65,9 +71,22 @@ const EditFabricForm = ({ fabricId, onClose, onSuccess }) => {
   }
 
   if (error) {
+    return <ErrorAlert message={error} />;
+  }
+
+  if (workers.length === 0) {
     return (
-      <div className="bg-error-base/10 border border-error-base text-error-base px-4 py-3 rounded mb-4">
-        {error}
+      <div className="text-center py-8">
+        <p className="text-gray-600 mb-4">No connected workers found.</p>
+        <p className="text-sm text-gray-500">
+          You need to connect with workers before editing fabrics.
+          <a 
+            href="/buyer/network" 
+            className="text-blue-500 hover:text-blue-600 ml-1"
+          >
+            Find workers
+          </a>
+        </p>
       </div>
     );
   }

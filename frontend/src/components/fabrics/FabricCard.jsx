@@ -175,7 +175,7 @@ export const FabricCard = ({
                       </select>
                       {isUpdatingStatus && (
                         <div className="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-gray-800/50 rounded-md">
-                          <LoadingSpinner size="sm" />
+                          <LoadingSpinner />
                         </div>
                       )}
                     </div>

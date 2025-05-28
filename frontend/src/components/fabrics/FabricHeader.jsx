@@ -13,7 +13,6 @@ export const FabricHeader = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
-  console.log(fabric)
 
   return (
     <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">

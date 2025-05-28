@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 import { PageMeta } from "../components/common/PageMeta";
-import PageBreadcrumb from "../components/common/PageBreadcrumb";
 import UserMetaCard from "../components/UserProfile/UserMetaCard";
 import UserInfoCard from "../components/UserProfile/UserInfoCard";
 import UserAddressCard from "../components/UserProfile/UserAddressCard";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { api } from "../helper/apiHelper";
-import { Breadcrumb } from "flowbite-react";
 
 export default function UserProfile() {
   const [profileData, setProfileData] = useState({

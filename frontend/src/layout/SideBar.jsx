@@ -17,8 +17,7 @@ import { MdWork, MdShoppingCart } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useSidebar } from "../context/SidebarContext";
 import { Logo } from "../components/common/Logo";
-
-// Role-based menu configurations
+// Lazy load menu configurations
 const menuConfigurations = {
   admin: {
     mainItems: [
@@ -68,14 +67,18 @@ const menuConfigurations = {
         icon: <HiChartPie className="text-xl" />, 
         path: "/worker/dashboard"
       },
+      {
+        name: "Requests",
+        icon: <FaUsersCog className="text-xl" />,
+        subItems: [
+          { name: "View Requests", path: "/worker/requests" },
+          { name: "My Connections", path: "/worker/connections" }
+        ]
+      },
       { 
         name: "Tasks", 
         icon: <MdWork className="text-xl" />, 
         path: "/worker/tasks"
-        // subItems: [
-        //   { name: "My Tasks", path: "/worker/tasks" },
-        //   { name: "Completed", path: "/worker/completed" }
-        // ]
       },
       { 
         name: "Account", 
@@ -106,14 +109,15 @@ const menuConfigurations = {
         icon: <HiChartPie className="text-xl" />, 
         path: "/buyer/dashboard"
       },
-      // { 
-      //   name: "Orders", 
-      //   icon: <MdShoppingCart className="text-xl" />, 
-      //   subItems: [
-      //     { name: "My Orders", path: "/buyer/orders" },
-      //     { name: "History", path: "/buyer/history" }
-      //   ]
-      // },
+      {
+        name: "Network",
+        icon: <FaUsersCog className="text-xl" />,
+        subItems: [
+          { name: "Find Workers", path: "/buyer/network" },
+          { name: "My Requests", path: "/buyer/requests" },
+          { name: "My Connections", path: "/buyer/connections" }
+        ]
+      },
       {
         name:"Fabric",
         icon:<HiOutlineViewGridAdd className="text-xl" />,
@@ -126,7 +130,7 @@ const menuConfigurations = {
         name: "Account", 
         icon: <HiUser className="text-xl" />, 
         subItems: [
-          { name: "Profile", path: "/worker/account/profile" },
+          { name: "Profile", path: "/buyer/account/profile" },
           { name: "Settings", path: "/account/settings" }
         ]
       }

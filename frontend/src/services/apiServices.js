@@ -1,16 +1,5 @@
 import { api } from "../helper/apiHelper";
 
-export const verifyEmail = async (data) => {
-  try {
-    const response = await api.post('/verify-email', data);
-    return response.data; // Assuming your backend responds with { success, message }
-  } catch (error) {
-    console.error("Verification failed: ", error.message);
-    return { success: false, message: "Something went wrong." }; // Fallback response
-  }
-};
-
-
 export const login = async (data) => {
     const response = await api.post("/auth/login", data);
     return response.data;

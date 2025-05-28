@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login, logout, getUserById } from "../../services/apiServices";
-import { toast } from "react-toastify";
 
 // Shared fetch logic
 const fetchUserData = async (userId) => {
@@ -14,6 +13,7 @@ export const loginUser = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const res = await login(data);
+      console.log(res);
       return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || { message: err.message });
@@ -91,8 +91,19 @@ const userSlice = createSlice({
         state.message = action.payload.message;
         state.isAuthenticated = true;
 
+        // Store user data and token
         localStorage.setItem("userId", action.payload.data.userId);
+        localStorage.setItem("role", action.payload.data.role);
         localStorage.setItem("tokenExpiry", expiry);
+        localStorage.setItem("token", action.payload.token);
+        
+        // Log for debugging
+        console.log('Stored token:', action.payload.token);
+        console.log('Stored user data:', {
+          userId: action.payload.data.userId,
+          role: action.payload.data.role,
+          expiry
+        });
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -135,6 +146,7 @@ const userSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state) => {
         localStorage.removeItem("userId");
+        localStorage.removeItem("role");
         localStorage.removeItem("tokenExpiry");
         state.loading = false;
         state.user = null;

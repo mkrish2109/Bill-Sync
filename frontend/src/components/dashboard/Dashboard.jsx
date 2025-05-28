@@ -1,11 +1,35 @@
-// components/dashboard/Dashboard.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaBox, FaTasks, FaPlus, FaChartLine, FaSearch } from 'react-icons/fa';
+import { FaBox, FaPlus } from 'react-icons/fa';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 import StatusFilter from '../common/StatusFilter';
 import SearchInput from '../common/SearchInput';
 import { ErrorAlert } from '../common/Alert';
 import LoadingSpinner from '../common/LoadingSpinner';
+
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Dashboard = ({
   title,
@@ -23,8 +47,14 @@ const Dashboard = ({
   addNewLabel = 'Add New',
   showAddButton = true,
   onStatusUpdate,
+  showCharts = true,
+  userRequests = {
+    pending: 0,
+    accepted: 0,
+    rejected: 0,
+    total: 0
+  }
 }) => {
-  const navigate = useNavigate();
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -49,7 +79,74 @@ const Dashboard = ({
     return statusMatch && searchMatch;
   });
 
-  if (loading) return <LoadingSpinner fullScreen />;
+  // Chart data
+  const statusChartData = {
+    labels: ['Assigned', 'In Progress', 'Completed', 'Cancelled'],
+    datasets: [{
+      data: [
+        statusCounts.assigned || 0,
+        statusCounts['in-progress'] || 0,
+        statusCounts.completed || 0,
+        statusCounts.cancelled || 0
+      ],
+      backgroundColor: [
+        '#f59e0b', // yellow
+        '#3b82f6', // blue
+        '#10b981', // green
+        '#ef4444'  // red
+      ],
+      borderWidth: 0,
+    }]
+  };
+
+  const activityChartData = {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [
+      {
+        label: 'New Items',
+        data: [12, 19, 15, 17, 22, 25, 20],
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        tension: 0.3
+      },
+      {
+        label: 'Completed',
+        data: [8, 12, 10, 14, 18, 15, 12],
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        tension: 0.3
+      }
+    ]
+  };
+
+  const requestStatusData = {
+    labels: ['Pending', 'Accepted', 'Rejected'],
+    datasets: [{
+      data: [
+        userRequests.pending || 0,
+        userRequests.accepted || 0,
+        userRequests.rejected || 0
+      ],
+      backgroundColor: [
+        '#f59e0b', // yellow for pending
+        '#10b981', // green for accepted
+        '#ef4444'  // red for rejected
+      ],
+      borderWidth: 0,
+    }]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+      },
+    },
+  };
+
+  if (loading) return <LoadingSpinner />;
   if (error) return <ErrorAlert error={error} onDismiss={() => setError(null)} />;
 
   return (
@@ -89,6 +186,51 @@ const Dashboard = ({
           <p className="text-3xl font-bold text-green-500">{statusCounts.completed || 0}</p>
         </div>
       </div>
+
+      {/* Request Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+          <h3 className="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Pending Requests</h3>
+          <p className="text-3xl font-bold text-yellow-500">{userRequests.pending || 0}</p>
+        </div>
+        <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+          <h3 className="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Accepted Requests</h3>
+          <p className="text-3xl font-bold text-green-500">{userRequests.accepted || 0}</p>
+        </div>
+        <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+          <h3 className="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Rejected Requests</h3>
+          <p className="text-3xl font-bold text-red-500">{userRequests.rejected || 0}</p>
+        </div>
+      </div>
+
+      {/* Charts Section */}
+      {showCharts && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+          {/* Status Distribution Chart */}
+          <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-xl shadow-md">
+            <h3 className="text-lg font-semibold text-text-light dark:text-text-dark mb-4">Status Distribution</h3>
+            <div className="h-64">
+              <Doughnut data={statusChartData} options={chartOptions} />
+            </div>
+          </div>
+
+          {/* Activity Chart */}
+          <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-xl shadow-md lg:col-span-2">
+            <h3 className="text-lg font-semibold text-text-light dark:text-text-dark mb-4">Weekly Activity</h3>
+            <div className="h-64">
+              <Line data={activityChartData} options={chartOptions} />
+            </div>
+          </div>
+
+          {/* Request Status Chart */}
+          <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-xl shadow-md">
+            <h3 className="text-lg font-semibold text-text-light dark:text-text-dark mb-4">Request Status</h3>
+            <div className="h-64">
+              <Doughnut data={requestStatusData} options={chartOptions} />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 bg-surface-light dark:bg-surface-dark p-4 rounded-xl shadow-sm">
