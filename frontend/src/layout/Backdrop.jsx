@@ -1,6 +1,6 @@
 // components/Backdrop.js
 
-import { useSidebar } from "../context/SidebarContext";
+import { useSidebar } from "../contexts/SidebarContext";
 
 const Backdrop = () => {
   const { isMobileOpen, toggleMobileSidebar } = useSidebar();

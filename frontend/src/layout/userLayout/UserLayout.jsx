@@ -3,7 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import UserFooter from "./UserFooter";
 import "react-toastify/dist/ReactToastify.css";
 import {  ToastContainer } from "react-toastify";
-import { SidebarProvider } from "../../context/SidebarContext";
+import { SidebarProvider } from "../../contexts/SidebarContext";
 import AppNavbar from "../AppNavbar";
 
 function UserLayout() {

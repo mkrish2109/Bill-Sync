@@ -10,7 +10,7 @@ import {
 import { FaUsersCog } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import { Logo } from "../../components/common/Logo";
-import { useSidebar } from "../../context/SidebarContext";
+import { useSidebar } from "../../contexts/SidebarContext";
 
 const mainItems = [
   { 

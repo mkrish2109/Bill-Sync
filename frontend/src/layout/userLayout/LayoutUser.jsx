@@ -4,7 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../SideBar";
 import Backdrop from "../Backdrop";
-import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
+import { SidebarProvider, useSidebar } from "../../contexts/SidebarContext";
 import AppNavbar from "../AppNavbar";
 
 const LayoutContent = () => {

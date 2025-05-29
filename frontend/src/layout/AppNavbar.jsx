@@ -18,10 +18,10 @@ import { logoutUser } from "../redux/slices/userSlice";
 import { toast } from "react-toastify";
 import ThemeToggleButton from "../components/common/ThemeToggleButton";
 import SideBarToggle from "../components/common/SideBarToggle";
-import { useSidebar } from "../context/SidebarContext";
+import { useSidebar } from "../contexts/SidebarContext";
 import { Logo } from "../components/common/Logo";
-import NotificationDropdown from "../components/NotificationDropdown";
 import NotificationBell from "../components/NotificationBell";
+import PropTypes from "prop-types";
 
 const NavLink = ({ to, children, exact = false, className = "" }) => {
   const location = useLocation();
@@ -34,14 +34,18 @@ const NavLink = ({ to, children, exact = false, className = "" }) => {
       as={Link}
       to={to}
       active={isActive}
-      className={`text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff] text-sm py-2 px-3 w-full text-center md:w-auto ${
-        isActive ? "text-[#44b8ff] dark:text-[#44b8ff] font-medium" : ""
+      className={`transition-colors duration-200 text-text-secondaryLight hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-light text-sm py-2 px-3 w-full text-center md:w-auto ${
+        isActive 
+          ? "bg-primary-light/10 md:text-primary-light md:dark:text-primary-light font-medium" 
+          : ""
       } ${className}`}
     >
       {children}
     </NavbarLink>
   );
 };
+
+
 
 const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
   const user = useSelector((store) => store?.user.user);
@@ -140,7 +144,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
   const userEmail = user?.email || "Not logged in";
 
   return (
-    <Navbar className="sticky top-0 flex w-full z-10 bg-background-light dark:bg-background-dark shadow-md border-b border-gray-200 dark:border-gray-700">
+    <Navbar className="sticky top-0 flex w-full z-10 bg-background-light justify-evenly dark:bg-background-dark shadow-md border-b border-gray-200 dark:border-gray-700">
       <div className="flex flex-col items-center justify-between grow">
         <div className="flex items-center justify-between w-full gap-2 px-3 sm:gap-4 lg:px-0">
           {showSidebarToggle && (
@@ -153,13 +157,11 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
 
           {variant === "default" && (
             <NavbarCollapse className="bg-background-light dark:bg-background-dark md:bg-transparent w-full md:w-auto absolute md:relative top-full left-0 right-0 border-b border-gray-200 dark:border-gray-700 md:border-none">
-              <div className="flex flex-col md:flex-row items-center py-2 md:py-0">
                 <NavLink to="/" exact>
                   Home
                 </NavLink>
                 <NavLink to="/about">About</NavLink>
                 <NavLink to="/contact">Contact</NavLink>
-              </div>
             </NavbarCollapse>
           )}
 

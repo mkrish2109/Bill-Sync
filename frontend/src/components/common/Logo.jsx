@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const sizeClasses = {
   sm: 'h-6',

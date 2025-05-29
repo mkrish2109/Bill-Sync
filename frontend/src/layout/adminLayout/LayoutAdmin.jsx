@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Backdrop from "../Backdrop";
-import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
+import { SidebarProvider, useSidebar } from "../../contexts/SidebarContext";
 import Sidebar from "../SideBar";
 import AppNavbar from "../AppNavbar";
 
