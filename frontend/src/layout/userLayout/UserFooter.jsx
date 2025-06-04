@@ -1,65 +1,102 @@
-import { Footer, FooterBrand, FooterCopyright, FooterDivider, FooterIcon, FooterLink, FooterLinkGroup, FooterTitle } from "flowbite-react";
 import React from "react";
 import {
-  BsDribbble,
   BsFacebook,
-  BsGithub,
   BsInstagram,
   BsTwitter,
+  BsLinkedin,
+  BsWhatsapp,
 } from "react-icons/bs";
 import { Logo } from "../../components/common/Logo";
 
 function UserFooter() {
   return (
-    <>
-      <Footer container className="rounded-none bg-gray-50 dark:bg-background-dark">
-        <div className="w-full">
-          <div className="grid w-full justify-between sm:flex sm:justify-between md:flex md:grid-cols-1">
-            <div className="flex items-center">
-              <FooterBrand href="#">
-                <Logo variant="full" size="lg" />
-              </FooterBrand>
-              
-            </div>
-            <div className="grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-6">
-              <div>
-                <FooterTitle title="about" />
-                <FooterLinkGroup col>
-                  <FooterLink href="#">Flowbite</FooterLink>
-                  <FooterLink href="#">Tailwind CSS</FooterLink>
-                </FooterLinkGroup>
-              </div>
-              <div>
-                <FooterTitle title="Follow us" />
-                <FooterLinkGroup col>
-                  <FooterLink href="#">Github</FooterLink>
-                  <FooterLink href="#">Discord</FooterLink>
-                </FooterLinkGroup>
-              </div>
-              <div>
-                <FooterTitle title="Legal" />
-                <FooterLinkGroup col>
-                  <FooterLink href="#">Privacy Policy</FooterLink>
-                  <FooterLink href="#">Terms &amp; Conditions</FooterLink>
-                </FooterLinkGroup>
-              </div>
-            </div>
+    <footer className="bg-gray-50 dark:bg-background-dark">
+      <div className="w-full  p-4 py-6 lg:py-8">
+        <div className="md:flex md:justify-between w-full">
+          <div className="mb-6 md:mb-0">
+            <a href="#" className="flex items-center">
+              <Logo variant="full" size="lg" />
+            </a>
           </div>
-
-          <FooterDivider />
-          <div className="w-full sm:flex sm:items-center sm:justify-between">
-            <FooterCopyright href="#" by="Tex bill™" year={2025} />
-            <div className="mt-4 flex space-x-6 sm:mt-0 sm:justify-center">
-              <FooterIcon href="#" icon={BsFacebook} />
-              <FooterIcon href="#" icon={BsInstagram} />
-              <FooterIcon href="#" icon={BsTwitter} />
-              <FooterIcon href="#" icon={BsGithub} />
-              <FooterIcon href="#" icon={BsDribbble} />
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+            <div>
+              <h2 className="mb-6 text-sm font-semibold uppercase text-gray-900 dark:text-white">Company</h2>
+              <ul className="text-gray-500 dark:text-gray-400 font-medium">
+                <li className="mb-4">
+                  <a href="#" className="hover:underline">About Us</a>
+                </li>
+                <li className="mb-4">
+                  <a href="#" className="hover:underline">Contact</a>
+                </li>
+                <li className="mb-4">
+                  <a href="#" className="hover:underline">Careers</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="mb-6 text-sm font-semibold uppercase text-gray-900 dark:text-white">Help Center</h2>
+              <ul className="text-gray-500 dark:text-gray-400 font-medium">
+                <li className="mb-4">
+                  <a href="#" className="hover:underline">Support</a>
+                </li>
+                <li className="mb-4">
+                  <a href="#" className="hover:underline">FAQs</a>
+                </li>
+                <li className="mb-4">
+                  <a href="#" className="hover:underline">Documentation</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="mb-6 text-sm font-semibold uppercase text-gray-900 dark:text-white">Legal</h2>
+              <ul className="text-gray-500 dark:text-gray-400 font-medium">
+                <li className="mb-4">
+                  <a href="#" className="hover:underline">Privacy Policy</a>
+                </li>
+                <li className="mb-4">
+                  <a href="#" className="hover:underline">Terms &amp; Conditions</a>
+                </li>
+                <li className="mb-4">
+                  <a href="#" className="hover:underline">Cookie Policy</a>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
-      </Footer>
-    </>
+        <hr className="my-6 border-gray-200 dark:border-gray-700 sm:mx-auto lg:my-8" />
+        <div className="sm:flex sm:items-center sm:justify-between">
+          <span className="text-sm text-gray-500 dark:text-gray-400 sm:text-center">
+            © {new Date().getFullYear()}{" "}
+            <a href="#" className="hover:underline">
+              Tex-Bill™
+            </a>
+            . All Rights Reserved.
+          </span>
+          <div className="mt-4 flex space-x-5 sm:mt-0 sm:justify-center">
+            <a href="/" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+              <BsFacebook className="h-5 w-5" />
+              <span className="sr-only">Facebook page</span>
+            </a>
+            <a href="/" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+              <BsInstagram className="h-5 w-5" />
+              <span className="sr-only">Instagram page</span>
+            </a>
+            <a href="/" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+              <BsTwitter className="h-5 w-5" />
+              <span className="sr-only">Twitter page</span>
+            </a>
+            <a href="/" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+              <BsLinkedin className="h-5 w-5" />
+              <span className="sr-only">LinkedIn page</span>
+            </a>
+            <a href="/" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+              <BsWhatsapp className="h-5 w-5" />
+              <span className="sr-only">WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 }
 

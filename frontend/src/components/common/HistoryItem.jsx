@@ -2,7 +2,7 @@ import {
   TimelineBody,
   TimelineContent,
   TimelineItem,
-  TimelinePoint,
+  // TimelinePoint,
   TimelineTime,
   TimelineTitle
 } from "flowbite-react";
@@ -10,14 +10,7 @@ import {  FaInfoCircle, FaUser } from "react-icons/fa";
 import { StatusBadge } from "./StatusBadge";
 
 const HistoryItem = ({ item, field }) => {
-  // const getIcon = () => {
-  //   switch (field) {
-  //     case 'status':
-  //       return FaExchangeAlt;
-  //     default:
-  //       return FaEdit;
-  //   }
-  // };
+
 
   return (
     <TimelineItem key={item._id || item.changedAt} className="mb-4 sm:mb-5">

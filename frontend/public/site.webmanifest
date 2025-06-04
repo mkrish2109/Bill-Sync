@@ -1,19 +1,25 @@
 {
   "name": "Tex Bill",
   "short_name": "TexBill",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "icons": [
     {
-      "src": "/logo/icon-192x192.png",
+      "src": "/logo/icon-192x192.webp",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/webp",
+      "purpose": "any maskable"
     },
     {
-      "src": "/logo/icon-512x512.png",
+      "src": "/logo/icon-512x512.webp",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/webp",
+      "purpose": "any maskable"
     }
   ],
   "theme_color": "#44b8ff",
   "background_color": "#ffffff",
-  "display": "standalone"
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
 }

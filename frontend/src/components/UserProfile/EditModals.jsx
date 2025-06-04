@@ -202,7 +202,7 @@ export const EditMetaProfile = ({
               <div className="flex flex-col items-center mb-6">
                 <div className="relative w-20 h-20 sm:w-24 sm:h-24 mb-4 overflow-hidden border-2 border-primary-light dark:border-primary-dark rounded-full shadow-md hover:shadow-lg transition-shadow duration-200">
                   <img 
-                    src={formData.image[0] ? URL.createObjectURL(formData.image[0]) : user?.image?.[0] || "/images/profile.png"} 
+                    src={formData.image[0] ? URL.createObjectURL(formData.image[0]) : user?.image?.[0] || "/images/profile.webp"} 
                     alt="Preview" 
                     className="object-cover w-full h-full"
                   />

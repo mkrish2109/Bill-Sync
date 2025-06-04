@@ -5,7 +5,8 @@ import { createTheme, ThemeProvider } from 'flowbite-react';
 import { SocketProvider } from './contexts/SocketContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
-import { Toaster } from 'react-hot-toast';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -150,7 +151,18 @@ function App() {
             <NotificationProvider>
               <BrowserRouter>
                 <AppRoutes />
-                <Toaster position="top-right" />
+                <ToastContainer
+                  position="top-right"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme="light"
+                />
               </BrowserRouter>
             </NotificationProvider>
           </SocketProvider>

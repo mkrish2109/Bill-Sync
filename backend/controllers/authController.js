@@ -4,10 +4,14 @@ const {
   sendVerificationEmail,
   sendResetPasswordEmail,
 } = require("../utils/emailUtils");
-const { sendSuccessResponse, sendErrorResponse } = require("../utils/serverUtils");
+const {
+  sendSuccessResponse,
+  sendErrorResponse,
+} = require("../utils/serverUtils");
 const { getCryptoToken, getJWT, getTokenUser } = require("../utils/tokenUtils");
 const Worker = require("../models/Worker");
 const Buyer = require("../models/Buyer");
+const session = require("express-session");
 
 // Register user
 const register = async (req, res) => {
@@ -15,14 +19,14 @@ const register = async (req, res) => {
     const { fname, lname, email, phone, password, role } = req.body;
 
     if (!fname || !lname || !email || !phone || !password || !role) {
-      return sendErrorResponse(res, 'All fields are required.', 400);
+      return sendErrorResponse(res, "All fields are required.", 400);
     }
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
     const existingUserPhone = await User.findOne({ phone });
     if (existingUser || existingUserPhone) {
-      return sendErrorResponse(res, 'User already exists.', 400);
+      return sendErrorResponse(res, "User already exists.", 400);
     }
 
     // Create a new user
@@ -44,23 +48,23 @@ const register = async (req, res) => {
     // Create worker or buyer profile based on role
     const userId = user._id;
 
-    if (user.role === 'worker') {
+    if (user.role === "worker") {
       const worker = new Worker({
         _id: userId, // <=== Use same _id
         userId,
         name: `${user.fname} ${user.lname}`,
         contact: user.phone,
-        experience: ''
+        experience: "",
       });
       await worker.save();
-    } else if (user.role === 'buyer') {
+    } else if (user.role === "buyer") {
       const buyer = new Buyer({
         _id: userId, // <=== Use same _id
         userId,
         name: `${user.fname} ${user.lname}`,
         contact: user.phone,
-        company: '',
-        preferences: []
+        company: "",
+        preferences: [],
       });
       await buyer.save();
     }
@@ -78,7 +82,11 @@ const verifyEmail = async (req, res) => {
     const { email, verificationToken } = req.body;
 
     if (!email || !verificationToken) {
-      return sendErrorResponse(res, "Email and verification token are required.", 400);
+      return sendErrorResponse(
+        res,
+        "Email and verification token are required.",
+        400
+      );
     }
 
     const existingUser = await User.findOne({ email });
@@ -107,52 +115,52 @@ const verifyEmail = async (req, res) => {
 
 // Login user
 const login = async (req, res) => {
-    try {
-      const { email, password } = req.body;
-  
-      if (!email || !password) {
-        return sendErrorResponse(res, "Email and password are required.", 400);
-      }
-  
-  
-      const existingUser = await User.findOne({ email });
-      if (!existingUser) {
-        return sendErrorResponse(res, "No such user exists.", 404);
-      }
-  
-      if (!existingUser.isVerified) {
-        return sendErrorResponse(res, "Account not verified.", 401);
-      }
-  
-      // Compare the hashed password using bcrypt
-      // const passwordMatch = await bcrypt.compare(password, existingUser.password);
-      // if (!passwordMatch) {
-      //   return sendErrorResponse(res, "Invalid password.", 401);
-      // }
-  
-      const tokenUser = getTokenUser(existingUser);
+  try {
+    const { email, password } = req.body;
 
-      const accessToken = getJWT({ 
-        userId: tokenUser.userId,
-        role: tokenUser.role 
+    if (!email || !password) {
+      return sendErrorResponse(res, "Email and password are required.", 400);
+    }
+
+
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      return sendErrorResponse(res, "No such user exists.", 404);
+    }
+
+    if (!existingUser.isVerified) {
+      return sendErrorResponse(res, "Account not verified.", 401);
+    }
+
+    // Compare the hashed password using bcrypt
+    // const passwordMatch = await bcrypt.compare(password, existingUser.password);
+    // if (!passwordMatch) {
+    //   return sendErrorResponse(res, "Invalid password.", 401);
+    // }
+
+    const tokenUser = getTokenUser(existingUser);
+
+    const accessToken = getJWT({ 
+      userId: tokenUser.userId,
+      role: tokenUser.role 
+  });
+
+    // console.log("Access Token: ", accessToken);
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: false,  // Should be true in production with HTTPS
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 ), 
     });
 
-      // console.log("Access Token: ", accessToken);
-  
-      res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: false,  // Should be true in production with HTTPS
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 ), 
-      });
-  
-      res
-      .status(200)
-      .json({ success: true, token : accessToken , data: tokenUser, message: "Logged in successfully." });
-    } catch (error) {
-      console.log("Error: ", error);
-      sendErrorResponse(res, error.message);
-    }
-  };
+    res
+    .status(200)
+    .json({ success: true, token : accessToken , data: tokenUser, message: "Logged in successfully." });
+  } catch (error) {
+    console.log("Error: ", error);
+    sendErrorResponse(res, error.message);
+  }
+};
 
 // Logout user
 const logout = async (req, res) => {
@@ -180,7 +188,10 @@ const forgotPassword = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
-      return sendSuccessResponse(res, "Reset password email sent successfully.");
+      return sendSuccessResponse(
+        res,
+        "Reset password email sent successfully."
+      );
     }
 
     const resetPasswordToken = getCryptoToken();
@@ -213,7 +224,11 @@ const resetPassword = async (req, res) => {
     }
 
     if (new Date() > existingUser.resetPasswordTokenExpiry) {
-      return sendErrorResponse(res, "Reset password token expired. Please generate a new one.", 400);
+      return sendErrorResponse(
+        res,
+        "Reset password token expired. Please generate a new one.",
+        400
+      );
     }
 
     if (existingUser.resetPasswordToken !== token) {
@@ -232,6 +247,26 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// Check session status
+const checkSession = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(200).json({
+        success: false,
+        isAuthenticated: false,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      isAuthenticated: true,
+      user: req.session.user,
+    });
+  } catch (error) {
+    sendErrorResponse(res, error.message);
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -239,4 +274,5 @@ module.exports = {
   logout,
   forgotPassword,
   resetPassword,
+  checkSession,
 };

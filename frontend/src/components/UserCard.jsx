@@ -10,6 +10,8 @@ const UserCard = ({ user, userType, onSendRequest }) => {
     e.preventDefault();
     setIsSending(true);
     try {
+      console.log(message)
+      console.log(user._id)
       await onSendRequest(user._id, message);
       setShowForm(false);
       setMessage('');

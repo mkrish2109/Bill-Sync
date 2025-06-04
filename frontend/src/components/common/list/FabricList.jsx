@@ -3,6 +3,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import { FaEye, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import LoadingSpinner from '../LoadingSpinner';
 import { ErrorAlert } from '../Alert';
+import { statusColors } from '../../../utils/colors';
 
 const FabricList = ({
   fabrics,
@@ -18,12 +19,12 @@ const FabricList = ({
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorAlert error={error}/>;
 
-  const statusColors = {
-    assigned: 'bg-primary-light/20 text-primary-light dark:bg-primary-dark/20 dark:text-primary-dark',
-    'in-progress': 'bg-warning-base/20 text-warning-base dark:bg-warning-hover/20 dark:text-warning-hover',
-    completed: 'bg-success-base/20 text-success-base dark:bg-success-hover/20 dark:text-success-hover',
-    cancelled: 'bg-error-base/20 text-error-base dark:bg-error-hover/20 dark:text-error-hover'
-  };
+  // const statusColors = {
+  //   assigned: 'bg-primary-light/20 text-primary-light dark:bg-primary-dark/20 dark:text-primary-dark',
+  //   'in-progress': 'bg-warning-base/20 text-warning-base dark:bg-warning-hover/20 dark:text-warning-hover',
+  //   completed: 'bg-success-base/20 text-success-base dark:bg-success-hover/20 dark:text-success-hover',
+  //   cancelled: 'bg-error-base/20 text-error-base dark:bg-error-hover/20 dark:text-error-hover'
+  // };
   
 
   return (

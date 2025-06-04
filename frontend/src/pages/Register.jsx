@@ -62,6 +62,19 @@ function Register() {
       toast.error(passwordValidationError);
       return;
     }
+
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    // Validate phone number format
+    if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(form.phone)) {
+      toast.error("Please enter a valid phone number");
+      return;
+    }
+
     const hashedPassword = await bcrypt.hash(form.password, 10);
     form.password = hashedPassword;
 

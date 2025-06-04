@@ -2,7 +2,7 @@ import { TextInput, Label } from "flowbite-react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import React, { useState } from "react";
 
-const PasswordInput = ({ label, id, name, required = true, onChange }) => {
+const PasswordInput = ({ label, id, name, required = true, onChange, autoComplete = "current-password" }) => {
   const [visible, setVisible] = useState(false);
 
   return (
@@ -15,6 +15,7 @@ const PasswordInput = ({ label, id, name, required = true, onChange }) => {
           type={visible ? "text" : "password"}
           required={required}
           onChange={onChange}
+          autoComplete={autoComplete}
           className="[&>div>input]:pr-[33px]"
         />
         {visible ? (

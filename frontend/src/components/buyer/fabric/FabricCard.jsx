@@ -32,19 +32,19 @@ const FabricCard = ({ fabric, onClick }) => {
         
         <div className="space-y-2">
           <div className="flex items-center text-sm text-text-light/90 dark:text-text-dark/90">
-            <FaBox className="mr-2 text-blue-500" />
+            <FaBox className="mr-2 text-blue-500 dark:text-blue-400" />
             <span>Ref: {referenceNumber}</span>
           </div>
           
           {worker && (
             <div className="flex items-center text-sm text-text-light/90 dark:text-text-dark/90">
-              <FaUser className="mr-2 text-purple-500" />
+              <FaUser className="mr-2 text-purple-500 dark:text-purple-400" />
               <span>Assigned to: {worker.name}</span>
             </div>
           )}
           
           <div className="flex items-center text-sm text-text-light/90 dark:text-text-dark/90">
-            <FaCalendarAlt className="mr-2 text-green-500" />
+            <FaCalendarAlt className="mr-2 text-green-500 dark:text-green-400" />
             <span>Created: {createdAt.toLocaleDateString()}</span>
           </div>
         </div>
