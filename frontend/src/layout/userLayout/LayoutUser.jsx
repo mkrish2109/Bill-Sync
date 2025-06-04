@@ -1,10 +1,8 @@
 // layouts/LayoutAdmin.js
 import { Outlet } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../SideBar";
 import Backdrop from "../Backdrop";
-import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
+import { SidebarProvider, useSidebar } from "../../contexts/SidebarContext";
 import AppNavbar from "../AppNavbar";
 
 const LayoutContent = () => {
@@ -12,17 +10,6 @@ const LayoutContent = () => {
 
   return (
     <div className="min-h-screen xl:flex bg-background-secondaryLight dark:bg-background-secondaryDark">
-      <ToastContainer 
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       
       <div>
         <Sidebar />

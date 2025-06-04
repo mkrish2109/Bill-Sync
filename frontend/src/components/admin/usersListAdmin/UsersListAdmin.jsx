@@ -106,7 +106,7 @@ function UsersListAdmin() {
                 <div className="flex items-center space-x-4">
                   <div className="flex-shrink-0 h-12 w-12 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600">
                     <img
-                      src="/images/profile.png"
+                      src="/images/profile.webp"
                       alt={user.fullName}
                       className="h-full w-full object-cover"
                     />

@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login, logout, getUserById } from "../../services/apiServices";
+import { api } from "../../helper/apiHelper";
+import { toast } from "react-toastify";
 
 // Shared fetch logic
 const fetchUserData = async (userId) => {
@@ -13,7 +15,6 @@ export const loginUser = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const res = await login(data);
-      console.log(res);
       return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || { message: err.message });
@@ -25,12 +26,10 @@ export const restoreUser = createAsyncThunk(
   "user/restoreUser",
   async (_, { rejectWithValue }) => {
     try {
-      const expiry = localStorage.getItem("tokenExpiry");
       const userId = localStorage.getItem("userId");
 
-      if (!userId || !expiry || Date.now() > Number(expiry)) {
+      if (!userId) {
         localStorage.removeItem("userId");
-        localStorage.removeItem("tokenExpiry");
         return null;
       }
 
@@ -56,7 +55,8 @@ export const logoutUser = createAsyncThunk(
   "user/logoutUser",
   async (_, { rejectWithValue }) => {
     try {
-      await logout();
+      const res = await logout();
+      return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || { message: err.message });
     }
@@ -70,12 +70,12 @@ const userSlice = createSlice({
     user: null,
     error: "",
     isAuthenticated: false,
-    message: ""
+    message: "",
   },
   reducers: {
     clearError: (state) => {
       state.error = "";
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -84,32 +84,20 @@ const userSlice = createSlice({
         state.error = "";
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        const expiry = Date.now() + 1000 * 60 * 60 * 24; // 24 hours
         state.user = action.payload.data;
         state.loading = false;
-        state.error = "";
-        state.message = action.payload.message;
         state.isAuthenticated = true;
-
-        // Store user data and token
+        state.error = "";
         localStorage.setItem("userId", action.payload.data.userId);
-        localStorage.setItem("role", action.payload.data.role);
-        localStorage.setItem("tokenExpiry", expiry);
-        localStorage.setItem("token", action.payload.token);
-        
-        // Log for debugging
-        console.log('Stored token:', action.payload.token);
-        console.log('Stored user data:', {
-          userId: action.payload.data.userId,
-          role: action.payload.data.role,
-          expiry
-        });
+        localStorage.setItem("token", action.payload?.token || "");
+        state.message = action.payload?.message;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
         state.error = action.payload?.message || "Login failed";
+        toast.error(state.error);
       })
       .addCase(fetchUser.pending, (state) => {
         state.loading = true;
@@ -125,6 +113,7 @@ const userSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         state.error = action.payload?.message || "Failed to fetch user";
+        toast.error(state.error);
       })
       .addCase(restoreUser.pending, (state) => {
         state.loading = true;
@@ -140,24 +129,24 @@ const userSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         state.error = action.payload?.message || "Session expired";
+        toast.error(state.error);
       })
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(logoutUser.fulfilled, (state) => {
-        localStorage.removeItem("userId");
-        localStorage.removeItem("role");
-        localStorage.removeItem("tokenExpiry");
+      .addCase(logoutUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
-        state.message = "Logged out successfully";
+        state.message = action.payload?.message || "Logged out successfully";
+        state.error = "";
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Logout failed";
+        toast.error(state.error);
       });
-  }
+  },
 });
 
 export const { clearError } = userSlice.actions;

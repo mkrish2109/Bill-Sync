@@ -20,13 +20,13 @@ module.exports = {
         // Text
         text: {
           light: '#111827',
-          dark: '#F9FAFB',
+          dark: '#FFFFFF',
           secondaryLight: '#6B7280',
-          secondaryDark: '#9CA3AF',
-          tertiaryLight: '#4B5563', // Added for less important text
-          tertiaryDark: '#6B7280',  // Added for less important dark text
-          invertedLight: '#FFFFFF', // For text on colored backgrounds
-          invertedDark: '#111827',  // For text on colored dark backgrounds
+          secondaryDark: '#B3B3B3',
+          tertiaryLight: '#4B5563',
+          tertiaryDark: '#9CA3AF',
+          invertedLight: '#FFFFFF',
+          invertedDark: '#111827',
         },
 
         // Surfaces

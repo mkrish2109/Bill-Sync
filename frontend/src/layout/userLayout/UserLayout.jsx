@@ -2,8 +2,7 @@ import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import UserFooter from "./UserFooter";
 import "react-toastify/dist/ReactToastify.css";
-import {  ToastContainer } from "react-toastify";
-import { SidebarProvider } from "../../context/SidebarContext";
+import { SidebarProvider } from "../../contexts/SidebarContext";
 import AppNavbar from "../AppNavbar";
 
 function UserLayout() {
@@ -14,15 +13,7 @@ function UserLayout() {
   return (
     <SidebarProvider>
       <AppNavbar variant="default" />
-      <ToastContainer position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover />
+      
       <Outlet />
       {!isLoginRegister && <UserFooter />}
     </SidebarProvider>

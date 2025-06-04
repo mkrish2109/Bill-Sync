@@ -6,7 +6,8 @@ const {
   logout,
   forgotPassword,
   resetPassword,
-} = require('../controllers/authController'); // Adjust the path if needed
+  checkSession
+} = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.post('/verify-email', verifyEmail);
 router.post('/logout', logout);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
+router.get('/check-session', checkSession);
 
 module.exports = router;

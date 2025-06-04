@@ -73,7 +73,7 @@ export default function UserMetaCard({ user, address, onUpdate }) {
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
             <div className="relative w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
               <img 
-                src={user?.image?.[0] || "/images/profile.png"} 
+                src={user?.image?.[0] || "/images/profile.webp"} 
                 alt={`${user?.fname} ${user?.lname}`} 
                 className="object-cover w-full h-full"
                 loading="lazy"

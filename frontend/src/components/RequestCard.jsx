@@ -1,5 +1,5 @@
 import { FaUser, FaClock, FaCheck, FaTimes } from 'react-icons/fa';
-import moment from 'moment';
+import { formatDistanceToNow } from 'date-fns';
 import {StatusBadge} from './common/StatusBadge';
 
 const RequestCard = ({ request, type, onAccept, onReject, userType }) => {
@@ -26,7 +26,7 @@ const RequestCard = ({ request, type, onAccept, onReject, userType }) => {
           <StatusBadge status={request.status} size="sm" />
           <span className="mx-2 text-text-tertiaryLight dark:text-text-tertiaryDark">|</span>
           <FaClock className="text-text-tertiaryLight dark:text-text-tertiaryDark mr-1" />
-          <span className="text-text-secondaryLight dark:text-text-secondaryDark">{moment(request.createdAt).fromNow()}</span>
+          <span className="text-text-secondaryLight dark:text-text-secondaryDark">{formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })}</span>
         </div>
         
         {type === 'received' && request.status === 'pending' && userType === 'worker' && (

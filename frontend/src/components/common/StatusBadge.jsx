@@ -1,31 +1,70 @@
+import { statusColors } from "../../utils/colors";
+
 export const StatusBadge = ({ status, size = 'md', className = '' }) => {
-const statusColors = {
-  pending: 'bg-warning-base/20 border-warning-base text-warning-base dark:bg-warning-hover/20 dark:text-warning-hover dark:border-warning-base',
-  accepted: 'bg-success-base/20 border-success-base text-success-base dark:bg-success-hover/20 dark:text-success-hover dark:border-success-base',
-  rejected: 'bg-error-base/20 border-error-base text-error-base dark:bg-error-hover/20 dark:text-error-hover dark:border-error-base',
-  assigned: 'bg-primary-light/20 border-primary-light text-primary-light dark:bg-primary-dark/20 dark:text-primary-dark dark:border-primary-dark',
-  'in-progress': 'bg-warning-base/20 border-warning-base text-warning-base dark:bg-warning-hover/20 dark:text-warning-hover dark:border-warning-base',
-  completed: 'bg-success-base/20 border-success-base text-success-base dark:bg-success-hover/20 dark:text-success-hover dark:border-success-base',
-  cancelled: 'bg-error-base/20 border-error-base text-error-base dark:bg-error-hover/20 dark:text-error-hover dark:border-error-base',
-  default: 'bg-secondary-light/20 border-secondary-light text-secondary-light dark:bg-secondary-dark/20 dark:text-secondary-dark dark:border-secondary-dark'
-};
+  // const statusColors = {
+  //   pending: {
+  //     bg: 'bg-warning-base/10 dark:bg-warning-base/20',
+  //     text: 'text-warning-base dark:text-warning-hover',
+  //     border: 'border-warning-base/30 dark:border-warning-base/40'
+  //   },
+  //   accepted: {
+  //     bg: 'bg-success-base/10 dark:bg-success-base/20',
+  //     text: 'text-success-base dark:text-green-200',
+  //     border: 'border-success-base/30 dark:border-success-base/40'
+  //   },
+  //   rejected: {
+  //     bg: 'bg-error-base/10 dark:bg-error-base/20',
+  //     text: 'text-error-base dark:text-error-hover',
+  //     border: 'border-error-base/30 dark:border-error-base/40'
+  //   },
+  //   assigned: {
+  //     bg: 'bg-primary-light/10 dark:bg-primary-dark/20',
+  //     text: 'text-primary-light dark:text-primary-dark',
+  //     border: 'border-primary-light/30 dark:border-primary-dark/40'
+  //   },
+  //   'in-progress': {
+  //     bg: 'bg-warning-base/10 dark:bg-warning-base/20',
+  //     text: 'text-warning-base dark:text-warning-hover',
+  //     border: 'border-warning-base/30 dark:border-warning-base/40'
+  //   },
+  //   completed: {
+  //     bg: 'bg-success-base/10 dark:bg-success-base/20',
+  //     text: 'text-success-base dark:text-green-200',
+  //     border: 'border-success-base/30 dark:border-success-base/40'
+  //   },
+  //   cancelled: {
+  //     bg: 'bg-error-base/10 dark:bg-error-base/20',
+  //     text: 'text-error-base dark:text-error-hover',
+  //     border: 'border-error-base/30 dark:border-error-base/40'
+  //   },
+  //   default: {
+  //     bg: 'bg-secondary-light/10 dark:bg-secondary-dark/20',
+  //     text: 'text-secondary-light dark:text-secondary-dark',
+  //     border: 'border-secondary-light/30 dark:border-secondary-dark/40'
+  //   }
+  // };
 
-const sizeClasses = {
-  sm: 'px-2 py-0.5 text-xs',
-  md: 'px-3 py-1 text-sm',
-  lg: 'px-4 py-1.5 text-base'
-};
+  const sizeClasses = {
+    sm: 'px-2 py-0.5 text-xs font-medium',
+    md: 'px-2.5 py-1 text-sm font-medium',
+    lg: 'px-3 py-1.5 text-base font-medium'
+  };
 
-return (
-  <span 
-    className={`
-      inline-flex items-center capitalize rounded-full font-medium border
-      ${statusColors[status] || statusColors.default}
-      ${sizeClasses[size]}
-      ${className}
-    `}
-  >
-    {status}
-  </span>
-);
+  const colors = statusColors[status] || statusColors.default;
+
+  return (
+    <span 
+      className={`
+        inline-flex items-center justify-center capitalize rounded-full
+        ${colors.bg}
+        ${colors.text}
+        ${colors.border}
+        ${sizeClasses[size]}
+        ${className}
+        transition-colors duration-200
+      `}
+    >
+      {status}
+    </span>
+  );
 };

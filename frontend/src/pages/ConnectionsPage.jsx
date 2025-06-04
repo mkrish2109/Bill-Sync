@@ -5,6 +5,7 @@ import { api } from '../helper/apiHelper';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { ErrorAlert } from '../components/common/Alert';
 import { StatusBadge } from '../components/common/StatusBadge';
+import { useAuth } from '../contexts/AuthContext';
 
 const ConnectionsPage = () => {
   const [connections, setConnections] = useState([]);
@@ -14,7 +15,8 @@ const ConnectionsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name'); // 'name' or 'date'
   const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
-  const role = localStorage.getItem('role');
+  const { user } = useAuth();
+  const role = user?.role;
   const navigate = useNavigate();
 
   const filterAndSortConnections = useCallback(() => {
@@ -209,7 +211,6 @@ const ConnectionsPage = () => {
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Recent Activity:</h4>
                 <div className="space-y-2">
                   {requestHistory.slice(0, 3).map((request) => (
-
                     <div 
                       key={request._id}
                       className="text-sm text-gray-600"

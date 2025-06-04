@@ -1,41 +1,58 @@
 import { api } from "../helper/apiHelper";
 
 export const login = async (data) => {
+  try {
     const response = await api.post("/auth/login", data);
     return response.data;
-  };
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Login failed");
+  }
+};
   
 export const logout = async () => {
-  const response = await api.post("/auth/logout"); // or your logout logic
-  if (response.status !== 200) {
-    throw new Error("Failed to log out");
+  try {
+    const response = await api.post("/auth/logout");
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Logout failed");
   }
-  return response.data;
 };
 
-
 export const forgotPassword = async (data) => {
-  const response = await api.post("/auth/forgot-password", data);
-  return response.data;
-}
+  try {
+    const response = await api.post("/auth/forgot-password", data);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to send reset password email");
+  }
+};
 
 export const resetPassword = async (data) => {
-  const response = await api.post("/auth/reset-password", data);
-  return response.data;
-}
-  
+  try {
+    const response = await api.post("/auth/reset-password", data);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to reset password");
+  }
+};
 
 export const getUserById = async (userId) => {
-  const res = await api.get(`/users/${userId}`);
-  return res.data;
+  try {
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
+    const response = await api.get(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to fetch user");
+  }
 };
 
 export const getAllUsers = async () => {
-  const response = await api.get("/admin/users",{
-    withCredentials: true, 
-  });
-  if (response.status !== 200) {
-    throw new Error("Failed to fetch users");
+  try {
+    const response = await api.get("/admin/users");
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to fetch users");
   }
-  return response.data; 
-}
+};

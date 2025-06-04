@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSocket } from './SocketContext';
+import { useAuth } from './AuthContext';
 import { getNotifications, markAsRead, markAllAsRead, deleteNotification, clearAllNotifications } from '../services/notificationService';
 
 const NotificationContext = createContext();
@@ -18,8 +19,9 @@ export const NotificationProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { socket } = useSocket();
-  const role = localStorage.getItem('role');
-  const userId = localStorage.getItem('userId');
+  const { user } = useAuth();
+  const role = user?.role;
+  const userId = user?.userId;
 
   // Fetch notifications from the server
   const fetchNotifications = async () => {

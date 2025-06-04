@@ -5,16 +5,20 @@ import { FaSearch, FaSort } from 'react-icons/fa';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { ErrorAlert } from '../components/common/Alert';
 import { useSocket } from '../contexts/SocketContext';
+import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 const NetworkPage = () => {
-  const role = localStorage.getItem('role');
+  const { user } = useAuth();
+  const role = user?.role?.toLowerCase();
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
-  const { socket, isConnected } = useSocket();
+  const { socket, isConnected, isInitializing } = useSocket();
   const listenersSetRef = useRef(false);
+  const [isSocketReady, setIsSocketReady] = useState(false);
 
   const {
     availableUsers,
@@ -25,16 +29,39 @@ const NetworkPage = () => {
   } = useAvailableWorkers();
 
   const handleWorkerUpdate = useCallback((data) => {
+    toast.info(`Worker availability updated: ${data.workerName} is now ${data.status}`);
     refetchUsers();
   }, [refetchUsers]);
 
   const handleNewWorker = useCallback((data) => {
+    toast.success(`New worker registered: ${data.workerName}`);
     refetchUsers();
   }, [refetchUsers]);
 
   useEffect(() => {
+    if (isInitializing) {
+      return; // Don't do anything while socket is initializing
+    }
+
+    // Add a small delay to ensure socket is ready
+    const socketReadyTimeout = setTimeout(() => {
+      setIsSocketReady(true);
+    }, 2000);
+
+    return () => {
+      clearTimeout(socketReadyTimeout);
+    };
+  }, [isInitializing]);
+
+  useEffect(() => {
+    if (!isSocketReady || isInitializing) {
+      return;
+    }
+
     if (!socket || !isConnected) {
-      console.warn('Socket not available or not connected in NetworkPage');
+      if (socket && !isConnected) {
+        toast.warning('Connection to real-time updates is not available. Some features may be limited.');
+      }
       return;
     }
 
@@ -42,19 +69,46 @@ const NetworkPage = () => {
       return;
     }
     
-    // Listen for worker availability updates and new registrations
-    socket.on('worker_availability_update', handleWorkerUpdate);
-    socket.on('new_worker_registered', handleNewWorker);
-    listenersSetRef.current = true;
+    try {
+      // Listen for worker availability updates and new registrations
+      socket.on('worker_availability_update', handleWorkerUpdate);
+      socket.on('new_worker_registered', handleNewWorker);
+      
+      // Handle connection events
+      socket.on('connect_error', (error) => {
+        toast.error('Connection error: ' + error.message);
+      });
+
+      socket.on('reconnect_attempt', (attemptNumber) => {
+        toast.info(`Attempting to reconnect (${attemptNumber}/5)...`);
+      });
+
+      socket.on('reconnect', () => {
+        toast.success('Reconnected to real-time updates');
+        refetchUsers(); // Refresh data after reconnection
+      });
+
+      listenersSetRef.current = true;
+    } catch (error) {
+      console.error('Error setting up socket listeners:', error);
+      toast.error('Failed to setup real-time updates');
+    }
 
     return () => {
       if (socket && listenersSetRef.current) {
-        socket.off('worker_availability_update', handleWorkerUpdate);
-        socket.off('new_worker_registered', handleNewWorker);
-        listenersSetRef.current = false;
+        try {
+          socket.off('worker_availability_update', handleWorkerUpdate);
+          socket.off('new_worker_registered', handleNewWorker);
+          socket.off('connect_error');
+          socket.off('reconnect_attempt');
+          socket.off('reconnect');
+          listenersSetRef.current = false;
+        } catch (error) {
+          console.error('Error cleaning up socket listeners:', error);
+        }
       }
     };
-  }, [socket, isConnected, handleWorkerUpdate, handleNewWorker]);
+  }, [socket, isConnected, isInitializing, isSocketReady, handleWorkerUpdate, handleNewWorker, refetchUsers]);
 
   // Filter and sort users
   const filteredUsers = (availableUsers?.filter(user => 
@@ -93,11 +147,11 @@ const NetworkPage = () => {
     }
   };
 
-  const handleSendRequest = async (workerId) => {
+  const handleSendRequest = async (workerId, message) => {
     try {
-      await sendRequest(workerId);
+      await sendRequest(workerId, message);
     } catch (error) {
-      console.error('Failed to send request:', error);
+      toast.error(error.message || 'Failed to send request');
     }
   };
 

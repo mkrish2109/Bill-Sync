@@ -13,14 +13,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useCallback, useMemo, useRef, useEffect, useState } from "react";
-import { logout } from "../services/apiServices";
 import { logoutUser } from "../redux/slices/userSlice";
 import { toast } from "react-toastify";
 import ThemeToggleButton from "../components/common/ThemeToggleButton";
 import SideBarToggle from "../components/common/SideBarToggle";
-import { useSidebar } from "../context/SidebarContext";
+import { useSidebar } from "../contexts/SidebarContext";
 import { Logo } from "../components/common/Logo";
-import NotificationDropdown from "../components/NotificationDropdown";
 import NotificationBell from "../components/NotificationBell";
 
 const NavLink = ({ to, children, exact = false, className = "" }) => {
@@ -34,9 +32,14 @@ const NavLink = ({ to, children, exact = false, className = "" }) => {
       as={Link}
       to={to}
       active={isActive}
-      className={`text-gray-700 hover:text-[#44b8ff] dark:text-gray-300 dark:hover:text-[#44b8ff] text-sm py-2 px-3 w-full text-center md:w-auto ${
-        isActive ? "text-[#44b8ff] dark:text-[#44b8ff] font-medium" : ""
-      } ${className}`}
+      className={`transition-colors duration-200 
+    text-gray-700 hover:text-blue-800 
+    dark:text-gray-300 dark:hover:text-blue-400 
+    text-sm py-2 px-3 w-full text-center md:w-auto rounded-md ${
+      isActive
+        ? "bg-blue-100/50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 font-medium"
+        : ""
+    } ${className}`}
     >
       {children}
     </NavbarLink>
@@ -47,11 +50,12 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
   const user = useSelector((store) => store?.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const inputRef = useRef(null);
 
-  const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar?.() || {};
+  const { isMobileOpen, toggleSidebar, toggleMobileSidebar } =
+    useSidebar?.() || {};
 
   const handleToggle = useCallback(() => {
     if (window.innerWidth >= 1024) {
@@ -63,26 +67,30 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
 
   const handleLogOut = useCallback(async () => {
     try {
-      const response = await logout();
-      dispatch(logoutUser());
-      if (response.status === 200) {
-        toast.warning("Logged out successfully", { pauseOnFocusLoss: false });
+      const response = await dispatch(logoutUser());
+      if (logoutUser.fulfilled.match(response)) {
+        toast.success(logoutUser.payload?.message || "Logout successful");
         navigate("/login");
-      } else {
-        toast.error(response.message);
+      }
+      if (logoutUser.rejected.match(response)) {
+        toast.error(response.payload?.message || "Logout failed!");
+        return;
       }
     } catch (error) {
       toast.error("An error occurred during logout");
     }
   }, [dispatch, navigate]);
 
-  const handleSearch = useCallback((e) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
-      setSearchTerm("");
-    }
-  }, [navigate, searchTerm]);
+  const handleSearch = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (searchTerm.trim()) {
+        navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+        setSearchTerm("");
+      }
+    },
+    [navigate, searchTerm]
+  );
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -140,26 +148,30 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
   const userEmail = user?.email || "Not logged in";
 
   return (
-    <Navbar className="sticky top-0 flex w-full z-10 bg-background-light dark:bg-background-dark shadow-md border-b border-gray-200 dark:border-gray-700">
+    <Navbar className="sticky top-0 flex w-full z-10 bg-background-light dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-700">
       <div className="flex flex-col items-center justify-between grow">
         <div className="flex items-center justify-between w-full gap-2 px-3 sm:gap-4 lg:px-0">
           {showSidebarToggle && (
-            <SideBarToggle handleToggle={handleToggle} isMobileOpen={isMobileOpen} />
+            <SideBarToggle
+              handleToggle={handleToggle}
+              isMobileOpen={isMobileOpen}
+            />
           )}
 
-          <NavbarBrand href="/" className={showSidebarToggle ? "lg:hidden" : ""}>
+          <NavbarBrand
+            href="/"
+            className={showSidebarToggle ? "lg:hidden" : ""}
+          >
             <Logo variant="full" size="lg" />
           </NavbarBrand>
 
           {variant === "default" && (
-            <NavbarCollapse className="bg-background-light dark:bg-background-dark md:bg-transparent w-full md:w-auto absolute md:relative top-full left-0 right-0 border-b border-gray-200 dark:border-gray-700 md:border-none">
-              <div className="flex flex-col md:flex-row items-center py-2 md:py-0">
-                <NavLink to="/" exact>
-                  Home
-                </NavLink>
-                <NavLink to="/about">About</NavLink>
-                <NavLink to="/contact">Contact</NavLink>
-              </div>
+            <NavbarCollapse className=" md:bg-transparent w-full md:w-auto absolute md:relative top-full left-0 right-0 border-b border-gray-200 dark:border-gray-700 md:border-none">
+              <NavLink to="/" exact>
+                Home
+              </NavLink>
+              <NavLink to="/about">About</NavLink>
+              <NavLink to="/contact">Contact</NavLink>
             </NavbarCollapse>
           )}
 
@@ -192,7 +204,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <button 
+                  <button
                     type="button"
                     className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-text-secondaryLight dark:border-gray-800 dark:bg-background-light/[0.03] dark:text-gray-400"
                     onClick={() => inputRef.current?.focus()}
@@ -207,7 +219,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
 
           <div className="flex md:order-2 gap-2 items-center">
             <ThemeToggleButton />
-            
+
             {user && <NotificationBell />}
 
             <Dropdown
@@ -216,7 +228,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
               label={
                 <Avatar
                   alt="User settings"
-                  img={user?.profilePicture || "/images/profile.png"}
+                  img={user?.profilePicture || "/images/profile.webp"}
                   rounded
                   bordered
                   className="border-gray-300 dark:border-gray-600"
@@ -224,7 +236,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
               }
               className="z-50 w-60"
             >
-              <DropdownHeader className="bg-background-light dark:bg-background-dark">
+              <DropdownHeader className="bg-background-light dark:bg-gray-900">
                 <span className="block text-sm font-semibold text-gray-800 dark:text-text-dark">
                   {userName}
                 </span>

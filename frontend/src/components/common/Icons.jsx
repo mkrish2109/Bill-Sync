@@ -10,7 +10,7 @@ import {
   HiDocumentText,
   HiOutlineViewGridAdd
 } from "react-icons/hi";
-import { FaUsersCog, FaTools,FaRegLightbulb,FaChartLine,FaShieldAlt,FaHandshake } from "react-icons/fa";
+import { FaUsersCog, FaTools, FaRegLightbulb, FaChartLine, FaShieldAlt, FaHandshake } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import { MdWork, MdShoppingCart } from "react-icons/md";
 
@@ -30,8 +30,8 @@ export {
   IoLogOut,
   MdWork,
   MdShoppingCart,
-  FaRegLightbulb, 
-  FaChartLine, 
-  FaShieldAlt, 
+  FaRegLightbulb,
+  FaChartLine,
+  FaShieldAlt,
   FaHandshake
 }; 

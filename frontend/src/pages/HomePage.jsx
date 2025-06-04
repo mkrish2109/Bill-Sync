@@ -4,7 +4,7 @@ import {
   FaChartLine, 
   FaShieldAlt, 
   FaHandshake,
-} from "../components/common/Icons";
+} from "../components/icons/homeIcons";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { PageMeta } from "../components/common/PageMeta";
@@ -82,7 +82,7 @@ const HomePage = () => {
                       className="border border-gray-200 dark:border-gray-700"
                     >
                       <Avatar 
-                        img={`https://randomuser.me/api/portraits/${i % 2 === 0 ? 'men' : 'women'}/${i+20}.jpg`} 
+                        img={`/images/avatar${i}.webp`} 
                         rounded 
                         size="sm"
                         className="hover:scale-110 transition-transform"
@@ -95,33 +95,38 @@ const HomePage = () => {
                 </p>
               </motion.div>
             </div>
-            <div className="md:w-1/2">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="relative"
-              >
-                {/* <div className="absolute -inset-4 bg-blue-400/20 dark:bg-blue-600/20 rounded-2xl blur-lg"></div> */}
-                <img 
-                  src="/images/hero-image.png"
-                  alt="Billing dashboard" 
-                  className="relative w-full max-w-2xl mx-auto" 
-                />
-              </motion.div>
-            </div>
+           <div className="md:w-1/2">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="relative"
+            >
+              <img 
+              src="/images/hero-image.webp"
+              alt="Modern billing dashboard interface showing analytics and payment processing"
+              className="relative w-full max-w-2xl mx-auto object-cover "
+              fetchpriority="high"
+              width="800"
+              height="600"
+              loading="eager"
+              decoding="async"
+            />
+
+            </motion.div>
+          </div>
           </div>
         </section>
 
         {/* Trust Badges */}
-        <section className="py-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+        <section className="py-8 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
           <div className="container mx-auto px-4">
-            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
+            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-90">
               {['AWS', 'Stripe', 'Google Cloud', 'Microsoft', 'PayPal'].map((company) => (
                 <motion.div
                   key={company}
                   whileHover={{ scale: 1.1 }}
-                  className="text-gray-500 dark:text-gray-400 font-bold text-xl md:text-2xl"
+                  className="text-gray-600 dark:text-gray-300 font-bold text-xl md:text-2xl hover:text-gray-800 dark:hover:text-gray-100 transition-colors"
                 >
                   {company}
                 </motion.div>
@@ -186,7 +191,7 @@ const HomePage = () => {
                 >
                   <div className="absolute -inset-4 bg-blue-400/10 dark:bg-blue-600/10 rounded-2xl blur-lg"></div>
                   <img 
-                    src="/images/dashboard-preview.png"
+                    src="/images/dashboard-preview.webp"
                     alt="Tex Bill dashboard preview" 
                     className="relative rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 w-full" 
                   />
@@ -231,21 +236,21 @@ const HomePage = () => {
                 {
                   name: "Sarah Johnson",
                   role: "Freelance Designer",
-                  avatar: "/images/avatar1.jpg",
+                  avatar: "/images/avatar1.webp",
                   quote: "Tex Bill has saved me so much time! I can now generate professional invoices in minutes and track all my payments in one place.",
                   rating: 5
                 },
                 {
                   name: "Michael Chen",
                   role: "Small Business Owner",
-                  avatar: "/images/avatar2.jpg",
+                  avatar: "/images/avatar2.webp",
                   quote: "The analytics dashboard gives me clear insights into my cash flow. I've improved my payment collection rate by 30% since switching.",
                   rating: 5
                 },
                 {
                   name: "Emily Rodriguez",
                   role: "Consultant",
-                  avatar: "/images/avatar3.jpg",
+                  avatar: "/images/avatar3.webp",
                   quote: "Client management is so easy with Tex Bill. The recurring billing feature is a game-changer for my retainer clients.",
                   rating: 5
                 }
@@ -261,20 +266,14 @@ const HomePage = () => {
                     <div className="mb-4 flex items-center">
                       <Avatar img={testimonial.avatar} rounded size="lg" />
                       <div className="ml-4">
-                        <h4 className="font-bold text-gray-800 dark:text-white">{testimonial.name}</h4>
+                        <h3 className="font-bold text-gray-800 dark:text-white">{testimonial.name}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300">{testimonial.role}</p>
                       </div>
                     </div>
                     <p className="text-gray-600 dark:text-gray-300 italic mb-4 flex-grow">
                       "{testimonial.quote}"
                     </p>
-                    <div className="flex text-amber-400">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <svg key={i} className="w-5 h-5 fill-current" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
-                    </div>
+                    <StarRating rating={testimonial.rating} />
                   </Card>
                 </motion.div>
               ))}
@@ -309,14 +308,13 @@ const HomePage = () => {
             <SectionHeader
               title="Ready to Transform Your Billing Process?"
               subtitle="Join thousands of professionals who trust Tex Bill for their billing needs."
-              className="mb-8"
+              className="mb-8 text-gray-800 dark:text-white"
             />
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button 
-                // gradientDuoTone="cyanToBlue" 
                 size="xl"
                 onClick={() => navigate('/register')}
-                className="mx-2 mb-4 group"
+                className="mx-2 mb-4 group bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <span className="group-hover:scale-105 transition-transform">
                   Start Your Free Trial
@@ -324,10 +322,9 @@ const HomePage = () => {
               </Button>
               <Button 
                 outline 
-                // gradientDuoTone="cyanToBlue"
                 size="xl"
                 onClick={() => navigate('/contact')}
-                className="mx-2 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
+                className="mx-2 text-blue-600 border-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-gray-700 transition-colors"
               >
                 Contact Sales
               </Button>
@@ -338,5 +335,44 @@ const HomePage = () => {
     </>
   );
 };
+
+// Replace the star rating SVG with a simple component
+const StarRating = ({ rating }) => {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  const totalStars = 5;
+
+  return (
+    <div className="flex text-amber-400">
+      {[...Array(fullStars)].map((_, i) => (
+        <svg key={`full-${i}`} className="w-5 h-5 fill-current" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+
+      {hasHalfStar && (
+        <svg key="half" className="w-5 h-5 fill-current" viewBox="0 0 20 20">
+          <defs>
+            <linearGradient id="half-grad">
+              <stop offset="50%" stopColor="currentColor" />
+              <stop offset="50%" stopColor="transparent" />
+            </linearGradient>
+          </defs>
+          <path
+            fill="url(#half-grad)"
+            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+          />
+        </svg>
+      )}
+
+      {[...Array(totalStars - fullStars - (hasHalfStar ? 1 : 0))].map((_, i) => (
+        <svg key={`empty-${i}`} className="w-5 h-5 fill-current text-gray-300" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+    </div>
+  );
+};
+
 
 export default HomePage;

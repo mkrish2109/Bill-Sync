@@ -30,11 +30,12 @@ function Login() {
     }
 
     try {
-      const loginResponse = await dispatch(loginUser({ email, password, rememberMe }));
-
+      const loginResponse = await dispatch(
+        loginUser({ email, password, rememberMe })
+      );
       if (loginUser.fulfilled.match(loginResponse)) {
         const userId = loginResponse.payload.data.userId;
-
+        toast.success(loginResponse.payload?.message || "Login successful!");
         const userResponse = await dispatch(fetchUser(userId));
         if (fetchUser.fulfilled.match(userResponse)) {
           const role = userResponse.payload.role;
@@ -52,17 +53,17 @@ function Login() {
               navigate("/");
           }
         } else {
-          toast.error(userResponse.payload?.message || "Failed to fetch user info.");
+          toast.error(
+            userResponse.payload?.message || "Failed to fetch user info."
+          );
         }
       } else {
         toast.error(loginResponse.payload?.message || "Login failed!");
       }
-
     } catch (err) {
       toast.error(err.message || "Something went wrong during login.");
     }
   };
-
 
   useEffect(() => {
     // Check for remembered credentials
@@ -75,33 +76,26 @@ function Login() {
 
   useEffect(() => {
     if (error) {
-      toast.error(error, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      toast.error(error);
     }
   }, [error]);
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-65px)] bg-gradient-to-br from-background-secondaryLight to-background-light dark:from-background-secondaryDark dark:to-surface-dark">
       <PageMeta title="Login | Text Bill" />
-      
+
       <div className="w-full max-w-md px-4 py-8">
         <div className="p-8 rounded-lg shadow-xl bg-background-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
           <h1 className="text-2xl font-bold text-center mb-6 text-text-light dark:text-text-dark">
             Welcome Back
           </h1>
-          
+
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div>
-              <Label 
-                htmlFor="email" 
-                value="Email address" 
-                className="mb-2 block text-text-light dark:text-text-dark" 
+              <Label
+                htmlFor="email"
+                value="Email address"
+                className="mb-2 block text-text-light dark:text-text-dark"
               />
               <TextInput
                 id="email"
@@ -118,13 +112,13 @@ function Login() {
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <Label 
-                  htmlFor="password" 
-                  value="Password" 
-                  className="text-text-light dark:text-text-dark" 
+                <Label
+                  htmlFor="password"
+                  value="Password"
+                  className="text-text-light dark:text-text-dark"
                 />
-                <Link 
-                  to="/forgot-password" 
+                <Link
+                  to="/forgot-password"
                   className="text-sm underline text-secondary-light hover:text-primary-light dark:text-secondary-dark dark:hover:text-primary-dark"
                 >
                   Forgot password?
@@ -149,7 +143,10 @@ function Login() {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 rounded border-border-light dark:border-border-dark text-primary-light dark:text-primary-dark focus:ring-primary-light dark:focus:ring-primary-dark"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-text-light dark:text-text-dark">
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-text-light dark:text-text-dark"
+              >
                 Remember me
               </label>
             </div>
@@ -163,15 +160,32 @@ function Login() {
             >
               {loading ? (
                 <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Logging in...
                 </span>
-              ) : "Sign in"}
+              ) : (
+                "Sign in"
+              )}
             </Button>
-
 
             <div className="text-center text-sm text-secondary-light dark:text-secondary-dark">
               Don't have an account?{" "}

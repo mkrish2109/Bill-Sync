@@ -5,17 +5,15 @@ import {
   HiUser, 
   HiShoppingBag, 
   HiChevronDown,
-  HiOutlineViewGrid,
   HiOutlineDotsHorizontal,
-  HiCog,
   HiDocumentText,
   HiOutlineViewGridAdd
 } from "react-icons/hi";
 import { FaUsersCog, FaTools } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
-import { MdWork, MdShoppingCart } from "react-icons/md";
+import { MdWork } from "react-icons/md";
 import { useSelector } from "react-redux";
-import { useSidebar } from "../context/SidebarContext";
+import { useSidebar } from "../contexts/SidebarContext";
 import { Logo } from "../components/common/Logo";
 // Lazy load menu configurations
 const menuConfigurations = {
@@ -326,6 +324,7 @@ function Sidebar() {
           <Link 
             to="/" 
             className={`flex items-center ${(isExpanded || isHovered || isMobileOpen) ? '' : 'justify-center'}`}
+            aria-label="Home"
           >
             {(isExpanded || isHovered || isMobileOpen) ? (
               <Logo variant="full" size="lg" />

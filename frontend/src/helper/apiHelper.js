@@ -1,6 +1,11 @@
 import axios from 'axios';
-const baseURL = "http://localhost:5000/api";
+
+const baseURL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+const socketURL = process.env.REACT_APP_SOCKET_URL || "http://localhost:5000";
+
 export const api = axios.create({
-  baseURL: baseURL,
-  withCredentials: true, 
+  baseURL,
+  withCredentials: true,
 });
+
+export const getSocketURL = () => socketURL;

@@ -1,11 +1,12 @@
 // WorkerDashboard.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../helper/apiHelper';
 import { useSelector } from 'react-redux';
 import { FaTasks } from 'react-icons/fa';
 import Dashboard from '../dashboard/Dashboard';
 import AssignmentCard from '../assignment/AssignmentCard';
+import { getUserRequests } from '../../services/api';
 
 const WorkerDashboard = () => {
   const navigate = useNavigate();
@@ -13,21 +14,52 @@ const WorkerDashboard = () => {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [requestStatus, setRequestStatus] = useState({
+    pending: 0,
+    accepted: 0,
+    rejected: 0,
+    total: 0
+  });
+
+  // Memoize the transformed assignments to prevent unnecessary recalculations
+  const transformedAssignments = useMemo(() => 
+    assignments.map(item => ({
+      ...item,
+      status: item.assignmentStatus || 'unassigned'
+    })),
+    [assignments]
+  );
 
   useEffect(() => {
-    const fetchAssignments = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/workers/fabrics?workerId=${user._id}`);
-        setAssignments(response.data.data);
+        const [assignmentsResponse, requestsResponse] = await Promise.all([
+          api.get(`/workers/fabrics?workerId=${user._id}`),
+          getUserRequests()
+        ]);
+        
+        setAssignments(assignmentsResponse.data.data);
+        
+        // Process request status data
+        const { sentRequests, receivedRequests } = requestsResponse.data.data;
+        const allRequests = [...sentRequests, ...receivedRequests];
+        
+        const statusCounts = allRequests.reduce((acc, request) => {
+          acc[request.status] = (acc[request.status] || 0) + 1;
+          acc.total = (acc.total || 0) + 1;
+          return acc;
+        }, { pending: 0, accepted: 0, rejected: 0, total: 0 });
+        
+        setRequestStatus(statusCounts);
       } catch (err) {
-        setError(err.message || 'Failed to fetch assignments');
+        setError(err.message || 'Failed to fetch data');
       } finally {
         setLoading(false);
       }
     };
     
-    fetchAssignments();
+    fetchData();
   }, [user._id]);
 
   const handleStatusUpdate = async (assignmentId, newStatus) => {
@@ -46,12 +78,6 @@ const WorkerDashboard = () => {
       setError(err.message || 'Failed to update status');
     }
   };
-
-  // Transform assignments to include status at root level for the dashboard
-  const transformedAssignments = assignments.map(item => ({
-    ...item,
-    status: item.assignmentStatus || 'unassigned'
-  }));
 
   return (
     <Dashboard
@@ -73,8 +99,9 @@ const WorkerDashboard = () => {
           onClick={() => navigate(`/worker/fabrics/${item.fabric._id}`)}
         />
       )}
+      userRequests={requestStatus}
     />
   );
 };
 
-export default WorkerDashboard;
+export default React.memo(WorkerDashboard);
