@@ -24,7 +24,6 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import UserProfile from './pages/UserProfile';
 import store from './redux/store';
-import { restoreUser } from './redux/slices/userSlice';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import LayoutUser from './layout/userLayout/LayoutUser';
 import HomePage from './pages/HomePage';
@@ -45,10 +44,6 @@ const AppRoutes = () => {
   const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.user);
   const role = user?.role;
-
-  useEffect(() => {
-    dispatch(restoreUser());
-  }, [dispatch]);
 
   if (loading) {
     return <LoadingSpinner />;

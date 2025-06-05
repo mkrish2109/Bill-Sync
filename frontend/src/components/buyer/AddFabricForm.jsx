@@ -3,11 +3,14 @@ import { api } from '../../helper/apiHelper';
 import FabricForm from '../fabrics/FabricForm';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { ErrorAlert } from '../common/Alert';
+import { useSocket } from '../../contexts/SocketContext';
+import { toast } from 'react-toastify';
 
 const AddFabricForm = () => {
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { socket, isConnected } = useSocket();
 
   useEffect(() => {
     const fetchConnectedWorkers = async () => {
@@ -29,6 +32,21 @@ const AddFabricForm = () => {
     };
     fetchConnectedWorkers();
   }, []);
+
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    // Listen for fabric assignment notifications
+    const handleFabricAssignment = (data) => {
+      toast.info(data.message);
+    };
+
+    socket.on('new_fabric_assignment', handleFabricAssignment);
+
+    return () => {
+      socket.off('new_fabric_assignment', handleFabricAssignment);
+    };
+  }, [socket, isConnected]);
 
   if (loading) {
     return <LoadingSpinner />;

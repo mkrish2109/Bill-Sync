@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../helper/apiHelper';
 import { confirmAlert } from 'react-confirm-alert';
 import { FabricList } from '../fabrics/FabricList';
+import { useSocket } from '../../contexts/SocketContext';
+import { toast } from 'react-toastify';
 
 const BuyerFabricList = () => {
   const [fabricData, setFabricData] = useState({
@@ -9,6 +11,7 @@ const BuyerFabricList = () => {
     loading: true,
     error: null
   });
+  const { socket, isConnected } = useSocket();
 
   const fetchFabrics = async () => {
     try {
@@ -39,6 +42,31 @@ const BuyerFabricList = () => {
   useEffect(() => {
     fetchFabrics();
   }, []);
+
+  useEffect(() => {
+    console.log('Socket connection status:', { isConnected, socket: !!socket });
+    
+    if (!socket || !isConnected) {
+      console.log('Socket not connected, skipping event listener setup');
+      return;
+    }
+
+    // Listen for fabric assignment notifications
+    const handleFabricAssignment = (data) => {
+      console.log('Received fabric assignment notification:', data);
+      toast.info(data.message);
+      // Refresh the fabric list to show updated assignments
+      fetchFabrics();
+    };
+
+    console.log('Setting up socket event listener for new_fabric_assignment');
+    socket.on('new_fabric_assignment', handleFabricAssignment);
+
+    return () => {
+      console.log('Cleaning up socket event listener');
+      socket.off('new_fabric_assignment', handleFabricAssignment);
+    };
+  }, [socket, isConnected]);
 
   const handleDelete = async (id) => {
     confirmAlert({

@@ -68,6 +68,17 @@ const updateAssignmentStatus = async (req, res) => {
         success: false,
         error: 'Assignment not found'
       });
+    }if(assignment.status === status) {
+      return res.status(400).json({
+        success: false,
+        error: 'Assignment is already in this status'
+      });
+    }
+    if (!assignment) {
+      return res.status(404).json({
+        success: false,
+        error: 'Assignment not found'
+      });
     }
 
     // Create history entry

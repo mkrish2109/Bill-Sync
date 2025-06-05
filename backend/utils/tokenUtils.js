@@ -1,6 +1,10 @@
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 
+// Token expiration times
+const ACCESS_TOKEN_EXPIRY = "15m";
+const REFRESH_TOKEN_EXPIRY = "7d";
+
 // Function to generate a random crypto token
 const getCryptoToken = (randomBytes = 40) => {
   return crypto.randomBytes(randomBytes).toString("hex");
@@ -18,10 +22,25 @@ const getTokenUser = (user) => {
   };
 };
 
-// Function to generate a JWT token
-const getJWT = (payload) => {
+// Function to generate an access token
+const generateAccessToken = (user) => {
+  const payload = {
+    ...getTokenUser(user),
+    type: "access",
+  };
   return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRY,
+    expiresIn: ACCESS_TOKEN_EXPIRY,
+  });
+};
+
+// Function to generate a refresh token
+const generateRefreshToken = (user) => {
+  const payload = {
+    userId: user._id,
+    type: "refresh",
+  };
+  return jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: REFRESH_TOKEN_EXPIRY,
   });
 };
 
@@ -30,4 +49,22 @@ const verifyJWT = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
 
-module.exports = { getJWT, getCryptoToken, getTokenUser, verifyJWT };
+// Function to verify refresh token specifically
+const verifyRefreshToken = (token) => {
+  const decoded = verifyJWT(token);
+  if (decoded.type !== "refresh") {
+    throw new Error("Invalid token type");
+  }
+  return decoded;
+};
+
+module.exports = {
+  generateAccessToken,
+  generateRefreshToken,
+  getCryptoToken,
+  getTokenUser,
+  verifyJWT,
+  verifyRefreshToken,
+  ACCESS_TOKEN_EXPIRY,
+  REFRESH_TOKEN_EXPIRY,
+};

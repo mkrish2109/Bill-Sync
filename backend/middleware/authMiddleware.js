@@ -1,22 +1,39 @@
 const { sendErrorResponse } = require("../utils/serverUtils");
-const { verifyJWT } = require("../utils/tokenUtils");
+const { verifyJWT, verifyRefreshToken } = require("../utils/tokenUtils");
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const { accessToken } = req.cookies;
-    
+    const accessToken = req.cookies.accessToken;
 
     if (!accessToken) {
-      return sendErrorResponse(res, "Token not provided.", 401);
+      return sendErrorResponse(res, "Access token not provided.", 401);
     }
-    const tokenUser = verifyJWT(accessToken);
-    
-    req.user = tokenUser;
-    if (!req.user) {
-      return sendErrorResponse(res, "Invalid token.", 401);
+
+    try {
+      const tokenUser = verifyJWT(accessToken);
+      req.user = tokenUser;
+      next();
+    } catch (error) {
+      // If access token is expired, try to refresh it
+      if (error.name === 'TokenExpiredError') {
+        const refreshToken = req.cookies.refreshToken;
+        
+        if (!refreshToken) {
+          return sendErrorResponse(res, "Refresh token not provided.", 401);
+        }
+
+        try {
+          const decoded = verifyRefreshToken(refreshToken);
+          // Token is valid, but we don't need to generate new tokens here
+          // The client should call the refresh endpoint to get new tokens
+          return sendErrorResponse(res, "Access token expired. Please refresh.", 401);
+        } catch (refreshError) {
+          return sendErrorResponse(res, "Invalid refresh token.", 401);
+        }
+      }
+      
+      return sendErrorResponse(res, "Invalid access token.", 401);
     }
-    // console.log(req.user);
-    next();
   } catch (error) {
     sendErrorResponse(res, "Authentication failed.", 401);
   }
@@ -34,4 +51,4 @@ const adminMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = { authMiddleware , adminMiddleware };
+module.exports = { authMiddleware, adminMiddleware };

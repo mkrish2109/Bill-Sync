@@ -1,36 +1,47 @@
-import { useState } from 'react';
-import RequestCard from './RequestCard';
+import { useState } from "react";
+import RequestCard from "./RequestCard";
 
-const RequestTabs = ({ sentRequests = [], receivedRequests = [], onAccept, onReject, userType }) => {
-  const [activeTab, setActiveTab] = useState(userType === 'worker' ? 'received' : 'sent');
+const RequestTabs = ({
+  sentRequests = [],
+  receivedRequests = [],
+  onAccept,
+  onReject,
+  userType,
+}) => {
+  const [activeTab, setActiveTab] = useState(
+    userType === "worker" ? "received" : "sent"
+  );
 
   // Only show tabs if both sent and received requests exist
-  const showTabs = userType === 'buyer' ? sentRequests.length > 0 : receivedRequests.length > 0;
+  const showTabs =
+    userType === "buyer"
+      ? sentRequests.length > 0
+      : receivedRequests.length > 0;
 
   return (
     <div>
       {showTabs && (
         <div className="flex border-b border-border-light dark:border-border-dark mb-4">
-          {userType === 'worker' && (
+          {userType === "worker" && (
             <button
               className={`px-4 py-2 font-medium transition-colors duration-200 ${
-                activeTab === 'received' 
-                  ? 'text-primary-light dark:text-primary-dark border-b-2 border-primary-light dark:border-primary-dark' 
-                  : 'text-text-secondaryLight dark:text-text-secondaryDark hover:text-text-light dark:hover:text-text-dark'
+                activeTab === "received"
+                  ? "text-primary-light dark:text-primary-dark border-b-2 border-primary-light dark:border-primary-dark"
+                  : "text-text-secondaryLight dark:text-text-secondaryDark hover:text-text-light dark:hover:text-text-dark"
               }`}
-              onClick={() => setActiveTab('received')}
+              onClick={() => setActiveTab("received")}
             >
               Received ({receivedRequests.length})
             </button>
           )}
-          {userType === 'buyer' && (
+          {userType === "buyer" && (
             <button
               className={`px-4 py-2 font-medium transition-colors duration-200 ${
-                activeTab === 'sent' 
-                  ? 'text-primary-light dark:text-primary-dark border-b-2 border-primary-light dark:border-primary-dark' 
-                  : 'text-text-secondaryLight dark:text-text-secondaryDark hover:text-text-light dark:hover:text-text-dark'
+                activeTab === "sent"
+                  ? "text-primary-light dark:text-primary-dark border-b-2 border-primary-light dark:border-primary-dark"
+                  : "text-text-secondaryLight dark:text-text-secondaryDark hover:text-text-light dark:hover:text-text-dark"
               }`}
-              onClick={() => setActiveTab('sent')}
+              onClick={() => setActiveTab("sent")}
             >
               Sent ({sentRequests.length})
             </button>
@@ -39,9 +50,9 @@ const RequestTabs = ({ sentRequests = [], receivedRequests = [], onAccept, onRej
       )}
 
       <div>
-        {userType === 'worker' ? (
+        {userType === "worker" ? (
           receivedRequests.length > 0 ? (
-            receivedRequests.map(request => (
+            receivedRequests.map((request) => (
               <RequestCard
                 key={request._id}
                 request={request}
@@ -52,21 +63,23 @@ const RequestTabs = ({ sentRequests = [], receivedRequests = [], onAccept, onRej
               />
             ))
           ) : (
-            <div className="text-center py-8 text-text-secondaryLight dark:text-text-secondaryDark">No received requests</div>
+            <div className="text-center py-8 text-text-secondaryLight dark:text-text-secondaryDark">
+              No received requests
+            </div>
           )
+        ) : sentRequests.length > 0 ? (
+          sentRequests.map((request) => (
+            <RequestCard
+              key={request._id}
+              request={request}
+              type="sent"
+              userType={userType}
+            />
+          ))
         ) : (
-          sentRequests.length > 0 ? (
-            sentRequests.map(request => (
-              <RequestCard
-                key={request._id}
-                request={request}
-                type="sent"
-                userType={userType}
-              />
-            ))
-          ) : (
-            <div className="text-center py-8 text-text-secondaryLight dark:text-text-secondaryDark">No sent requests</div>
-          )
+          <div className="text-center py-8 text-text-secondaryLight dark:text-text-secondaryDark">
+            No sent requests
+          </div>
         )}
       </div>
     </div>

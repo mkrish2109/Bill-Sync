@@ -6,7 +6,8 @@ export default function BillList() {
 
   useEffect(() => {
     // Fetch all bills from the backend
-    api.get("/bills")
+    api
+      .get("/bills")
       .then((res) => setBills(res.data))
       .catch((err) => console.error("Failed to fetch bills", err));
   }, []);
@@ -16,7 +17,11 @@ export default function BillList() {
       const response = await api.patch(`/bills/${billId}/pay`);
       if (response.status === 200) {
         alert("Bill marked as paid!");
-        setBills(bills.map((bill) => (bill._id === billId ? { ...bill, paymentStatus: "paid" } : bill)));
+        setBills(
+          bills.map((bill) =>
+            bill._id === billId ? { ...bill, paymentStatus: "paid" } : bill
+          )
+        );
       }
     } catch (error) {
       console.error("Failed to update payment status", error);
@@ -41,13 +46,19 @@ export default function BillList() {
             <tr key={bill._id}>
               <td>{bill.buyerId?.name}</td>
               <td>{bill.workerId?.name}</td>
-              <td>{bill.fabricDetails.map((f, idx) => (
-                <div key={idx}>{f.item} ({f.quantity} {f.unit})</div>
-              ))}</td>
+              <td>
+                {bill.fabricDetails.map((f, idx) => (
+                  <div key={idx}>
+                    {f.item} ({f.quantity} {f.unit})
+                  </div>
+                ))}
+              </td>
               <td>{bill.paymentStatus}</td>
               <td>
                 {bill.paymentStatus === "pending" && (
-                  <button onClick={() => markAsPaid(bill._id)}>Mark as Paid</button>
+                  <button onClick={() => markAsPaid(bill._id)}>
+                    Mark as Paid
+                  </button>
                 )}
               </td>
             </tr>

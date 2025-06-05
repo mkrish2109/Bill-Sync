@@ -24,7 +24,12 @@ const io = new Server(server, {
   transports: ["websocket", "polling"],
   path: "/socket.io/",
   serveClient: false,
-  cookie: false,
+  cookie: {
+    name: "io",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  },
   reconnection: true,
   reconnectionAttempts: 5,
   reconnectionDelay: 1000,
@@ -33,14 +38,23 @@ const io = new Server(server, {
 
 // Socket.IO middleware for authentication
 io.use((socket, next) => {
-  const token = socket.handshake.auth.token;
-  if (!token) {
-    console.error("Socket authentication error: Token not provided");
-    return next(new Error("Authentication error: Token not provided"));
+  // Get the access token from cookies
+  const cookies = socket.handshake.headers.cookie;
+  if (!cookies) {
+    return next(new Error("Authentication error: No cookies found"));
+  }
+
+  const accessToken = cookies
+    .split(";")
+    .find((c) => c.trim().startsWith("accessToken="))
+    ?.split("=")[1];
+
+  if (!accessToken) {
+    return next(new Error("Authentication error: No access token found"));
   }
 
   try {
-    const decoded = verifyJWT(token);
+    const decoded = verifyJWT(accessToken);
     socket.user = decoded;
     next();
   } catch (err) {
@@ -51,13 +65,18 @@ io.use((socket, next) => {
 
 // Socket.IO connection handling
 io.on("connection", (socket) => {
-  // console.log(`User connected: ${socket.user.userId}`);
-
+  // console.log(`User connected: ${socket.user.userId}, Socket ID: ${socket.id}`);
+  // console.log("Socket connection is working properly on server - Connection details:", {
+  //   userId: socket.user.userId,
+  //   socketId: socket.id,
+  //   timestamp: new Date().toISOString()
+  // });
   // Join user's room for private messages
   socket.on("join_room", (userId, callback) => {
     if (socket.user.userId === userId) {
       // Leave any existing rooms first
       const currentRooms = Array.from(socket.rooms);
+
       currentRooms.forEach((room) => {
         if (room !== socket.id) {
           // Don't leave the socket's own room
@@ -70,6 +89,7 @@ io.on("connection", (socket) => {
 
       // Verify room was joined
       const rooms = Array.from(socket.rooms);
+
       if (rooms.includes(userId)) {
         if (callback) callback({ success: true });
       } else {
@@ -103,15 +123,15 @@ io.on("connection", (socket) => {
 
   // Handle reconnection
   socket.on("reconnect_attempt", (attemptNumber) => {
-    console.log(
-      `Reconnection attempt ${attemptNumber} for user ${socket.user.userId}`
-    );
+    // console.log(
+    //   `Reconnection attempt ${attemptNumber} for user ${socket.user.userId}`
+    // );
   });
 
   socket.on("reconnect", (attemptNumber) => {
-    console.log(
-      `User ${socket.user.userId} reconnected after ${attemptNumber} attempts`
-    );
+    // console.log(
+    //   `User ${socket.user.userId} reconnected after ${attemptNumber} attempts`
+    // );
     // Automatically rejoin the room after reconnection
     socket.emit("join_room", socket.user.userId);
   });
