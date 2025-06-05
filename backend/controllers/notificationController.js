@@ -1,28 +1,32 @@
-const Notification = require('../models/Notification');
-const { sendErrorResponse, sendSuccessResponse, sendDataResponse } = require('../utils/serverUtils');
+const Notification = require("../models/Notification");
+const {
+  sendErrorResponse,
+  sendSuccessResponse,
+  sendDataResponse,
+} = require("../utils/serverUtils");
 
 // Create a new notification
 exports.createNotification = async (userId, type, message, data) => {
   try {
     if (!userId) {
-      throw new Error('User ID is required');
+      throw new Error("User ID is required");
     }
 
     if (!type || !message) {
-      throw new Error('Type and message are required');
+      throw new Error("Type and message are required");
     }
 
     const notification = new Notification({
       userId,
       type,
       message,
-      data
+      data,
     });
 
     await notification.save();
     return notification;
   } catch (error) {
-    if (error.name === 'ValidationError') {
+    if (error.name === "ValidationError") {
       throw new Error(`Invalid notification data: ${error.message}`);
     }
     throw new Error(`Failed to create notification: ${error.message}`);
@@ -36,13 +40,18 @@ exports.createUserNotification = async (req, res) => {
     const userId = req.user.userId;
 
     if (!type || !message) {
-      return sendErrorResponse(res, 'Type and message are required', 400);
+      return sendErrorResponse(res, "Type and message are required", 400);
     }
 
-    const notification = await this.createNotification(userId, type, message, data);
+    const notification = await this.createNotification(
+      userId,
+      type,
+      message,
+      data
+    );
     sendDataResponse(res, notification);
   } catch (error) {
-    console.error('Error creating notification:', error);
+    console.error("Error creating notification:", error);
     sendErrorResponse(res, error.message, error.status || 500);
   }
 };
@@ -51,19 +60,19 @@ exports.createUserNotification = async (req, res) => {
 exports.getUserNotifications = async (req, res) => {
   try {
     const userId = req.user.userId;
-    
+
     if (!userId) {
-      return sendErrorResponse(res, 'User ID is required', 400);
+      return sendErrorResponse(res, "User ID is required", 400);
     }
 
     const notifications = await Notification.find({ userId })
       .sort({ createdAt: -1 })
       .limit(50);
-    
+
     sendDataResponse(res, notifications);
   } catch (error) {
-    console.error('Error getting notifications:', error);
-    sendErrorResponse(res, 'Failed to fetch notifications', 500);
+    console.error("Error getting notifications:", error);
+    sendErrorResponse(res, "Failed to fetch notifications", 500);
   }
 };
 
@@ -74,7 +83,7 @@ exports.markAsRead = async (req, res) => {
     const userId = req.user.userId;
 
     if (!notificationId) {
-      return sendErrorResponse(res, 'Notification ID is required', 400);
+      return sendErrorResponse(res, "Notification ID is required", 400);
     }
 
     const notification = await Notification.findOneAndUpdate(
@@ -84,16 +93,20 @@ exports.markAsRead = async (req, res) => {
     );
 
     if (!notification) {
-      return sendErrorResponse(res, 'Notification not found or unauthorized', 404);
+      return sendErrorResponse(
+        res,
+        "Notification not found or unauthorized",
+        404
+      );
     }
 
     sendDataResponse(res, notification);
   } catch (error) {
-    console.error('Error marking notification as read:', error);
-    if (error.name === 'CastError') {
-      return sendErrorResponse(res, 'Invalid notification ID', 400);
+    console.error("Error marking notification as read:", error);
+    if (error.name === "CastError") {
+      return sendErrorResponse(res, "Invalid notification ID", 400);
     }
-    sendErrorResponse(res, 'Failed to mark notification as read', 500);
+    sendErrorResponse(res, "Failed to mark notification as read", 500);
   }
 };
 
@@ -103,7 +116,7 @@ exports.markAllAsRead = async (req, res) => {
     const userId = req.user.userId;
 
     if (!userId) {
-      return sendErrorResponse(res, 'User ID is required', 400);
+      return sendErrorResponse(res, "User ID is required", 400);
     }
 
     const result = await Notification.updateMany(
@@ -112,13 +125,13 @@ exports.markAllAsRead = async (req, res) => {
     );
 
     if (result.modifiedCount === 0) {
-      return sendSuccessResponse(res, 'No unread notifications found');
+      return sendSuccessResponse(res, "No unread notifications found");
     }
 
-    sendSuccessResponse(res, 'All notifications marked as read');
+    sendSuccessResponse(res, "All notifications marked as read");
   } catch (error) {
-    console.error('Error marking all notifications as read:', error);
-    sendErrorResponse(res, 'Failed to mark notifications as read', 500);
+    console.error("Error marking all notifications as read:", error);
+    sendErrorResponse(res, "Failed to mark notifications as read", 500);
   }
 };
 
@@ -129,25 +142,29 @@ exports.deleteNotification = async (req, res) => {
     const userId = req.user.userId;
 
     if (!notificationId) {
-      return sendErrorResponse(res, 'Notification ID is required', 400);
+      return sendErrorResponse(res, "Notification ID is required", 400);
     }
 
     const notification = await Notification.findOneAndDelete({
       _id: notificationId,
-      userId
+      userId,
     });
 
     if (!notification) {
-      return sendErrorResponse(res, 'Notification not found or unauthorized', 404);
+      return sendErrorResponse(
+        res,
+        "Notification not found or unauthorized",
+        404
+      );
     }
 
-    sendSuccessResponse(res, 'Notification deleted successfully');
+    sendSuccessResponse(res, "Notification deleted successfully");
   } catch (error) {
-    console.error('Error deleting notification:', error);
-    if (error.name === 'CastError') {
-      return sendErrorResponse(res, 'Invalid notification ID', 400);
+    console.error("Error deleting notification:", error);
+    if (error.name === "CastError") {
+      return sendErrorResponse(res, "Invalid notification ID", 400);
     }
-    sendErrorResponse(res, 'Failed to delete notification', 500);
+    sendErrorResponse(res, "Failed to delete notification", 500);
   }
 };
 
@@ -157,18 +174,18 @@ exports.clearAllNotifications = async (req, res) => {
     const userId = req.user.userId;
 
     if (!userId) {
-      return sendErrorResponse(res, 'User ID is required', 400);
+      return sendErrorResponse(res, "User ID is required", 400);
     }
 
     const result = await Notification.deleteMany({ userId });
 
     if (result.deletedCount === 0) {
-      return sendSuccessResponse(res, 'No notifications found to clear');
+      return sendSuccessResponse(res, "No notifications found to clear");
     }
 
-    sendSuccessResponse(res, 'All notifications cleared');
+    sendSuccessResponse(res, "All notifications cleared");
   } catch (error) {
-    console.error('Error clearing notifications:', error);
-    sendErrorResponse(res, 'Failed to clear notifications', 500);
+    console.error("Error clearing notifications:", error);
+    sendErrorResponse(res, "Failed to clear notifications", 500);
   }
-}; 
+};

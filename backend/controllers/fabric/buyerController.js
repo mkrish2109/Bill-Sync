@@ -1,17 +1,26 @@
-// controllers/fabric/buyerController.js
+const mongoose = require("mongoose");
 const Fabric = require("../../models/Fabric");
 const Buyer = require("../../models/Buyer");
 const FabricAssignment = require("../../models/FabricAssignment");
 const Worker = require("../../models/Worker");
 const commonController = require("./commonController");
+const { createNotification } = require("../notificationController");
 
 // Create a new fabric (buyer only)
 const createFabric = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  
   try {
     const buyerId = req.user.userId;
+    const io = req.app.get("io");
 
-    const buyer = await Buyer.findById(buyerId);
+    console.log('Creating fabric with Socket.IO instance:', !!io);
+
+    const buyer = await Buyer.findById(buyerId).session(session);
     if (!buyer) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).json({
         success: false,
         error: 'Buyer not found'
@@ -21,6 +30,8 @@ const createFabric = async (req, res) => {
     const { name, description, unit, quantity, unitPrice, imageUrl, workerId } = req.body;
     
     if (!name || !description || !unit || !quantity || !unitPrice || !imageUrl) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({
         success: false,
         error: 'Missing required fields'
@@ -28,6 +39,8 @@ const createFabric = async (req, res) => {
     }
 
     if (quantity <= 0 || unitPrice <= 0) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({
         success: false,
         error: 'Quantity and unit price must be positive numbers'
@@ -47,31 +60,94 @@ const createFabric = async (req, res) => {
       imageUrl
     });
 
-    const savedFabric = await fabric.save();
+    const savedFabric = await fabric.save({ session });
     
     await Buyer.findByIdAndUpdate(buyerId, {
       $push: { fabricIds: savedFabric._id }
-    });
+    }, { session });
 
     let assignment = null;
     if (workerId) {
+      console.log('Creating assignment for worker:', workerId);
+      
       // Create worker assignment
       assignment = new FabricAssignment({
         fabricId: savedFabric._id,
         buyerId,
-        workerId:workerId
+        workerId: workerId,
+        status: 'assigned'
       });
 
-      await assignment.save();
+      await assignment.save({ session });
 
       await Fabric.findByIdAndUpdate(savedFabric._id, {
         $push: { assignments: assignment._id }
-      });
+      }, { session });
 
       await Buyer.findByIdAndUpdate(buyerId, {
         $push: { assignedFabrics: assignment._id }
+      }, { session });
+
+      // Get worker details for notification
+      const worker = await Worker.findById(workerId).session(session);
+      console.log('Found worker for notification:', { 
+        workerId,
+        workerFound: !!worker,
+        workerUserId: worker?.userId,
+        workerName: worker?.name
       });
+      
+      if (worker && worker.userId) {
+        console.log('Creating notification for worker:', worker.userId);
+        
+        // Create notification for worker
+        const notificationData = {
+          fabric: savedFabric,
+          buyer: buyer,
+          type: 'status_update',
+          message: `New fabric "${name}" has been assigned to you by ${buyer.name}`
+        };
+
+        console.log('Notification data prepared:', notificationData);
+
+        // Store notification in database
+        await createNotification(
+          worker.userId,
+          'status_update',
+          notificationData.message,
+          notificationData,
+          { session } // Pass session to notification creation
+        );
+
+        console.log('Notification stored in database');
+
+        // Get all sockets in the worker's room
+        const workerRoom = io.sockets.adapter.rooms.get(worker.userId.toString());
+        console.log('Worker room status:', {
+          roomExists: !!workerRoom,
+          socketCount: workerRoom?.size || 0,
+          workerUserId: worker.userId.toString(),
+          allRooms: Array.from(io.sockets.adapter.rooms.keys())
+        });
+
+        // Emit notification to worker's room
+        io.to(worker.userId.toString()).emit('new_fabric_assignment', notificationData);
+        console.log('Notification emitted to worker room:', worker.userId.toString());
+      } else {
+        console.log('Worker or worker.userId not found:', { 
+          worker: worker ? {
+            id: worker._id,
+            name: worker.name,
+            hasUserId: !!worker.userId
+          } : null,
+          workerId
+        });
+      }
     }
+
+    // If everything succeeded, commit the transaction
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(201).json({
       success: true,
@@ -81,6 +157,10 @@ const createFabric = async (req, res) => {
       }
     });
   } catch (error) {
+    // If any error occurs, abort the transaction
+    await session.abortTransaction();
+    session.endSession();
+    
     console.error('Error creating fabric:', error);
     res.status(400).json({
       success: false,
@@ -174,6 +254,7 @@ const updateFabric = async (req, res) => {
     
     const { id } = req.params;
     const userId = req.user.userId;
+    const io = req.app.get("io");
     
     // First get the current fabric document
     const fabric = await Fabric.findById(id);
@@ -216,6 +297,7 @@ const updateFabric = async (req, res) => {
     // Handle worker assignment if workerId is provided
     if (workerId !== undefined) {
       const currentAssignment = await FabricAssignment.findOne({ fabricId: id });
+      const buyer = await Buyer.findById(userId);
       
       if (currentAssignment) {
         if (workerId) {
@@ -224,6 +306,29 @@ const updateFabric = async (req, res) => {
               workerId,
               status: 'assigned'
           });
+
+          // Get worker details for notification
+          const worker = await Worker.findById(workerId);
+          if (worker && worker.userId) {
+            // Create notification for worker
+            const notificationData = {
+              fabric: { ...fabric.toObject(), ...updateFields },
+              buyer: buyer,
+              type: 'status_update',
+              message: `Fabric "${name || fabric.name}" has been assigned to you by ${buyer.name}`
+            };
+
+            // Store notification in database
+            await createNotification(
+              worker.userId,
+              'status_update',
+              notificationData.message,
+              notificationData
+            );
+
+            // Emit notification to worker's room
+            io.to(worker.userId.toString()).emit('new_fabric_assignment', notificationData);
+          }
         } else {
           // Remove assignment if workerId is empty
           await FabricAssignment.findByIdAndDelete(currentAssignment._id);
@@ -252,6 +357,29 @@ const updateFabric = async (req, res) => {
         await Buyer.findByIdAndUpdate(userId, {
           $push: { assignedFabrics: newAssignment._id }
         });
+
+        // Get worker details for notification
+        const worker = await Worker.findById(workerId);
+        if (worker && worker.userId) {
+          // Create notification for worker
+          const notificationData = {
+            fabric: { ...fabric.toObject(), ...updateFields },
+            buyer: buyer,
+            type: 'status_update',
+            message: `New fabric "${name || fabric.name}" has been assigned to you by ${buyer.name}`
+          };
+
+          // Store notification in database
+          await createNotification(
+            worker.userId,
+            'status_update',
+            notificationData.message,
+            notificationData
+          );
+
+          // Emit notification to worker's room
+          io.to(worker.userId.toString()).emit('new_fabric_assignment', notificationData);
+        }
       }
     }
 

@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { FaUser, FaPhone, FaBriefcase, FaTools } from 'react-icons/fa';
+import { useState } from "react";
+import { FaUser, FaPhone, FaBriefcase, FaTools } from "react-icons/fa";
 
 const UserCard = ({ user, userType, onSendRequest }) => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
@@ -10,11 +10,11 @@ const UserCard = ({ user, userType, onSendRequest }) => {
     e.preventDefault();
     setIsSending(true);
     try {
-      console.log(message)
-      console.log(user._id)
+      console.log(message);
+      console.log(user._id);
       await onSendRequest(user._id, message);
       setShowForm(false);
-      setMessage('');
+      setMessage("");
     } finally {
       setIsSending(false);
     }
@@ -27,18 +27,22 @@ const UserCard = ({ user, userType, onSendRequest }) => {
           <FaUser className="text-text-secondaryLight dark:text-text-secondaryDark text-xl" />
         </div>
         <div>
-          <h3 className="font-semibold text-lg text-text-light dark:text-text-dark">{user.name}</h3>
+          <h3 className="font-semibold text-lg text-text-light dark:text-text-dark">
+            {user.name}
+          </h3>
           <div className="flex items-center text-text-secondaryLight dark:text-text-secondaryDark text-sm">
             <FaPhone className="mr-1" />
             <span>{user.contact}</span>
           </div>
         </div>
       </div>
-      
+
       <div className="space-y-3 mb-4">
         <div className="flex items-center text-text-secondaryLight dark:text-text-secondaryDark">
           <FaBriefcase className="mr-2" />
-          <span className="text-sm">{user.experience || 'No experience listed'}</span>
+          <span className="text-sm">
+            {user.experience || "No experience listed"}
+          </span>
         </div>
 
         {user.skills && user.skills.length > 0 && (
@@ -49,7 +53,7 @@ const UserCard = ({ user, userType, onSendRequest }) => {
             </div>
             <div className="flex flex-wrap gap-2">
               {user.skills.map((skill, index) => (
-                <span 
+                <span
                   key={index}
                   className="bg-primary-light/10 dark:bg-primary-dark/10 text-primary-light dark:text-primary-dark text-xs px-2 py-1 rounded"
                 >
@@ -60,7 +64,7 @@ const UserCard = ({ user, userType, onSendRequest }) => {
           </div>
         )}
       </div>
-      
+
       {!showForm ? (
         <button
           onClick={() => setShowForm(true)}
@@ -90,7 +94,7 @@ const UserCard = ({ user, userType, onSendRequest }) => {
               disabled={isSending}
               className="px-4 py-2 bg-primary-light dark:bg-primary-dark text-text-invertedLight dark:text-text-invertedDark rounded-lg hover:bg-primary-hoverLight dark:hover:bg-primary-hoverDark transition-colors duration-200 disabled:opacity-50"
             >
-              {isSending ? 'Sending...' : 'Send Request'}
+              {isSending ? "Sending..." : "Send Request"}
             </button>
           </div>
         </form>

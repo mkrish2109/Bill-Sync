@@ -1,28 +1,55 @@
-import React, { useEffect, useCallback, useRef, useState } from 'react';
-import { useRequests } from '../hooks/useRequests';
-import RequestTabs from '../components/RequestTabs';
-import LoadingSpinner from '../components/common/LoadingSpinner';
-import { ErrorAlert } from '../components/common/Alert';
-import { useSocket } from '../contexts/SocketContext';
-import { useAuth } from '../contexts/AuthContext';
-import { toast } from 'react-toastify';
+import React, { useEffect, useCallback, useRef, useState } from "react";
+import { useRequests } from "../hooks/useRequests";
+import RequestTabs from "../components/RequestTabs";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import { ErrorAlert } from "../components/common/Alert";
+import { useSocket } from "../contexts/SocketContext";
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const RequestsPage = () => {
   const { user } = useAuth();
   const userType = user.role.toLowerCase();
-  const { requests, loading, error, acceptRequest, rejectRequest, refetchRequests } = useRequests(userType);
+  const {
+    requests,
+    loading,
+    error,
+    acceptRequest,
+    rejectRequest,
+    refetchRequests,
+    cancelRequest,
+  } = useRequests(userType);
   const { socket, isConnected, isInitializing } = useSocket();
   const listenersSetRef = useRef(false);
   const [isSocketReady, setIsSocketReady] = useState(false);
 
-  const handleNewRequest = useCallback((data) => {
-    toast.info(`New request received from ${data.senderName}`);
-    refetchRequests();
-  }, [refetchRequests]);
+  const handleNewRequest = useCallback(
+    (data) => {
+      toast.info(`New request received from ${data.senderName}`);
+      refetchRequests();
+    },
+    [refetchRequests]
+  );
 
-  const handleRequestStatusUpdate = useCallback((data) => {
-    refetchRequests();
-  }, [refetchRequests]);
+  const handleRequestStatusUpdate = useCallback(
+    (data) => {
+      console.log(data);
+      data.status == "accepted"
+        ? toast.success(
+            `Request status updated: ${
+              userType == "buyer" ? data.workerName : data.buyerName
+            } is now ${data.status}`
+          )
+        : toast.error(
+            `Request status updated: ${
+              userType == "buyer" ? data.workerName : data.buyerName
+            } is now ${data.status}`
+          );
+
+      refetchRequests();
+    },
+    [refetchRequests]
+  );
 
   useEffect(() => {
     if (isInitializing) {
@@ -46,7 +73,9 @@ const RequestsPage = () => {
 
     if (!socket || !isConnected) {
       if (socket && !isConnected) {
-        toast.warning('Connection to real-time updates is not available. Some features may be limited.');
+        toast.warning(
+          "Connection to real-time updates is not available. Some features may be limited."
+        );
       }
       return;
     }
@@ -54,54 +83,62 @@ const RequestsPage = () => {
     if (listenersSetRef.current) {
       return;
     }
-    
+
     try {
       // Listen for new requests and status updates
-      socket.on('new_request', handleNewRequest);
-      socket.on('request_status_update', handleRequestStatusUpdate);
-      
+      socket.on("new_request", handleNewRequest);
+      socket.on("request_status_update", handleRequestStatusUpdate);
+
       // Handle connection events
-      socket.on('connect_error', (error) => {
-        toast.error('Connection error: ' + error.message);
+      socket.on("connect_error", (error) => {
+        toast.error("Connection error: " + error.message);
       });
 
-      socket.on('reconnect_attempt', (attemptNumber) => {
+      socket.on("reconnect_attempt", (attemptNumber) => {
         toast.info(`Attempting to reconnect (${attemptNumber}/5)...`);
       });
 
-      socket.on('reconnect', () => {
-        toast.success('Reconnected to real-time updates');
+      socket.on("reconnect", () => {
+        toast.success("Reconnected to real-time updates");
         refetchRequests(); // Refresh data after reconnection
       });
 
       listenersSetRef.current = true;
     } catch (error) {
-      console.error('Error setting up socket listeners:', error);
-      toast.error('Failed to setup real-time updates');
+      console.error("Error setting up socket listeners:", error);
+      toast.error("Failed to setup real-time updates");
     }
 
     // Cleanup function
     return () => {
       if (socket && listenersSetRef.current) {
         try {
-          socket.off('new_request', handleNewRequest);
-          socket.off('request_status_update', handleRequestStatusUpdate);
-          socket.off('connect_error');
-          socket.off('reconnect_attempt');
-          socket.off('reconnect');
+          socket.off("new_request", handleNewRequest);
+          socket.off("request_status_update", handleRequestStatusUpdate);
+          socket.off("connect_error");
+          socket.off("reconnect_attempt");
+          socket.off("reconnect");
           listenersSetRef.current = false;
         } catch (error) {
-          console.error('Error cleaning up socket listeners:', error);
+          console.error("Error cleaning up socket listeners:", error);
         }
       }
     };
-  }, [socket, isConnected, isInitializing, isSocketReady, handleNewRequest, handleRequestStatusUpdate, refetchRequests]);
+  }, [
+    socket,
+    isConnected,
+    isInitializing,
+    isSocketReady,
+    handleNewRequest,
+    handleRequestStatusUpdate,
+    refetchRequests,
+  ]);
 
   const handleAcceptRequest = async (requestId) => {
     try {
       await acceptRequest(requestId);
     } catch (error) {
-      toast.error(error.message || 'Failed to accept request');
+      toast.error(error.message || "Failed to accept request");
     }
   };
 
@@ -109,14 +146,22 @@ const RequestsPage = () => {
     try {
       await rejectRequest(requestId);
     } catch (error) {
-      toast.error(error.message || 'Failed to reject request');
+      toast.error(error.message || "Failed to reject request");
+    }
+  };
+
+  const handleCancelRequest = async (requestId) => {
+    try {
+      await cancelRequest(requestId);
+    } catch (error) {
+      toast.error(error.message || "Failed to cancel request");
     }
   };
 
   // Filter requests based on user type
   const filteredRequests = {
-    sent: userType === 'buyer' ? requests.sent : [],
-    received: userType === 'worker' ? requests.received : []
+    sent: userType === "buyer" ? requests.sent : [],
+    received: userType === "worker" ? requests.received : [],
   };
 
   if (loading) {
@@ -125,19 +170,19 @@ const RequestsPage = () => {
 
   if (error) {
     return <ErrorAlert message={error} />;
-  } 
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">
-        {userType === 'buyer' ? 'Sent Requests' : 'Received Requests'}
+        {userType === "buyer" ? "Sent Requests" : "Received Requests"}
       </h1>
       <RequestTabs
         userType={userType}
         sentRequests={filteredRequests.sent}
         receivedRequests={filteredRequests.received}
         onAccept={handleAcceptRequest}
-        onReject={handleRejectRequest}
+        onReject={handleCancelRequest}
       />
     </div>
   );

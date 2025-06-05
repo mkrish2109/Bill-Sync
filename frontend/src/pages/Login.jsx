@@ -30,15 +30,18 @@ function Login() {
     }
 
     try {
-      const loginResponse = await dispatch(
-        loginUser({ email, password, rememberMe })
-      );
+      const loginResponse = await dispatch(loginUser({ email, password }));
+
       if (loginUser.fulfilled.match(loginResponse)) {
-        const userId = loginResponse.payload.data.userId;
         toast.success(loginResponse.payload?.message || "Login successful!");
-        const userResponse = await dispatch(fetchUser(userId));
+
+        // Fetch user data to get role
+        const userResponse = await dispatch(fetchUser());
+
         if (fetchUser.fulfilled.match(userResponse)) {
-          const role = userResponse.payload.role;
+          const role = userResponse.payload.data.role;
+
+          // Navigate based on role
           switch (role) {
             case "admin":
               navigate("/admin/dashboard");

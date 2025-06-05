@@ -1,23 +1,40 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { login, logout, getUserById } from "../../services/apiServices";
-import { api } from "../../helper/apiHelper";
 import { toast } from "react-toastify";
+import { authAPI } from "../../utils/api";
 
-// Shared fetch logic
-const fetchUserData = async (userId) => {
-  const user = await getUserById(userId);
-  return user;
-};
-
-// Async Thunks
+// Async thunks
 export const loginUser = createAsyncThunk(
-  "user/loginUser",
-  async (data, { rejectWithValue }) => {
+  "user/login",
+  async (credentials, { rejectWithValue }) => {
     try {
-      const res = await login(data);
-      return res;
-    } catch (err) {
-      return rejectWithValue(err.response?.data || { message: err.message });
+      const response = await authAPI.login(credentials);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Login failed" });
+    }
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  "user/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.logout();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Logout failed" });
+    }
+  }
+);
+
+export const fetchUser = createAsyncThunk(
+  "user/fetchUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.verifyAuth();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Failed to fetch user" });
     }
   }
 );
@@ -26,39 +43,10 @@ export const restoreUser = createAsyncThunk(
   "user/restoreUser",
   async (_, { rejectWithValue }) => {
     try {
-      const userId = localStorage.getItem("userId");
-
-      if (!userId) {
-        localStorage.removeItem("userId");
-        return null;
-      }
-
-      return await fetchUserData(userId);
-    } catch (err) {
-      return rejectWithValue(err.response?.data || { message: err.message });
-    }
-  }
-);
-
-export const fetchUser = createAsyncThunk(
-  "user/fetchUser",
-  async (userId, { rejectWithValue }) => {
-    try {
-      return await fetchUserData(userId);
-    } catch (err) {
-      return rejectWithValue(err.response?.data || { message: err.message });
-    }
-  }
-);
-
-export const logoutUser = createAsyncThunk(
-  "user/logoutUser",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await logout();
-      return res;
-    } catch (err) {
-      return rejectWithValue(err.response?.data || { message: err.message });
+      const response = await authAPI.verifyAuth();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Session expired" });
     }
   }
 );
@@ -88,8 +76,6 @@ const userSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.error = "";
-        localStorage.setItem("userId", action.payload.data.userId);
-        localStorage.setItem("token", action.payload?.token || "");
         state.message = action.payload?.message;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -105,8 +91,9 @@ const userSlice = createSlice({
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
-        state.isAuthenticated = true;
+        state.user = action.payload.data;
+        state.isAuthenticated = action.payload.isAuthenticated;
+        state.error = "";
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.loading = false;
@@ -121,8 +108,9 @@ const userSlice = createSlice({
       })
       .addCase(restoreUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
-        state.isAuthenticated = !!action.payload;
+        state.user = action.payload.data;
+        state.isAuthenticated = action.payload.isAuthenticated;
+        state.error = "";
       })
       .addCase(restoreUser.rejected, (state, action) => {
         state.loading = false;

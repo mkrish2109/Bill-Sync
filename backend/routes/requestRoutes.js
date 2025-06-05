@@ -26,6 +26,11 @@ router.put(
   authMiddleware,
   requestController.rejectRequest
 );
+router.put(
+  "/:requestId/cancel",
+  authMiddleware,
+  requestController.cancelRequest
+);
 router.get("/connections", authMiddleware, requestController.getConnectedUsers);
 
 module.exports = router;

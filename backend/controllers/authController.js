@@ -8,10 +8,17 @@ const {
   sendSuccessResponse,
   sendErrorResponse,
 } = require("../utils/serverUtils");
-const { getCryptoToken, getJWT, getTokenUser } = require("../utils/tokenUtils");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+  getCryptoToken,
+  getTokenUser,
+} = require("../utils/tokenUtils");
 const Worker = require("../models/Worker");
 const Buyer = require("../models/Buyer");
 const session = require("express-session");
+const { verifyJWT } = require("../utils/tokenUtils");
 
 // Register user
 const register = async (req, res) => {
@@ -122,7 +129,6 @@ const login = async (req, res) => {
       return sendErrorResponse(res, "Email and password are required.", 400);
     }
 
-
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
       return sendErrorResponse(res, "No such user exists.", 404);
@@ -133,29 +139,36 @@ const login = async (req, res) => {
     }
 
     // Compare the hashed password using bcrypt
-    // const passwordMatch = await bcrypt.compare(password, existingUser.password);
-    // if (!passwordMatch) {
-    //   return sendErrorResponse(res, "Invalid password.", 401);
-    // }
+    const passwordMatch = await bcrypt.compare(password, existingUser.password);
+    if (!passwordMatch) {
+      return sendErrorResponse(res, "Invalid password.", 401);
+    }
 
     const tokenUser = getTokenUser(existingUser);
+    const accessToken = generateAccessToken(existingUser);
+    const refreshToken = generateRefreshToken(existingUser);
 
-    const accessToken = getJWT({ 
-      userId: tokenUser.userId,
-      role: tokenUser.role 
-  });
-
-    // console.log("Access Token: ", accessToken);
-
-    res.cookie("accessToken", accessToken, {
+    // Set refresh token in HTTP-only cookie
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,  // Should be true in production with HTTPS
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 ), 
+      secure: process.env.NODE_ENV === "production", // true in production
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    res
-    .status(200)
-    .json({ success: true, token : accessToken , data: tokenUser, message: "Logged in successfully." });
+    // Set access token in HTTP-only cookie
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // true in production
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    res.status(200).json({
+      success: true,
+      data: tokenUser,
+      message: "Logged in successfully.",
+    });
   } catch (error) {
     console.log("Error: ", error);
     sendErrorResponse(res, error.message);
@@ -165,15 +178,71 @@ const login = async (req, res) => {
 // Logout user
 const logout = async (req, res) => {
   try {
+    // Clear both access and refresh tokens
     res.cookie("accessToken", "", {
       httpOnly: true,
-      secure: false,
-      expires: new Date(),
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      expires: new Date(0),
+    });
+
+    res.cookie("refreshToken", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      expires: new Date(0),
     });
 
     sendSuccessResponse(res, "Logged out successfully.");
   } catch (error) {
     sendErrorResponse(res, error.message);
+  }
+};
+
+// Refresh token endpoint
+const refreshToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return sendErrorResponse(res, "Refresh token not provided.", 401);
+    }
+
+    // Verify the refresh token
+    const decoded = verifyRefreshToken(refreshToken);
+
+    // Get the user
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return sendErrorResponse(res, "User not found.", 404);
+    }
+
+    // Generate new tokens
+    const newAccessToken = generateAccessToken(user);
+    const newRefreshToken = generateRefreshToken(user);
+
+    // Set new refresh token
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    // Set new access token
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Tokens refreshed successfully.",
+    });
+  } catch (error) {
+    sendErrorResponse(res, "Invalid refresh token.", 401);
   }
 };
 
@@ -248,20 +317,91 @@ const resetPassword = async (req, res) => {
 };
 
 // Check session status
-const checkSession = async (req, res) => {
+const verifyAuth = async (req, res) => {
   try {
-    if (!req.session.user) {
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!accessToken && !refreshToken) {
       return res.status(200).json({
         success: false,
         isAuthenticated: false,
+        message: "No tokens found",
       });
     }
 
-    res.status(200).json({
-      success: true,
-      isAuthenticated: true,
-      user: req.session.user,
-    });
+    try {
+      // Try to verify access token first
+      const decoded = verifyJWT(accessToken);
+      const user = await User.findById(decoded.userId);
+
+      if (!user) {
+        return res.status(200).json({
+          success: false,
+          isAuthenticated: false,
+          message: "User not found",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        isAuthenticated: true,
+        data: getTokenUser(user),
+      });
+    } catch (error) {
+      // If access token is invalid/expired, try refresh token
+      if (refreshToken) {
+        try {
+          const decoded = verifyRefreshToken(refreshToken);
+          const user = await User.findById(decoded.userId);
+
+          if (!user) {
+            return res.status(200).json({
+              success: false,
+              isAuthenticated: false,
+              message: "User not found",
+            });
+          }
+
+          // Generate new tokens
+          const newAccessToken = generateAccessToken(user);
+          const newRefreshToken = generateRefreshToken(user);
+
+          // Set new tokens
+          res.cookie("accessToken", newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000, // 15 minutes
+          });
+
+          res.cookie("refreshToken", newRefreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          });
+
+          return res.status(200).json({
+            success: true,
+            isAuthenticated: true,
+            data: getTokenUser(user),
+          });
+        } catch (refreshError) {
+          return res.status(200).json({
+            success: false,
+            isAuthenticated: false,
+            message: "Invalid refresh token",
+          });
+        }
+      }
+
+      return res.status(200).json({
+        success: false,
+        isAuthenticated: false,
+        message: "Invalid access token",
+      });
+    }
   } catch (error) {
     sendErrorResponse(res, error.message);
   }
@@ -274,5 +414,6 @@ module.exports = {
   logout,
   forgotPassword,
   resetPassword,
-  checkSession,
+  verifyAuth,
+  refreshToken,
 };

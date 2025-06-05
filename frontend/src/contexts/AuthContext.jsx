@@ -1,5 +1,6 @@
-import React, { createContext, useContext } from 'react';
-import { useSelector } from 'react-redux';
+import React, { createContext, useContext, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { restoreUser } from '../redux/slices/userSlice';
 
 const AuthContext = createContext();
 
@@ -12,12 +13,25 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const { user, loading } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { user, loading, isAuthenticated } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        await dispatch(restoreUser()).unwrap();
+      } catch (error) {
+        console.error('Failed to restore user session:', error);
+      }
+    };
+
+    initializeAuth();
+  }, [dispatch]);
 
   const value = {
     user,
     loading,
-    isAuthenticated: !!user
+    isAuthenticated
   };
 
   return (

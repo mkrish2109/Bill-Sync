@@ -26,7 +26,7 @@ export const SocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const socketRef = useRef(null);
   const retryTimeoutRef = useRef(null);
   const connectionAttemptsRef = useRef(0);
@@ -36,7 +36,7 @@ export const SocketProvider = ({ children }) => {
   const RECONNECTION_DELAY = 5000;
   const INITIAL_RECONNECTION_DELAY = 1000;
   const PING_INTERVAL = 25000; // 25 seconds
-  const userId = user?._id;
+  const userId = user?.userId || user?._id;
 
   const cleanupSocket = useCallback(() => {
     if (retryTimeoutRef.current) {
@@ -87,35 +87,28 @@ export const SocketProvider = ({ children }) => {
   }, []);
 
   const initializeSocket = useCallback(async () => {
-    if (isInitializingRef.current) {
+    if (isInitializingRef.current || !isAuthenticated) {
+      console.log("Socket initialization skipped:", { isInitializingRef: isInitializingRef.current, isAuthenticated });
       return;
     }
 
     if (socketRef.current) {
+      console.log("Cleaning up existing socket connection");
       cleanupSocket();
     }
 
-    const token = localStorage.getItem("token");
     if (!user || !userId) {
-      console.error("User not authenticated");
+      console.error("User not authenticated", { user, userId });
       setConnectionError("User is not authenticated");
-      localStorage.removeItem("token");
       return;
     }
-    if (!token) {
-      console.error("No valid authentication token found");
-      setConnectionError("No valid authentication token found");
-      localStorage.removeItem("token");
-      return;
-    }
+
+    console.log("Starting socket initialization", { userId });
     isInitializingRef.current = true;
     setConnectionError(null);
 
     try {
       const newSocket = io(getSocketURL(), {
-        auth: {
-          token: token,
-        },
         withCredentials: true,
         reconnection: true,
         reconnectionAttempts: MAX_RECONNECTION_ATTEMPTS,
@@ -134,7 +127,7 @@ export const SocketProvider = ({ children }) => {
       // Set up event listeners
       newSocket.on("connect", async () => {
         try {
-          console.log("Socket connected successfully");
+          console.log("Socket connection is working properly - Connection ID:", newSocket.id);
           setIsConnected(true);
           connectionAttemptsRef.current = 0;
           isInitializingRef.current = false;
@@ -172,7 +165,6 @@ export const SocketProvider = ({ children }) => {
 
         if (error.message === "Authentication error: Invalid token") {
           console.error("Authentication error, redirecting to login...");
-          localStorage.removeItem("token");
           window.location.href = "/login";
         } else {
           connectionAttemptsRef.current += 1;
@@ -299,10 +291,10 @@ export const SocketProvider = ({ children }) => {
       toast.error("Failed to establish real-time connection");
       cleanupSocket();
     }
-  }, [cleanupSocket, handleRoomJoin, user, userId, startPingInterval]);
+  }, [cleanupSocket, handleRoomJoin, user, userId, startPingInterval, isAuthenticated]);
 
   useEffect(() => {
-    if (!userId) {
+    if (!userId || !isAuthenticated) {
       cleanupSocket();
       return;
     }
@@ -316,7 +308,7 @@ export const SocketProvider = ({ children }) => {
       clearTimeout(initTimeout);
       cleanupSocket();
     };
-  }, [initializeSocket, cleanupSocket, userId]);
+  }, [initializeSocket, cleanupSocket, userId, isAuthenticated]);
 
   const value = {
     socket,

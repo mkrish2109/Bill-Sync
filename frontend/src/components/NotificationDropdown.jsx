@@ -1,8 +1,8 @@
-import React from 'react';
-import { useNotifications } from '../contexts/NotificationContext';
-import { formatDistanceToNow } from 'date-fns';
-import { FaCheck, FaTrash, FaCheckDouble } from 'react-icons/fa';
-import LoadingSpinner from './common/LoadingSpinner';
+import React from "react";
+import { useNotifications } from "../contexts/NotificationContext";
+import { formatDistanceToNow } from "date-fns";
+import { FaCheck, FaTrash, FaCheckDouble } from "react-icons/fa";
+import LoadingSpinner from "./common/LoadingSpinner";
 
 const NotificationDropdown = ({ onClose }) => {
   const {
@@ -12,7 +12,7 @@ const NotificationDropdown = ({ onClose }) => {
     markAsRead,
     markAllAsRead,
     deleteNotification,
-    clearAllNotifications
+    clearAllNotifications,
   } = useNotifications();
 
   const handleMarkAsRead = async (notificationId) => {
@@ -55,7 +55,9 @@ const NotificationDropdown = ({ onClose }) => {
     <div className="w-80 sm:w-96 bg-surface-elevatedLight dark:bg-surface-elevatedDark rounded-lg shadow-card dark:shadow-card-dark overflow-hidden border border-border-light dark:border-border-dark">
       <div className="p-4 border-b border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-text-light dark:text-text-dark">Notifications</h3>
+          <h3 className="text-lg font-semibold text-text-light dark:text-text-dark">
+            Notifications
+          </h3>
           <div className="flex gap-2">
             <button
               onClick={handleMarkAllAsRead}
@@ -87,7 +89,9 @@ const NotificationDropdown = ({ onClose }) => {
             <div
               key={notification._id}
               className={`p-4 border-b border-border-subtleLight dark:border-border-subtleDark hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark transition-colors duration-150 ${
-                !notification.read ? 'bg-highlight-light dark:bg-highlight-dark/50' : ''
+                !notification.read
+                  ? "bg-highlight-light dark:bg-highlight-dark/50"
+                  : ""
               }`}
             >
               <div className="flex justify-between items-start gap-3">
@@ -97,7 +101,7 @@ const NotificationDropdown = ({ onClose }) => {
                   </p>
                   <p className="text-xs text-text-tertiaryLight dark:text-text-tertiaryDark mt-1">
                     {formatDistanceToNow(new Date(notification.createdAt), {
-                      addSuffix: true
+                      addSuffix: true,
                     })}
                   </p>
                 </div>

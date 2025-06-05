@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import {
   getAvailableWorkers,
   sendRequest,
   acceptRequest,
   rejectRequest,
-  getUserRequests
-} from '../services/api';
-import { toast } from 'react-toastify';
+  getUserRequests,
+  cancelRequest,
+} from "../services/api";
+import { toast } from "react-toastify";
 
 // Hook for handling requests (sent/received)
 export const useRequests = (userType) => {
@@ -21,21 +22,23 @@ export const useRequests = (userType) => {
       setLoading(true);
       setError(null);
       const response = await getUserRequests();
-      
+
       if (response?.data?.success) {
-        const { sentRequests = [], receivedRequests = [] } = response.data.data || {};
+        const { sentRequests = [], receivedRequests = [] } =
+          response.data.data || {};
         setRequests({
           sent: sentRequests || [],
-          received: receivedRequests || []
+          received: receivedRequests || [],
         });
       } else {
-        const errorMsg = response?.data?.message || 'Failed to fetch requests';
+        const errorMsg = response?.data?.message || "Failed to fetch requests";
         setError(errorMsg);
         toast.error(errorMsg);
         setRequests({ sent: [], received: [] });
       }
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Failed to fetch requests';
+      const errorMsg =
+        err.response?.data?.message || "Failed to fetch requests";
       setError(errorMsg);
       toast.error(errorMsg);
       setRequests({ sent: [], received: [] });
@@ -46,8 +49,8 @@ export const useRequests = (userType) => {
 
   const handleAcceptRequest = async (requestId) => {
     // Only workers can accept requests
-    if (userType !== 'worker') {
-      const errorMsg = 'Only workers can accept requests';
+    if (userType !== "worker") {
+      const errorMsg = "Only workers can accept requests";
       setError(errorMsg);
       toast.error(errorMsg);
       return;
@@ -56,20 +59,21 @@ export const useRequests = (userType) => {
     try {
       setError(null);
       const response = await acceptRequest(requestId);
-      
+
       if (response?.data?.success) {
-        toast.success('Request accepted successfully');
+        // toast.success("Request accepted successfully");
         // Refresh requests after accepting
         await fetchUserRequests();
         return response.data.data;
       } else {
-        const errorMsg = response?.data?.message || 'Failed to accept request';
+        const errorMsg = response?.data?.message || "Failed to accept request";
         setError(errorMsg);
         toast.error(errorMsg);
         throw new Error(errorMsg);
       }
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Failed to accept request';
+      const errorMsg =
+        err.response?.data?.message || "Failed to accept request";
       setError(errorMsg);
       toast.error(errorMsg);
       throw err;
@@ -78,8 +82,8 @@ export const useRequests = (userType) => {
 
   const handleRejectRequest = async (requestId) => {
     // Only workers can reject requests
-    if (userType !== 'worker') {
-      const errorMsg = 'Only workers can reject requests';
+    if (userType !== "worker") {
+      const errorMsg = "Only workers can reject requests";
       setError(errorMsg);
       toast.error(errorMsg);
       return;
@@ -88,20 +92,52 @@ export const useRequests = (userType) => {
     try {
       setError(null);
       const response = await rejectRequest(requestId);
-      
+
       if (response?.data?.success) {
-        toast.success('Request rejected successfully');
+        toast.success("Request rejected successfully");
         // Refresh requests after rejecting
         await fetchUserRequests();
         return response.data.data;
       } else {
-        const errorMsg = response?.data?.message || 'Failed to reject request';
+        const errorMsg = response?.data?.message || "Failed to reject request";
         setError(errorMsg);
         toast.error(errorMsg);
         throw new Error(errorMsg);
       }
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Failed to reject request';
+      const errorMsg =
+        err.response?.data?.message || "Failed to reject request";
+      setError(errorMsg);
+      toast.error(errorMsg);
+      throw err;
+    }
+  };
+
+  const handleCancelRequest = async (requestId) => {
+    //only workers can cancel requests
+    if (userType !== "worker") {
+      const errorMsg = "Only workers can cancel requests";
+      setError(errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
+    try {
+      setError(null);
+      const response = await cancelRequest(requestId); // Assuming cancelRequest is similar to rejectRequest
+      if (response?.data?.success) {
+        toast.success("Request cancelled successfully");
+        // Refresh requests after cancelling
+        await fetchUserRequests();
+        return response.data.data;
+      } else {
+        const errorMsg = response?.data?.message || "Failed to cancel request";
+        setError(errorMsg);
+        toast.error(errorMsg);
+        throw new Error(errorMsg);
+      }
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.message || "Failed to cancel request";
       setError(errorMsg);
       toast.error(errorMsg);
       throw err;
@@ -118,7 +154,8 @@ export const useRequests = (userType) => {
     error,
     acceptRequest: handleAcceptRequest,
     rejectRequest: handleRejectRequest,
-    refetchRequests: fetchUserRequests
+    cancelRequest: handleCancelRequest,
+    refetchRequests: fetchUserRequests,
   };
 };
 
@@ -134,19 +171,21 @@ export const useAvailableWorkers = () => {
       setLoading(true);
       setError(null);
       const response = await getAvailableWorkers();
-      
+
       if (response?.data?.success) {
         // Extract the workers array from the nested data structure
         const workers = response.data.data?.data || [];
         setAvailableUsers(workers);
       } else {
-        const errorMsg = response?.data?.message || 'Failed to fetch available workers';
+        const errorMsg =
+          response?.data?.message || "Failed to fetch available workers";
         setError(errorMsg);
         toast.error(errorMsg);
         setAvailableUsers([]);
       }
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Failed to fetch available workers';
+      const errorMsg =
+        err.response?.data?.message || "Failed to fetch available workers";
       setError(errorMsg);
       toast.error(errorMsg);
       setAvailableUsers([]);
@@ -159,24 +198,24 @@ export const useAvailableWorkers = () => {
     try {
       setError(null);
       const response = await sendRequest({
-        senderId: user.userId,
+        senderId: user._idd,
         receiverId,
-        message
+        message,
       });
-      
+
       if (response?.data?.success) {
-        toast.success('Request sent successfully');
+        toast.success("Request sent successfully");
         // Refresh available users after sending request
         await fetchAvailableUsers();
         return response.data.data;
       } else {
-        const errorMsg = response?.data?.message || 'Failed to send request';
+        const errorMsg = response?.data?.message || "Failed to send request";
         setError(errorMsg);
         toast.error(errorMsg);
         throw new Error(errorMsg);
       }
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Failed to send request';
+      const errorMsg = err.response?.data?.message || "Failed to send request";
       setError(errorMsg);
       toast.error(errorMsg);
       throw err;
@@ -192,6 +231,6 @@ export const useAvailableWorkers = () => {
     loading,
     error,
     sendRequest: handleSendRequest,
-    refetchUsers: fetchAvailableUsers
+    refetchUsers: fetchAvailableUsers,
   };
 };

@@ -13,7 +13,7 @@ exports.sendRequest = async (req, res) => {
   try {
     console.log(req.body);
     const senderId = req.user.userId; // Get sender ID from authenticated user
-    const {  receiverId, message } = req.body;
+    const { receiverId, message } = req.body;
     const io = req.app.get("io");
 
     // Validate required fields
@@ -338,6 +338,105 @@ exports.rejectRequest = async (req, res) => {
   }
 };
 
+// Cancel request (worker canceling a received request)
+exports.cancelRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const userId = req.user.userId;
+    const io = req.app.get("io");
+
+    if (!requestId) {
+      return sendErrorResponse(res, "Request ID is required", 400);
+    }
+
+    // First find the worker by userId
+    const worker = await Worker.findOne({ userId });
+    if (!worker) {
+      return sendErrorResponse(res, "Worker not found", 404);
+    }
+
+    const request = await Request.findById(requestId)
+      .populate("sender", "name contact")
+      .populate("receiver", "name contact");
+
+    if (!request) {
+      return sendErrorResponse(res, "Request not found", 404);
+    }
+
+    // Verify the request is from a buyer to this worker
+    if (request.receiver._id.toString() !== worker._id.toString()) {
+      return sendErrorResponse(
+        res,
+        "Not authorized to cancel this request",
+        403
+      );
+    }
+
+    if (request.status !== "pending") {
+      return sendErrorResponse(
+        res,
+        `Cannot cancel a request that is ${request.status}`,
+        400
+      );
+    }
+
+    // Remove request from both users' request arrays
+    await Promise.all([
+      Buyer.findByIdAndUpdate(request.sender, {
+        $pull: { sentRequests: request._id },
+      }),
+      Worker.findByIdAndUpdate(request.receiver._id, {
+        $pull: { receivedRequests: request._id },
+      }),
+    ]);
+
+    // Delete the request
+    await Request.findByIdAndDelete(requestId);
+
+    // Get the buyer's userId for socket room
+    const buyerDoc = await Buyer.findById(request.sender);
+    if (!buyerDoc) {
+      return sendErrorResponse(res, "Buyer not found", 404);
+    }
+
+    // Create notification for buyer
+    const buyerNotificationData = {
+      request: request.toObject(),
+      status: "cancelled",
+      workerName: worker.name,
+      worker: worker,
+    };
+
+    // Store notification in database
+    await createNotification(
+      buyerDoc.userId,
+      "status_update",
+      `Your request was cancelled by ${worker.name}`,
+      buyerNotificationData
+    );
+
+    // Emit request cancellation to both sender and receiver
+    io.to(buyerDoc.userId.toString()).emit(
+      "request_status_update",
+      buyerNotificationData
+    );
+
+    io.to(worker.userId.toString()).emit("request_status_update", {
+      request: request.toObject(),
+      status: "cancelled",
+      buyerName: request.sender.name,
+      buyer: request.sender,
+    });
+
+    sendSuccessResponse(res, "Request cancelled successfully");
+  } catch (error) {
+    console.error("Error in cancelRequest:", error);
+    if (error.name === "CastError") {
+      return sendErrorResponse(res, "Invalid request ID", 400);
+    }
+    sendErrorResponse(res, "Failed to cancel request", 500);
+  }
+};
 // Get user's requests
 exports.getUserRequests = async (req, res) => {
   try {

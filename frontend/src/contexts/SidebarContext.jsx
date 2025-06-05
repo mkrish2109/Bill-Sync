@@ -6,25 +6,25 @@ export const SidebarProvider = ({ children }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1024) {
         setIsExpanded(false);
       }
     };
-    
+
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const toggleSidebar = () => {
-    setIsExpanded(prev => !prev);
+    setIsExpanded((prev) => !prev);
   };
 
   const toggleMobileSidebar = () => {
-    setIsMobileOpen(prev => !prev);
+    setIsMobileOpen((prev) => !prev);
   };
 
   return (
@@ -37,7 +37,7 @@ export const SidebarProvider = ({ children }) => {
         toggleMobileSidebar,
         setIsHovered,
         setIsExpanded,
-        setIsMobileOpen
+        setIsMobileOpen,
       }}
     >
       {children}
