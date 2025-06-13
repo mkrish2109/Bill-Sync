@@ -17,7 +17,6 @@ const {
 } = require("../utils/tokenUtils");
 const Worker = require("../models/Worker");
 const Buyer = require("../models/Buyer");
-const session = require("express-session");
 const { verifyJWT } = require("../utils/tokenUtils");
 
 // Register user
@@ -316,7 +315,6 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// Check session status
 const verifyAuth = async (req, res) => {
   try {
     const accessToken = req.cookies.accessToken;

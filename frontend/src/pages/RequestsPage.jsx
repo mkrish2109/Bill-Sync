@@ -6,6 +6,7 @@ import { ErrorAlert } from "../components/common/Alert";
 import { useSocket } from "../contexts/SocketContext";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "react-toastify";
+import { PageMeta } from "../components/common/PageMeta";
 
 const RequestsPage = () => {
   const { user } = useAuth();
@@ -33,7 +34,6 @@ const RequestsPage = () => {
 
   const handleRequestStatusUpdate = useCallback(
     (data) => {
-      console.log(data);
       data.status == "accepted"
         ? toast.success(
             `Request status updated: ${
@@ -173,18 +173,25 @@ const RequestsPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">
-        {userType === "buyer" ? "Sent Requests" : "Received Requests"}
-      </h1>
-      <RequestTabs
-        userType={userType}
-        sentRequests={filteredRequests.sent}
-        receivedRequests={filteredRequests.received}
-        onAccept={handleAcceptRequest}
-        onReject={handleCancelRequest}
+    <>
+      <PageMeta
+        title="Requests | Bill Sync - Manage Your Service Requests"
+        description="Track and manage your service requests on Bill Sync. Handle incoming and outgoing requests efficiently with our intuitive interface."
+        keywords="service requests, request management, work requests, service tracking, request handling"
       />
-    </div>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-6 text-primary-light dark:text-primary-dark">
+          {userType === "buyer" ? "Sent Requests" : "Received Requests"}
+        </h1>
+        <RequestTabs
+          userType={userType}
+          sentRequests={filteredRequests.sent}
+          receivedRequests={filteredRequests.received}
+          onAccept={handleAcceptRequest}
+          onReject={handleCancelRequest}
+        />
+      </div>
+    </>
   );
 };
 

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../helper/apiHelper";
+import React from "react";
+import {PageMeta} from "./common/PageMeta";
 
 export default function BillList() {
   const [bills, setBills] = useState([]);
@@ -29,42 +31,49 @@ export default function BillList() {
   };
 
   return (
-    <div>
-      <h2>Bill List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Buyer</th>
-            <th>Worker</th>
-            <th>Fabric Details</th>
-            <th>Payment Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {bills.map((bill) => (
-            <tr key={bill._id}>
-              <td>{bill.buyerId?.name}</td>
-              <td>{bill.workerId?.name}</td>
-              <td>
-                {bill.fabricDetails.map((f, idx) => (
-                  <div key={idx}>
-                    {f.item} ({f.quantity} {f.unit})
-                  </div>
-                ))}
-              </td>
-              <td>{bill.paymentStatus}</td>
-              <td>
-                {bill.paymentStatus === "pending" && (
-                  <button onClick={() => markAsPaid(bill._id)}>
-                    Mark as Paid
-                  </button>
-                )}
-              </td>
+    <>
+      <PageMeta
+        title="Bills | Bill Sync - Manage Your Invoices"
+        description="View and manage all your bills and invoices in one place. Track payments, generate reports, and stay on top of your finances."
+        keywords="bills management, invoice tracking, payment history, financial records, bill organization"
+      />
+      <div>
+        <h2>Bill List</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Buyer</th>
+              <th>Worker</th>
+              <th>Fabric Details</th>
+              <th>Payment Status</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {bills.map((bill) => (
+              <tr key={bill._id}>
+                <td>{bill.buyerId?.name}</td>
+                <td>{bill.workerId?.name}</td>
+                <td>
+                  {bill.fabricDetails.map((f, idx) => (
+                    <div key={idx}>
+                      {f.item} ({f.quantity} {f.unit})
+                    </div>
+                  ))}
+                </td>
+                <td>{bill.paymentStatus}</td>
+                <td>
+                  {bill.paymentStatus === "pending" && (
+                    <button onClick={() => markAsPaid(bill._id)}>
+                      Mark as Paid
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

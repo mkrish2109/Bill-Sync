@@ -21,13 +21,13 @@ const RequestTabs = ({
   return (
     <div>
       {showTabs && (
-        <div className="flex border-b border-border-light dark:border-border-dark mb-4">
+        <div className="flex border-b border-border-hoverLight dark:border-border-hoverDark mb-4">
           {userType === "worker" && (
             <button
               className={`px-4 py-2 font-medium transition-colors duration-200 ${
                 activeTab === "received"
-                  ? "text-primary-light dark:text-primary-dark border-b-2 border-primary-light dark:border-primary-dark"
-                  : "text-text-secondaryLight dark:text-text-secondaryDark hover:text-text-light dark:hover:text-text-dark"
+                  ? "text-text-secondaryLight dark:text-text-secondaryDark border-b-2 border-border-hoverLight dark:border-border-dark"
+                  : "text-primary-light dark:text-primary-dark border-b-2 border-primary-light dark:border-primary-dark"
               }`}
               onClick={() => setActiveTab("received")}
             >
@@ -38,8 +38,8 @@ const RequestTabs = ({
             <button
               className={`px-4 py-2 font-medium transition-colors duration-200 ${
                 activeTab === "sent"
-                  ? "text-primary-light dark:text-primary-dark border-b-2 border-primary-light dark:border-primary-dark"
-                  : "text-text-secondaryLight dark:text-text-secondaryDark hover:text-text-light dark:hover:text-text-dark"
+                  ? "text-text-secondaryLight dark:text-text-secondaryDark border-b-2 border-border-hoverLight dark:border-border-dark"
+                  : "text-primary-light dark:text-primary-dark border-b-2 border-primary-light dark:border-primary-dark"
               }`}
               onClick={() => setActiveTab("sent")}
             >
@@ -63,7 +63,7 @@ const RequestTabs = ({
               />
             ))
           ) : (
-            <div className="text-center py-8 text-text-secondaryLight dark:text-text-secondaryDark">
+            <div className="text-center py-8 text-secondary-light dark:text-secondary-dark">
               No received requests
             </div>
           )
@@ -77,7 +77,7 @@ const RequestTabs = ({
             />
           ))
         ) : (
-          <div className="text-center py-8 text-text-secondaryLight dark:text-text-secondaryDark">
+          <div className="text-center py-8 text-secondary-light dark:text-secondary-dark">
             No sent requests
           </div>
         )}

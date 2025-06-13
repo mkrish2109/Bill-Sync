@@ -12,44 +12,41 @@ module.exports = {
           light: "#FFFFFF",
           dark: "#121212",
           surfaceLight: "#F9FAFB",
-          surfaceDark: "#1E1E24", // More contrast-safe for dark surfaces
+          surfaceDark: "#151519",
           elevatedLight: "#FFFFFF",
-          elevatedDark: "#2A2A31", // Better against text-primary-dark
+          elevatedDark: "#2C2F31", // matches logo theme
         },
-
         // === Text Colors ===
         text: {
-          light: "#1A1A1A", // deeper black for white backgrounds
-          dark: "#F5F5F5", // brighter white for dark backgrounds
-          secondaryLight: "#374151",
-          secondaryDark: "#D1D5DB",
+          light: "#2C3639", // matches "Bill" in light mode
+          dark: "#E0E6F2", // matches "Sync" in dark mode
+          secondaryLight: "#4B5563",
+          secondaryDark: "#B8CFCE", // soft teal for readability
           mutedLight: "#6B7280",
           mutedDark: "#9CA3AF",
         },
 
         // === Primary Brand Color ===
         primary: {
-          light: "#7A4F2A", // deeper bronze for better contrast with white
-          dark: "#D4B483", // brighter gold-tan for dark backgrounds
-          hoverLight: "#5C3C20", // hover contrast for light mode
-          hoverDark: "#FFD794", // hover contrast for dark mode
-          disabledLight: "#C6A782",
+          light: "#A9714B", // updated from #916e52 — warm bronze
+          dark: "#D4B483", // same as dark mode "Bill"
+          hoverLight: "#8C5E38",
+          hoverDark: "#C2A86F",
+          disabledLight: "#D1BFAF",
           disabledDark: "#998866",
         },
 
-        // === Accent (contrast-safe adjusted) ===
-        accent: {
-          light: "#5A3E28", // deeper bronze for light bg
-          dark: "#F4E1B5", // softer and brighter than original for contrast
-          muted: "#8A6D56", // fallback muted tone
+        // === Accent / Secondary Styling ===
+        secondary: {
+          light: "#7F8CAA", // cool gray-blue
+          dark: "#9DB9B8", // soft, harmonious teal
+          hoverLight: "#6B7A98",
+          hoverDark: "#9DB9B8",
         },
 
-        // === Secondary Styling ===
-        secondary: {
-          light: "#55617A", // updated from #7F8CAA — dark enough for white
-          hoverLight: "#445066",
-          dark: "#B8CFCE",
-          hoverDark: "#9DB9B8",
+        accent:{
+          light: "#2C3639",
+          dark: "#E0E6F2",
         },
 
         // === UI Feedback ===

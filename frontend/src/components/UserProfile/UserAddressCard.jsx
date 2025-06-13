@@ -13,7 +13,7 @@ export default function UserAddressCard({ address, onUpdate }) {
     city: address?.city || "",
     postalCode: address?.postalCode || "",
     addressLine1: address?.addressLine1 || "",
-    addressLine2: address?.addressLine2 || ""
+    addressLine2: address?.addressLine2 || "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -25,11 +25,11 @@ export default function UserAddressCard({ address, onUpdate }) {
     try {
       setLoading(true);
       const response = await api.put("/user/profile/address", formData);
-     if (response.status === 200) {
-       onUpdate(response.data.data);
-       toast.success("Address updated successfully");
-       closeModal();
-      }else{
+      if (response.status === 200) {
+        onUpdate(response.data.data);
+        toast.success("Address updated successfully");
+        closeModal();
+      } else {
         toast.error("Failed to update address");
       }
     } catch (error) {
@@ -50,35 +50,51 @@ export default function UserAddressCard({ address, onUpdate }) {
   );
 
   const addressInfo = [
-    { label: "Country", value: address?.country || "Not specified", name: "country" },
+    {
+      label: "Country",
+      value: address?.country || "Not specified",
+      name: "country",
+    },
     { label: "State", value: address?.state || "Not specified", name: "state" },
     { label: "City", value: address?.city || "Not specified", name: "city" },
-    { label: "Postal Code", value: address?.postalCode || "Not specified", name: "postalCode" },
-    { label: "Address Line 1", value: address?.addressLine1 || "Not specified", name: "addressLine1" },
-    { label: "Address Line 2", value: address?.addressLine2 || "Not specified", name: "addressLine2" }
+    {
+      label: "Postal Code",
+      value: address?.postalCode || "Not specified",
+      name: "postalCode",
+    },
+    {
+      label: "Address Line 1",
+      value: address?.addressLine1 || "Not specified",
+      name: "addressLine1",
+    },
+    {
+      label: "Address Line 2",
+      value: address?.addressLine2 || "Not specified",
+      name: "addressLine2",
+    },
   ];
 
   return (
-    <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+    <div className="p-5 border border-border-light hover:border-border-hoverLight rounded-2xl dark:border-border-dark dark:hover:border-border-hoverDark lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h4 className="text-lg font-semibold text-gray-800 dark:text-text-dark/90 lg:mb-6">
+          <h4 className="text-lg font-semibold text-text-light dark:text-text-dark lg:mb-6">
             Address Information
           </h4>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7">
             {addressInfo.map((info, index) => (
               <div key={index}>
-                <p className="mb-2 text-xs leading-normal text-text-secondaryLight dark:text-gray-400">
+                <p className="mb-2 text-xs leading-normal text-text-mutedLight dark:text-text-mutedDark">
                   {info.label}
                 </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-text-dark/90">
+                <p className="text-sm font-medium text-text-light dark:text-text-dark">
                   {info.value}
                 </p>
               </div>
             ))}
           </div>
         </div>
-        <Button 
+        <Button
           color="primary"
           onClick={openModal}
           variant="outline"
@@ -89,9 +105,9 @@ export default function UserAddressCard({ address, onUpdate }) {
         </Button>
       </div>
 
-      <EditAddressModal 
-        isOpen={isOpen} 
-        onClose={closeModal} 
+      <EditAddressModal
+        isOpen={isOpen}
+        onClose={closeModal}
         onSave={handleSave}
         addressInfo={addressInfo}
         formData={formData}

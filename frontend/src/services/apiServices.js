@@ -8,7 +8,7 @@ export const login = async (data) => {
     throw new Error(error.response?.data?.message || "Login failed");
   }
 };
-  
+
 export const logout = async () => {
   try {
     const response = await api.post("/auth/logout");
@@ -23,7 +23,9 @@ export const forgotPassword = async (data) => {
     const response = await api.post("/auth/forgot-password", data);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to send reset password email");
+    throw new Error(
+      error.response?.data?.message || "Failed to send reset password email"
+    );
   }
 };
 
@@ -32,7 +34,9 @@ export const resetPassword = async (data) => {
     const response = await api.post("/auth/reset-password", data);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to reset password");
+    throw new Error(
+      error.response?.data?.message || "Failed to reset password"
+    );
   }
 };
 
@@ -56,3 +60,10 @@ export const getAllUsers = async () => {
     throw new Error(error.response?.data?.message || "Failed to fetch users");
   }
 };
+
+export const getAvailableWorkers = () => api.get('/requests/available/workers');
+export const sendRequest = (requestData) => api.post('/requests', requestData);
+export const acceptRequest = (requestId) => api.put(`/requests/${requestId}/accept`);
+export const rejectRequest = (requestId) => api.put(`/requests/${requestId}/reject`);
+export const cancelRequest = (requestId) => api.put(`/requests/${requestId}/cancel`);
+export const getUserRequests = () => api.get('/requests');

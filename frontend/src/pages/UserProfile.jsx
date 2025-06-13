@@ -10,29 +10,29 @@ import { api } from "../helper/apiHelper";
 export default function UserProfile() {
   const [profileData, setProfileData] = useState({
     user: null,
-    address: null
+    address: null,
   });
   const [loading, setLoading] = useState(true);
   const reduxUser = useSelector((store) => store?.user.user);
 
+  // Fetch initial profile data
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         setLoading(true);
         const response = await api.get("/user/profile");
-
         setProfileData({
-          user: response.data.user,
-          address: response.data.address
+          user: response.data.data.user,
+          address: response.data.data.address,
         });
       } catch (error) {
         toast.error("Failed to load profile data");
         console.error("Profile fetch error:", error);
         // Fallback to Redux user data if API fails
         if (reduxUser) {
-          setProfileData(prev => ({
+          setProfileData((prev) => ({
             ...prev,
-            user: reduxUser
+            user: reduxUser,
           }));
         }
       } finally {
@@ -43,17 +43,22 @@ export default function UserProfile() {
     fetchProfileData();
   }, [reduxUser]);
 
-  const handleProfileUpdate = (updatedUser) => {
-    setProfileData(prev => ({
+  // Effect to handle profile updates
+  useEffect(() => {}, [profileData.user]);
+
+  const handleProfileUpdate = (updatedData) => {
+    // console.log("Updating profile with:", updatedData);
+    setProfileData((prev) => ({
       ...prev,
-      user: updatedUser
+      user: updatedData.user,
     }));
   };
 
   const handleAddressUpdate = (updatedAddress) => {
-    setProfileData(prev => ({
+    console.log("Updating address with:", updatedAddress);
+    setProfileData((prev) => ({
       ...prev,
-      address: updatedAddress
+      address: updatedAddress,
     }));
   };
 
@@ -68,30 +73,33 @@ export default function UserProfile() {
   if (!profileData.user) {
     return (
       <div className="text-center py-10">
-        <p className="text-gray-600 dark:text-gray-400">Failed to load profile data</p>
+        <p className="text-gray-600 dark:text-gray-400">
+          Failed to load profile data
+        </p>
       </div>
     );
   }
 
   return (
     <>
-      <PageMeta
-        title="User Profile | Tex Bill"
-        description="User profile dashboard for Tex Bill application"
+      <PageMeta 
+        title="User Profile | Bill Sync"
+        description="Manage your Bill Sync profile, update personal information, and customize your account settings."
+        keywords="user profile, account settings, personal information, profile management"
       />
       <div className="rounded-2xl border border-gray-200 bg-background-light p-5 dark:border-gray-800 dark:bg-background-light/[0.03] lg:p-6">
-        <h3 className="mb-5 text-lg font-semibold text-gray-800 dark:text-text-dark/90 lg:mb-7">
+        <h3 className="mb-5 text-lg font-semibold text-text-light dark:text-text-dark lg:mb-7">
           Profile
         </h3>
         <div className="space-y-6">
-          <UserMetaCard user={profileData.user} address ={profileData.address} />
-          <UserInfoCard 
-            user={profileData.user} 
-            onUpdate={handleProfileUpdate} 
+          <UserMetaCard user={profileData.user} address={profileData.address} />
+          <UserInfoCard
+            user={profileData.user}
+            onUpdate={handleProfileUpdate}
           />
-          <UserAddressCard 
-            address={profileData.address} 
-            onUpdate={handleAddressUpdate} 
+          <UserAddressCard
+            address={profileData.address}
+            onUpdate={handleAddressUpdate}
           />
         </div>
       </div>

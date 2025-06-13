@@ -15,9 +15,9 @@ const authMiddleware = async (req, res, next) => {
       next();
     } catch (error) {
       // If access token is expired, try to refresh it
-      if (error.name === 'TokenExpiredError') {
+      if (error.name === "TokenExpiredError") {
         const refreshToken = req.cookies.refreshToken;
-        
+
         if (!refreshToken) {
           return sendErrorResponse(res, "Refresh token not provided.", 401);
         }
@@ -26,12 +26,16 @@ const authMiddleware = async (req, res, next) => {
           const decoded = verifyRefreshToken(refreshToken);
           // Token is valid, but we don't need to generate new tokens here
           // The client should call the refresh endpoint to get new tokens
-          return sendErrorResponse(res, "Access token expired. Please refresh.", 401);
+          return sendErrorResponse(
+            res,
+            "Access token expired. Please refresh.",
+            401
+          );
         } catch (refreshError) {
           return sendErrorResponse(res, "Invalid refresh token.", 401);
         }
       }
-      
+
       return sendErrorResponse(res, "Invalid access token.", 401);
     }
   } catch (error) {

@@ -6,7 +6,8 @@ import { useSelector } from "react-redux";
 import { FaTasks } from "react-icons/fa";
 import Dashboard from "../dashboard/Dashboard";
 import AssignmentCard from "../assignment/AssignmentCard";
-import { getUserRequests } from "../../services/api";
+import { getUserRequests } from "../../services/apiServices";
+import { PageMeta } from "../common/PageMeta";
 
 const WorkerDashboard = () => {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ const WorkerDashboard = () => {
     };
 
     fetchData();
-  }, [user._id]);
+  }, [user?.userId || user?._id]);
 
   const handleStatusUpdate = async (assignmentId, newStatus) => {
     if (!assignmentId || !newStatus) {
@@ -77,7 +78,7 @@ const WorkerDashboard = () => {
       });
 
       // Refresh assignments
-      const response = await api.get(`/workers/fabrics?workerId=${user._id}`);
+      const response = await api.get(`/workers/fabrics`);
       setAssignments(response.data.data);
     } catch (err) {
       console.log(err);
@@ -86,27 +87,34 @@ const WorkerDashboard = () => {
   };
 
   return (
-    <Dashboard
-      title="My Assignments"
-      items={transformedAssignments}
-      loading={loading}
-      error={error}
-      setError={setError}
-      itemType="assignments"
-      statusKey="status"
-      searchKeys={["fabric.name", "buyer.name", "instructions"]}
-      emptyStateIcon={FaTasks}
-      showAddButton={false}
-      renderCard={(item) => (
-        <AssignmentCard
-          key={item._id || item.assignmentId}
-          assignment={item}
-          onStatusUpdate={handleStatusUpdate}
-          onClick={() => navigate(`/worker/fabrics/${item.fabric._id}`)}
-        />
-      )}
-      userRequests={requestStatus}
-    />
+    <>
+      <PageMeta
+        title="Worker Dashboard | Bill Sync - Manage Your Tasks"
+        description="Access your worker dashboard to manage tasks, track assignments, and monitor your work progress on Bill Sync."
+        keywords="worker dashboard, task management, work assignments, progress tracking, worker tools"
+      />
+      <Dashboard
+        title="My Assignments"
+        items={transformedAssignments}
+        loading={loading}
+        error={error}
+        setError={setError}
+        itemType="assignments"
+        statusKey="status"
+        searchKeys={["fabric.name", "buyer.name", "instructions"]}
+        emptyStateIcon={FaTasks}
+        showAddButton={false}
+        renderCard={(item) => (
+          <AssignmentCard
+            key={item._id || item.assignmentId}
+            assignment={item}
+            onStatusUpdate={handleStatusUpdate}
+            onClick={() => navigate(`/worker/fabrics/${item.fabric._id}`)}
+          />
+        )}
+        userRequests={requestStatus}
+      />
+    </>
   );
 };
 

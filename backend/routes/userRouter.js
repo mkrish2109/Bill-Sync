@@ -34,8 +34,8 @@ userRouter.put(
   authMiddleware,
   [
     check("fname", "First name is required").not().isEmpty(),
-    check("lname", "Last name is required").not().isEmpty(),
-    check("phone", "Phone is required").not().isEmpty()
+    check("lname", "Last name is required").not().isEmpty()
+    // check("phone", "Phone is required").not().isEmpty()
   ],
   updateUserProfile
 );

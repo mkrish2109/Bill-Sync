@@ -10,7 +10,7 @@ import { Logo } from "../../components/common/Logo";
 
 function UserFooter() {
   return (
-    <footer className="bg-gray-50 dark:bg-background-dark">
+    <footer className="bg-gray-50 dark:bg-background-dark border-t border-gray-200 dark:border-background-dark">
       <div className="w-full  p-4 py-6 lg:py-8">
         <div className="md:flex md:justify-between w-full">
           <div className="mb-6 md:mb-0">
@@ -68,7 +68,7 @@ function UserFooter() {
           <span className="text-sm text-gray-500 dark:text-gray-400 sm:text-center">
             © {new Date().getFullYear()}{" "}
             <a href="#" className="hover:underline">
-              Tex-Bill™
+              Bill-Sync™
             </a>
             . All Rights Reserved.
           </span>

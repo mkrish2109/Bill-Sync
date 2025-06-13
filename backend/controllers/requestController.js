@@ -588,3 +588,4 @@ exports.getConnectedUsers = async (req, res) => {
     sendErrorResponse(res, "Failed to fetch connected users", 500);
   }
 };
+

@@ -9,20 +9,18 @@ const LayoutContent = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   return (
-    <div className="min-h-screen xl:flex bg-background-secondaryLight dark:bg-background-secondaryDark">
-      
+    <div className="min-h-screen xl:flex bg-background-surfaceLight dark:bg-background-surfaceDark">
       <div>
         <Sidebar />
         <Backdrop />
       </div>
-      
       <div
         className={`flex-1 transition-all duration-300 ease-in-out ${
           isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
         } ${isMobileOpen ? "ml-0" : ""}`}
       >
         <AppNavbar variant="default" showSidebarToggle={true} />
-      <div className="p-4 mx-auto max-w-7xl md:p-6 dark:bg-background-secondaryDark">
+      <div className="p-1 mx-auto max-w-7xl md:p-6 dark:bg-background-surfaceDark">
           <Outlet />
         </div>
       </div>

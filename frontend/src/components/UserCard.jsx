@@ -1,3 +1,4 @@
+import { Button } from "flowbite-react";
 import { useState } from "react";
 import { FaUser, FaPhone, FaBriefcase, FaTools } from "react-icons/fa";
 
@@ -10,8 +11,7 @@ const UserCard = ({ user, userType, onSendRequest }) => {
     e.preventDefault();
     setIsSending(true);
     try {
-      console.log(message);
-      console.log(user._id);
+      // console.log(message);
       await onSendRequest(user._id, message);
       setShowForm(false);
       setMessage("");
@@ -21,7 +21,7 @@ const UserCard = ({ user, userType, onSendRequest }) => {
   };
 
   return (
-    <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-card dark:shadow-card-dark p-6 hover:shadow-lg transition-shadow duration-200">
+    <div className="bg-background-surfaceLight dark:bg-background-surfaceDark rounded-lg shadow-card dark:shadow-card-dark p-6 hover:shadow-lg transition-shadow duration-200">
       <div className="flex items-center mb-4">
         <div className="bg-surface-tertiaryLight dark:bg-surface-tertiaryDark rounded-full p-3 mr-4">
           <FaUser className="text-text-secondaryLight dark:text-text-secondaryDark text-xl" />
@@ -66,19 +66,20 @@ const UserCard = ({ user, userType, onSendRequest }) => {
       </div>
 
       {!showForm ? (
-        <button
+        <Button
+        color="secondary"
           onClick={() => setShowForm(true)}
-          className="w-full bg-primary-light dark:bg-primary-dark hover:bg-primary-hoverLight dark:hover:bg-primary-hoverDark text-text-invertedLight dark:text-text-invertedDark py-2 px-4 rounded-lg transition-colors duration-200"
+          className="w-full transition-colors duration-200"
         >
           Send Request
-        </button>
+        </Button>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-3">
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Add a message (optional)"
-            className="w-full p-3 border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark text-sm bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark"
+            className="w-full p-3 border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-light dark:focus:ring-primary-dark text-sm bg-background-surfaceLight dark:bg-background-surfaceDark text-text-light dark:text-text-dark"
             rows="3"
           />
           <div className="flex justify-end space-x-2">

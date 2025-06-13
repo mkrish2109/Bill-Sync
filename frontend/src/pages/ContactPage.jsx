@@ -1,5 +1,18 @@
-import { Button, TextInput, Textarea, Card, Alert, Spinner } from "flowbite-react";
-import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaCheckCircle, FaPaperPlane } from "react-icons/fa";
+import {
+  Button,
+  TextInput,
+  Textarea,
+  Card,
+  Alert,
+  Spinner,
+} from "flowbite-react";
+import {
+  FaMapMarkerAlt,
+  FaPhone,
+  FaEnvelope,
+  FaCheckCircle,
+  FaPaperPlane,
+} from "react-icons/fa";
 import { useState } from "react";
 import { PageMeta } from "../components/common/PageMeta";
 import SectionHeader from "../components/common/SectionHeader";
@@ -18,13 +31,13 @@ export default function ContactPage() {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = "Please enter a valid email";
     }
-    if (!formData.message.trim()) newErrors.message = 'Message is required';
+    if (!formData.message.trim()) newErrors.message = "Message is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -32,18 +45,18 @@ export default function ContactPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       setSubmitted(true);
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error("Submission error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -55,7 +68,7 @@ export default function ContactPage() {
       ...formData,
       [name]: value,
     });
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors({
@@ -66,8 +79,12 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen py-12 px-4">
-      <PageMeta title="Contact" />
+    <div className="bg-background-surfaceLight dark:bg-background-surfaceDark min-h-screen py-12 px-4">
+      <PageMeta
+        title="Contact | Bill Sync - Get Support & Assistance"
+        description="Get in touch with Bill Sync's support team. We're here to help with any questions about our billing and payment management solutions."
+        keywords="contact Bill Sync, customer support, help desk, technical support, customer service, contact information"
+      />
       <div className="max-w-6xl mx-auto">
         <SectionHeader
           title="Contact Us"
@@ -88,7 +105,7 @@ export default function ContactPage() {
 
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           {/* Contact Form */}
-          <Card className="dark:bg-gray-800">
+          <Card className="bg-background-light dark:bg-background-dark">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
               Send us a message
             </h2>
@@ -163,6 +180,7 @@ export default function ContactPage() {
               </div>
 
               <Button
+                color="primary"
                 type="submit"
                 className="w-full"
                 disabled={isSubmitting}
@@ -184,7 +202,7 @@ export default function ContactPage() {
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <Card className="dark:bg-gray-800">
+            <Card className="bg-background-light dark:bg-background-dark">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
                 Contact Information
               </h2>
@@ -198,7 +216,8 @@ export default function ContactPage() {
                       Address
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300">
-                      203 Angle Square, Digital Valley<br />
+                      203 Angle Square, Digital Valley
+                      <br />
                       Surat, Gujarat 394105
                     </p>
                   </div>
@@ -213,7 +232,8 @@ export default function ContactPage() {
                       Phone
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300">
-                      +1 (555) 123-4567<br />
+                      +1 (555) 123-4567
+                      <br />
                       Mon-Fri, 9am-5pm EST
                     </p>
                   </div>
@@ -228,7 +248,8 @@ export default function ContactPage() {
                       Email
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300">
-                      info@example.com<br />
+                      info@example.com
+                      <br />
                       support@example.com
                     </p>
                   </div>
@@ -236,23 +257,35 @@ export default function ContactPage() {
               </div>
             </Card>
 
-            {/* Business Hours */} 
-            <Card className="dark:bg-gray-800">
+            {/* Business Hours */}
+            <Card className="bg-background-light dark:bg-background-dark">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                 Business Hours
               </h2>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Monday - Friday</span>
-                  <span className="font-medium text-gray-800 dark:text-white">9:00 AM - 5:00 PM</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    Monday - Friday
+                  </span>
+                  <span className="font-medium text-gray-800 dark:text-white">
+                    9:00 AM - 5:00 PM
+                  </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Saturday</span>
-                  <span className="font-medium text-gray-800 dark:text-white">10:00 AM - 2:00 PM</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    Saturday
+                  </span>
+                  <span className="font-medium text-gray-800 dark:text-white">
+                    10:00 AM - 2:00 PM
+                  </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Sunday</span>
-                  <span className="font-medium text-gray-800 dark:text-white">Closed</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    Sunday
+                  </span>
+                  <span className="font-medium text-gray-800 dark:text-white">
+                    Closed
+                  </span>
                 </div>
               </div>
             </Card>
@@ -260,7 +293,7 @@ export default function ContactPage() {
         </div>
 
         {/* Map */}
-        <Card className="p-0 overflow-hidden dark:bg-gray-800">
+        <Card className="p-0 overflow-hidden bg-background-light dark:bg-background-dark">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14874.692024199153!2d72.8311!3d21.1702!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04e8466bcf6eb%3A0x6ab1d4013788d700!2s6VM7%2BJP%20Surat%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1715765634561!5m2!1sen!2sin"
             width="100%"

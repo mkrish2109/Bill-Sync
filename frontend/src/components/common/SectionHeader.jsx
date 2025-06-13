@@ -1,13 +1,13 @@
 // components/common/SectionHeader.jsx
 import { motion } from "framer-motion";
 
-const SectionHeader = ({ 
-  title, 
-  subtitle, 
-  tagline, 
+const SectionHeader = ({
+  title,
+  subtitle,
+  tagline,
   className = "",
   titleClassName = "",
-  subtitleClassName = ""
+  subtitleClassName = "",
 }) => {
   return (
     <motion.div
@@ -18,15 +18,19 @@ const SectionHeader = ({
       className={`text-center mb-12 ${className}`}
     >
       {tagline && (
-        <span className="inline-block px-3 py-1 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900 rounded-full mb-4">
+        <span className="inline-block px-3 py-1 text-sm font-semibold text-primary-light dark:text-primary-dark bg-primary-light/10 dark:bg-primary-dark/10 rounded-full mb-4">
           {tagline}
         </span>
       )}
-      <h2 className={`text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4 ${titleClassName}`}>
+      <h2
+        className={`text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark mb-4 ${titleClassName}`}
+      >
         {title}
       </h2>
       {subtitle && (
-        <p className={`text-gray-600 dark:text-gray-300 max-w-2xl mx-auto ${subtitleClassName}`}>
+        <p
+          className={`text-text-secondaryLight dark:text-text-secondaryDark max-w-2xl mx-auto ${subtitleClassName}`}
+        >
           {subtitle}
         </p>
       )}

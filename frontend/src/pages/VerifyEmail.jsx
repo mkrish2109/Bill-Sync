@@ -18,8 +18,8 @@ function VerifyEmail() {
     async function verify() {
       // console.log("Verifying email with data: verify", data);
       try {
-        const response = await api.post('/auth/verify-email', data);
-        if( "Email is already verified." === response.data.message) {
+        const response = await api.post("/auth/verify-email", data);
+        if ("Email is already verified." === response.data.message) {
           toast.success(response.message);
           setVerified(true);
           return;
@@ -35,9 +35,7 @@ function VerifyEmail() {
       } catch (error) {
         console.error("Verification failed: ", error.message);
         toast.error("Something went wrong.");
-        
       }
-      
     }
 
     verify();
@@ -58,7 +56,8 @@ function VerifyEmail() {
           color="primary"
           className="w-fit"
           onClick={goToHome}
-          disabled={!verified}>
+          disabled={!verified}
+        >
           Go to Home
         </Button>
       </div>

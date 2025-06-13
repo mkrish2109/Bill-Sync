@@ -20,6 +20,7 @@ import SideBarToggle from "../components/common/SideBarToggle";
 import { useSidebar } from "../contexts/SidebarContext";
 import { Logo } from "../components/common/Logo";
 import NotificationBell from "../components/NotificationBell";
+import { FaSearch } from "react-icons/fa";
 
 const NavLink = ({ to, children, exact = false, className = "" }) => {
   const location = useLocation();
@@ -32,14 +33,12 @@ const NavLink = ({ to, children, exact = false, className = "" }) => {
       as={Link}
       to={to}
       active={isActive}
-      className={`transition-colors duration-200 
-    text-gray-700 hover:text-blue-800 
-    dark:text-gray-300 dark:hover:text-blue-400 
-    text-sm py-2 px-3 w-full text-center md:w-auto rounded-md ${
-      isActive
-        ? "bg-blue-100/50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 font-medium"
-        : ""
-    } ${className}`}
+      className={`transition-colors duration-200 text-text-light  hover:text-primary-light md:hover:text-primary-light
+         dark:text-text-dark dark:hover:text-primary-dark dark:md:hover:text-primary-dark text-sm py-2 px-3 w-full text-center md:w-auto rounded-md ${
+           isActive
+             ? "bg-primary-light/5 text-primary-light md:text-primary-light  dark:bg-blue-900/20 dark:text-primary-dark font-medium"
+             : ""
+         } ${className}`}
     >
       {children}
     </NavbarLink>
@@ -56,6 +55,12 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } =
     useSidebar?.() || {};
+
+  const navigationItems = [
+    { name: "Home", path: "/", exact: true },
+    { name: "About", path: "/about" },
+    { name: "Contact", path: "/contact" },
+  ];
 
   const handleToggle = useCallback(() => {
     if (window.innerWidth >= 1024) {
@@ -148,7 +153,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
   const userEmail = user?.email || "Not logged in";
 
   return (
-    <Navbar className="sticky top-0 flex w-full z-10 bg-background-light dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-700">
+    <Navbar className="sticky top-0 flex w-full z-10 bg-background-light dark:bg-background-dark shadow-md border-b border-gray-200 dark:border-gray-700">
       <div className="flex flex-col items-center justify-between grow">
         <div className="flex items-center justify-between w-full gap-2 px-3 sm:gap-4 lg:px-0">
           {showSidebarToggle && (
@@ -166,12 +171,12 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
           </NavbarBrand>
 
           {variant === "default" && (
-            <NavbarCollapse className=" md:bg-transparent w-full md:w-auto absolute md:relative top-full left-0 right-0 border-b border-gray-200 dark:border-gray-700 md:border-none">
-              <NavLink to="/" exact>
-                Home
-              </NavLink>
-              <NavLink to="/about">About</NavLink>
-              <NavLink to="/contact">Contact</NavLink>
+            <NavbarCollapse className="bg-background-light dark:bg-background-dark sm:bg-transparent w-full md:w-auto absolute md:relative top-full left-0 right-0">
+              {navigationItems.map((item) => (
+                <NavLink key={item.path} to={item.path} exact={item.exact}>
+                  {item.name}
+                </NavLink>
+              ))}
             </NavbarCollapse>
           )}
 
@@ -180,37 +185,28 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
               <form onSubmit={handleSearch}>
                 <div className="relative">
                   <span className="absolute -translate-y-1/2 pointer-events-none left-4 top-1/2">
-                    <svg
-                      className="fill-gray-500 dark:fill-gray-400"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M3.04175 9.37363C3.04175 5.87693 5.87711 3.04199 9.37508 3.04199C12.8731 3.04199 15.7084 5.87693 15.7084 9.37363C15.7084 12.8703 12.8731 15.7053 9.37508 15.7053C5.87711 15.7053 3.04175 12.8703 3.04175 9.37363ZM9.37508 1.54199C5.04902 1.54199 1.54175 5.04817 1.54175 9.37363C1.54175 13.6991 5.04902 17.2053 9.37508 17.2053C11.2674 17.2053 13.003 16.5344 14.357 15.4176L17.177 18.238C17.4699 18.5309 17.9448 18.5309 18.2377 18.238C18.5306 17.9451 18.5306 17.4703 18.2377 17.1774L15.418 14.3573C16.5365 13.0033 17.2084 11.2669 17.2084 9.37363C17.2084 5.04817 13.7011 1.54199 9.37508 1.54199Z"
-                        fill=""
-                      />
-                    </svg>
+                    {/* search logo */}
+                    <FaSearch className="text-secondary-light dark:text-secondary-dark" />
                   </span>
                   <input
                     ref={inputRef}
                     type="text"
                     placeholder="Search or type command..."
-                    className="h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-background-dark dark:text-text-dark/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 md:w-[300px] lg:w-[430px]"
+                    className="h-11 w-full rounded-lg border border-border-light bg-transparent py-2.5 pl-12 pr-14 text-sm text-text-secondaryLight dark:text-text-secondaryDark shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-border-light dark:bg-background-dark dark:placeholder:text-white/30 dark:focus:border-border-dark md:w-[300px] lg:w-[430px]"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                   <button
                     type="button"
-                    className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-text-secondaryLight dark:border-gray-800 dark:bg-background-light/[0.03] dark:text-gray-400"
+                    className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-background-surfaceLight px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-text-secondaryLight dark:border-background-surfaceDark dark:bg-background-surfaceDark dark:text-text-dark"
                     onClick={() => inputRef.current?.focus()}
                   >
-                    <span>⌘</span>
-                    <span>K</span>
+                    <span className="text-secondary-light dark:text-secondary-dark">
+                      ⌘
+                    </span>
+                    <span className="text-secondary-light dark:text-secondary-dark">
+                      K
+                    </span>
                   </button>
                 </div>
               </form>

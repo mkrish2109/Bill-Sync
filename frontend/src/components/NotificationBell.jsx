@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { FaBell } from "react-icons/fa";
 import { useNotifications } from "../contexts/NotificationContext";
 import NotificationDropdown from "./NotificationDropdown";
+import { Button } from "flowbite-react";
 
 const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +25,7 @@ const NotificationBell = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-text-secondaryLight hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-light/20 dark:focus:ring-primary-dark/20 rounded-full hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark"
+        className="relative p-2 text-text-secondaryLight hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-dark transition-colors duration-200 focus:outline-none focus:ring-1 focus:ring-primary-light/20 dark:focus:ring-primary-dark/20 rounded-full hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark"
         aria-label="Notifications"
         aria-haspopup="true"
         aria-expanded={isOpen}
