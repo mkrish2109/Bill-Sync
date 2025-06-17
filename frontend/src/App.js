@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider } from "flowbite-react";
@@ -41,7 +41,6 @@ import RequestsPage from "./pages/RequestsPage";
 import ConnectionsPage from "./pages/ConnectionsPage";
 
 const AppRoutes = () => {
-  const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.user);
   const role = user?.role;
 

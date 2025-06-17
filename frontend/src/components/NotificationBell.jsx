@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { FaBell } from "react-icons/fa";
 import { useNotifications } from "../contexts/NotificationContext";
 import NotificationDropdown from "./NotificationDropdown";
-import { Button } from "flowbite-react";
 
 const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);

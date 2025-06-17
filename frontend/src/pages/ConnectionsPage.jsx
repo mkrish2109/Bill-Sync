@@ -1,12 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaPhone,
-  FaBuilding,
-  FaBriefcase,
-  FaSearch,
-  FaSort,
-} from "react-icons/fa";
+import { FaPhone, FaBuilding, FaBriefcase, FaSort } from "react-icons/fa";
 import { api } from "../helper/apiHelper";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import { ErrorAlert } from "../components/common/Alert";

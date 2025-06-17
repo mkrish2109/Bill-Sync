@@ -29,7 +29,7 @@ export const NotificationProvider = ({ children }) => {
   const { socket } = useSocket();
   const { user, isAuthenticated } = useAuth();
   const role = user?.role;
-  
+
   const userId = user?.userId || user?._id;
 
   // Fetch notifications from the server

@@ -34,15 +34,15 @@ const RequestsPage = () => {
 
   const handleRequestStatusUpdate = useCallback(
     (data) => {
-      data.status == "accepted"
+      data.status === "accepted"
         ? toast.success(
             `Request status updated: ${
-              userType == "buyer" ? data.workerName : data.buyerName
+              userType === "buyer" ? data.workerName : data.buyerName
             } is now ${data.status}`
           )
         : toast.error(
             `Request status updated: ${
-              userType == "buyer" ? data.workerName : data.buyerName
+              userType === "buyer" ? data.workerName : data.buyerName
             } is now ${data.status}`
           );
 
