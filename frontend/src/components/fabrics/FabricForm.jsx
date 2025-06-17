@@ -1,5 +1,4 @@
-// components/fabrics/FabricForm.jsx
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../helper/apiHelper";
 import ImageUploader from "../ui/ImageUploader";

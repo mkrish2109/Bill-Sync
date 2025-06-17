@@ -14,7 +14,6 @@ import {
 } from "react-icons/hi";
 import { FaUsersCog } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { getAllUsers } from "../../../services/apiServices";
 import { api } from "../../../helper/apiHelper";
 import LoadingSpinner from "../../common/LoadingSpinner";

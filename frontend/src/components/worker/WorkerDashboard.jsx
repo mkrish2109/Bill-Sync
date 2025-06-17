@@ -1,4 +1,3 @@
-// WorkerDashboard.js
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../helper/apiHelper";
