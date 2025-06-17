@@ -1,30 +1,30 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const requestSchema = new mongoose.Schema({
   sender: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Buyer',
-    required: true
+    ref: "Buyer",
+    required: true,
   },
   receiver: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Worker',
-    required: true
+    ref: "Worker",
+    required: true,
   },
   status: {
     type: String,
-    enum: ['pending', 'accepted', 'rejected', 'cancelled'],
-    default: 'pending'
+    enum: ["pending", "accepted", "rejected", "cancelled"],
+    default: "pending",
   },
   message: String,
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
 });
 
 // Update the updatedAt timestamp before saving
-requestSchema.pre('save', function(next) {
+requestSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-module.exports = mongoose.model('Request', requestSchema);
+module.exports = mongoose.model("Request", requestSchema);

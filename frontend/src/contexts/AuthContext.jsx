@@ -1,13 +1,13 @@
-import React, { createContext, useContext, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { restoreUser } from '../redux/slices/userSlice';
+import React, { createContext, useContext, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { restoreUser } from "../redux/slices/userSlice";
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
       try {
         await dispatch(restoreUser()).unwrap();
       } catch (error) {
-        console.error('Failed to restore user session:', error);
+        console.error("Failed to restore user session:", error);
       }
     };
 
@@ -31,12 +31,8 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     loading,
-    isAuthenticated
+    isAuthenticated,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-}; 
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};

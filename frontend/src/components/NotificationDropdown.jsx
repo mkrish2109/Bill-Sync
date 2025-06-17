@@ -33,7 +33,7 @@ const NotificationDropdown = ({ onClose }) => {
 
   if (loading) {
     return (
-      <div className="w-80 sm:w-96 bg-surface-elevatedLight dark:bg-surface-elevatedDark rounded-lg shadow-card dark:shadow-card-dark overflow-hidden border border-border-light dark:border-border-dark">
+      <div className="w-80 sm:w-96 bg-background-elevatedLight dark:bg-background-elevatedDark rounded-lg shadow-card dark:shadow-card-dark overflow-hidden border border-border-light dark:border-border-dark">
         <div className="p-4 flex justify-center items-center min-h-[200px]">
           <LoadingSpinner />
         </div>
@@ -43,7 +43,7 @@ const NotificationDropdown = ({ onClose }) => {
 
   if (error) {
     return (
-      <div className="w-80 sm:w-96 bg-surface-elevatedLight dark:bg-surface-elevatedDark rounded-lg shadow-card dark:shadow-card-dark overflow-hidden border border-border-light dark:border-border-dark">
+      <div className="w-80 sm:w-96 bg-background-elevatedLight dark:bg-background-elevatedDark rounded-lg shadow-card dark:shadow-card-dark overflow-hidden border border-border-light dark:border-border-dark">
         <div className="p-4 text-error-base bg-error-base/10 rounded">
           {error}
         </div>
@@ -52,8 +52,8 @@ const NotificationDropdown = ({ onClose }) => {
   }
 
   return (
-    <div className="w-80 sm:w-96 bg-surface-elevatedLight dark:bg-surface-elevatedDark rounded-lg shadow-card dark:shadow-card-dark overflow-hidden border border-border-light dark:border-border-dark">
-      <div className="p-4 border-b border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
+    <div className="w-80 sm:w-96 bg-background-elevatedLight dark:bg-background-elevatedDark rounded-lg shadow-card dark:shadow-card-dark overflow-hidden border border-border-light dark:border-border-dark">
+      <div className="p-4 border-b border-border-light dark:border-border-dark bg-background-surfaceLight dark:bg-background-surfaceDark">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold text-text-light dark:text-text-dark">
             Notifications
@@ -61,7 +61,7 @@ const NotificationDropdown = ({ onClose }) => {
           <div className="flex gap-2">
             <button
               onClick={handleMarkAllAsRead}
-              className="p-2 text-text-secondaryLight hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-dark transition-colors duration-150 rounded-lg hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark focus:outline-none focus:ring-2 focus:ring-primary-light/20 dark:focus:ring-primary-dark/20"
+              className="p-2 text-text-secondaryLight hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-dark transition-colors duration-150 rounded-lg hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark focus:outline-none focus:ring-1 focus:ring-primary-light/20 dark:focus:ring-primary-dark/20"
               title="Mark all as read"
               aria-label="Mark all notifications as read"
             >
@@ -69,7 +69,7 @@ const NotificationDropdown = ({ onClose }) => {
             </button>
             <button
               onClick={handleClearAll}
-              className="p-2 text-text-secondaryLight hover:text-error-base dark:text-text-secondaryDark dark:hover:text-error-base transition-colors duration-150 rounded-lg hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark focus:outline-none focus:ring-2 focus:ring-error-base/20"
+              className="p-2 text-text-secondaryLight hover:text-error-base dark:text-text-secondaryDark dark:hover:text-error-base transition-colors duration-150 rounded-lg hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark focus:outline-none focus:ring-1 focus:ring-error-base/20"
               title="Clear all"
               aria-label="Clear all notifications"
             >
@@ -99,7 +99,7 @@ const NotificationDropdown = ({ onClose }) => {
                   <p className="text-sm font-medium text-text-light dark:text-text-dark break-words">
                     {notification.message}
                   </p>
-                  <p className="text-xs text-text-tertiaryLight dark:text-text-tertiaryDark mt-1">
+                  <p className="text-xs text-text-secondaryLight dark:text-text-secondaryDark mt-1">
                     {formatDistanceToNow(new Date(notification.createdAt), {
                       addSuffix: true,
                     })}
@@ -109,7 +109,7 @@ const NotificationDropdown = ({ onClose }) => {
                   {!notification.read && (
                     <button
                       onClick={() => handleMarkAsRead(notification._id)}
-                      className="p-2 text-text-secondaryLight hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-dark transition-colors duration-150 rounded-lg hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark focus:outline-none focus:ring-2 focus:ring-primary-light/20 dark:focus:ring-primary-dark/20"
+                      className="p-2 text-text-secondaryLight hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-dark transition-colors duration-150 rounded-lg hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark focus:outline-none focus:ring-1 focus:ring-primary-light/20 dark:focus:ring-primary-dark/20"
                       title="Mark as read"
                       aria-label={`Mark notification as read`}
                     >
@@ -118,7 +118,7 @@ const NotificationDropdown = ({ onClose }) => {
                   )}
                   <button
                     onClick={() => handleDelete(notification._id)}
-                    className="p-2 text-text-secondaryLight hover:text-error-base dark:text-text-secondaryDark dark:hover:text-error-base transition-colors duration-150 rounded-lg hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark focus:outline-none focus:ring-2 focus:ring-error-base/20"
+                    className="p-2 text-text-secondaryLight hover:text-error-base dark:text-text-secondaryDark dark:hover:text-error-base transition-colors duration-150 rounded-lg hover:bg-surface-tertiaryLight dark:hover:bg-surface-tertiaryDark focus:outline-none focus:ring-1 focus:ring-error-base/20"
                     title="Delete"
                     aria-label={`Delete notification`}
                   >

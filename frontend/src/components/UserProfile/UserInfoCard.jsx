@@ -11,8 +11,8 @@ const validateName = (name) => {
 
 const validatePhone = (phone) => {
   // Remove all non-digit characters for validation
-  const digitsOnly = phone.replace(/\D/g, '');
-  
+  const digitsOnly = phone.replace(/\D/g, "");
+
   // Check if the cleaned number has 10 digits
   if (digitsOnly.length !== 10) {
     return false;
@@ -20,12 +20,12 @@ const validatePhone = (phone) => {
 
   // Optional: Check if the original format matches common patterns
   const commonFormats = [
-    /^\(\d{3}\)\s\d{3}-\d{4}$/,  // (123) 456-7890
-    /^\d{3}-\d{3}-\d{4}$/,       // 123-456-7890
-    /^\d{10}$/                   // 1234567890
+    /^\(\d{3}\)\s\d{3}-\d{4}$/, // (123) 456-7890
+    /^\d{3}-\d{3}-\d{4}$/, // 123-456-7890
+    /^\d{10}$/, // 1234567890
   ];
 
-  return commonFormats.some(format => format.test(phone));
+  return commonFormats.some((format) => format.test(phone));
 };
 
 const validateBio = (bio) => {
@@ -36,36 +36,37 @@ export default function UserInfoCard({ user, onUpdate }) {
   const [formData, setFormData] = useState({
     fname: user?.fname || "",
     lname: user?.lname || "",
+    email: user?.email || "",
     phone: user?.phone || "",
-    bio: user?.bio || ""
+    bio: user?.bio || "",
   });
-  
+
   const [errors, setErrors] = useState({
     fname: "",
     lname: "",
     phone: "",
-    bio: ""
+    bio: "",
   });
   const [loading, setLoading] = useState(false);
 
   const validateField = (name, value) => {
     let error = "";
-    
-    switch(name) {
-      case 'fname':
-      case 'lname':
+
+    switch (name) {
+      case "fname":
+      case "lname":
         if (!value.trim()) {
           error = "This field is required";
         } else if (!validateName(value)) {
           error = "Name should be 2-30 alphabetic characters";
         }
         break;
-      case 'phone':
+      case "phone":
         if (value && !validatePhone(value)) {
           error = "Please enter a valid phone number (e.g., (123) 456-7890)";
         }
         break;
-      case 'bio':
+      case "bio":
         if (value && !validateBio(value)) {
           error = "Bio should be less than 200 characters";
         }
@@ -73,38 +74,38 @@ export default function UserInfoCard({ user, onUpdate }) {
       default:
         break;
     }
-    
+
     return error;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Validate the field
     const error = validateField(name, value);
-    
+
     setErrors({
       ...errors,
-      [name]: error
+      [name]: error,
     });
-    
-    setFormData({ 
-      ...formData, 
-      [name]: value 
+
+    setFormData({
+      ...formData,
+      [name]: value,
     });
   };
 
   const validateForm = () => {
     const newErrors = {};
     let isValid = true;
-    
+
     // Validate all fields
-    Object.keys(formData).forEach(key => {
+    Object.keys(formData).forEach((key) => {
       const error = validateField(key, formData[key]);
       newErrors[key] = error;
       if (error) isValid = false;
     });
-    
+
     setErrors(newErrors);
     return isValid;
   };
@@ -114,12 +115,32 @@ export default function UserInfoCard({ user, onUpdate }) {
       toast.error("Please fix the errors in the form");
       return;
     }
-    
+
     try {
       setLoading(true);
       const response = await api.put("/user/profile", formData);
+      // console.log(response.data);
       if (response.status === 200) {
+        // Update the form data with the new values
+        const updatedUser = response.data.data.user;
+        setFormData({
+          fname: updatedUser.fname || "",
+          lname: updatedUser.lname || "",
+          email: updatedUser.email || "",
+          phone: updatedUser.phone || "",
+          bio: updatedUser.bio || "",
+        });
+
+        // Update the parent component with the new user data
         onUpdate(response.data.data);
+
+        // Update the personalInfo array with new values
+        personalInfo.forEach((info) => {
+          info.value =
+            updatedUser[info.name] ||
+            (info.name === "bio" ? "Not specified" : "");
+        });
+
         toast.success("Profile updated successfully");
         closeModal();
       } else {
@@ -145,32 +166,37 @@ export default function UserInfoCard({ user, onUpdate }) {
   const personalInfo = [
     { label: "First Name", value: user?.fname, name: "fname" },
     { label: "Last Name", value: user?.lname, name: "lname" },
-    { label: "Email address", value: user?.email, name: "email" ,type:"email" },
-    { label: "Phone", value: user?.phone, name: "phone",type:"tel" },
-    { label: "Bio", value: user?.bio || "Not specified", name: "bio" }
+    {
+      label: "Email address",
+      value: user?.email,
+      name: "email",
+      type: "email",
+    },
+    { label: "Phone", value: user?.phone, name: "phone", type: "tel" },
+    { label: "Bio", value: user?.bio || "Not specified", name: "bio" },
   ];
 
   return (
-    <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+    <div className="p-5 border border-border-light hover:border-border-hoverLight rounded-2xl dark:border-border-dark dark:hover:border-border-hoverDark lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h4 className="text-lg font-semibold text-gray-800 dark:text-text-dark/90 lg:mb-6">
+          <h4 className="text-lg font-semibold text-text-light dark:text-text-dark lg:mb-6">
             Personal Information
           </h4>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
             {personalInfo.map((info, index) => (
               <div key={index}>
-                <p className="mb-2 text-xs leading-normal text-text-secondaryLight dark:text-gray-400">
+                <p className="mb-2 text-xs leading-normal text-text-mutedLight dark:text-text-mutedDark">
                   {info.label}
                 </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-text-dark/90">
+                <p className="text-sm font-medium text-text-light dark:text-text-dark">
                   {info.value}
                 </p>
               </div>
             ))}
           </div>
         </div>
-        <Button 
+        <Button
           color="primary"
           onClick={openModal}
           variant="outline"
@@ -181,15 +207,15 @@ export default function UserInfoCard({ user, onUpdate }) {
         </Button>
       </div>
 
-      <EditProfileModal 
-        isOpen={isOpen} 
-        onClose={closeModal} 
+      <EditProfileModal
+        isOpen={isOpen}
+        onClose={closeModal}
         onSave={handleSave}
         personalInfo={personalInfo}
         formData={formData}
         handleChange={handleChange}
         loading={loading}
-        errors={errors} 
+        errors={errors}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 // components/common/TechStackItem.jsx
 import { motion } from "framer-motion";
 
-const TechStackItem = ({ name, logo, delay = 0, className = "" }) => {
+const TechStackItem = ({ name, logo, color, delay = 0, className = "" }) => {
   return (
     <motion.div
       key={name}
@@ -10,14 +10,21 @@ const TechStackItem = ({ name, logo, delay = 0, className = "" }) => {
       transition={{ duration: 0.3, delay }}
       viewport={{ once: true }}
       whileHover={{ scale: 1.05 }}
-      className={`flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:shadow-md transition-all ${className}`}
+      className={`flex flex-col items-center p-6 bg-background-surfaceLight dark:bg-background-surfaceDark rounded-lg
+        hover:shadow-lg transition-all border border-border-light dark:border-border-dark
+        hover:border-primary-light dark:hover:border-primary-light ${className}`}
     >
-      <img 
-        src={logo} 
-        alt={name} 
-        className="h-12 w-12 object-contain mb-3"
-      />
-      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{name}</span>
+      <div className="p-3 rounded-lg mb-4">
+        <div
+          className="h-16 w-16 flex items-center justify-center"
+          style={{ color }}
+        >
+          {logo}
+        </div>
+      </div>
+      <span className="text-base font-medium text-text-mutedLight dark:text-text-mutedDark">
+        {name}
+      </span>
     </motion.div>
   );
 };

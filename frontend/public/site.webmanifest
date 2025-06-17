@@ -1,19 +1,19 @@
 {
-  "name": "Tex Bill",
-  "short_name": "TexBill",
+  "name": "Bill Sync",
+  "short_name": "BillSync",
   "start_url": "/?source=pwa",
   "scope": "/",
   "icons": [
     {
-      "src": "/logo/icon-192x192.webp",
+      "src": "/logo/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/logo/icon-512x512.webp",
+      "src": "/logo/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],

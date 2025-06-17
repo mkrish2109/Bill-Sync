@@ -7,7 +7,7 @@ import {
   rejectRequest,
   getUserRequests,
   cancelRequest,
-} from "../services/api";
+} from "../services/apiServices";
 import { toast } from "react-toastify";
 
 // Hook for handling requests (sent/received)
@@ -198,7 +198,7 @@ export const useAvailableWorkers = () => {
     try {
       setError(null);
       const response = await sendRequest({
-        senderId: user._idd,
+        senderId: user?.userId || user?._id,
         receiverId,
         message,
       });

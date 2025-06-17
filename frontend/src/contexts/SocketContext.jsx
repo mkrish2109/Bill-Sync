@@ -32,11 +32,53 @@ export const SocketProvider = ({ children }) => {
   const connectionAttemptsRef = useRef(0);
   const isInitializingRef = useRef(false);
   const pingIntervalRef = useRef(null);
+  const isPageVisibleRef = useRef(true);
   const MAX_RECONNECTION_ATTEMPTS = 5;
   const RECONNECTION_DELAY = 5000;
   const INITIAL_RECONNECTION_DELAY = 1000;
   const PING_INTERVAL = 25000; // 25 seconds
   const userId = user?.userId || user?._id;
+
+  // Handle page visibility changes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      const wasVisible = isPageVisibleRef.current;
+      isPageVisibleRef.current = !document.hidden;
+
+      // Only handle reconnection if the page becomes visible again
+      if (wasVisible && !isPageVisibleRef.current) {
+        // Page is hidden, pause ping interval
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+          pingIntervalRef.current = null;
+        }
+      } else if (!wasVisible && isPageVisibleRef.current) {
+        // Page is visible again, resume ping interval
+        if (socketRef.current?.connected) {
+          startPingInterval();
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  // Handle beforeunload event
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (socketRef.current?.connected) {
+        socketRef.current.disconnect();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   const cleanupSocket = useCallback(() => {
     if (retryTimeoutRef.current) {
@@ -80,15 +122,19 @@ export const SocketProvider = ({ children }) => {
       clearInterval(pingIntervalRef.current);
     }
     pingIntervalRef.current = setInterval(() => {
-      if (socketRef.current?.connected) {
+      if (socketRef.current?.connected && isPageVisibleRef.current) {
         socketRef.current.emit("client_ping");
       }
     }, PING_INTERVAL);
   }, []);
 
   const initializeSocket = useCallback(async () => {
-    if (isInitializingRef.current || !isAuthenticated) {
-      console.log("Socket initialization skipped:", { isInitializingRef: isInitializingRef.current, isAuthenticated });
+    if (isInitializingRef.current || !isAuthenticated || !isPageVisibleRef.current) {
+      console.log("Socket initialization skipped:", {
+        isInitializingRef: isInitializingRef.current,
+        isAuthenticated,
+        isHidden: !isPageVisibleRef.current,
+      });
       return;
     }
 
@@ -122,12 +168,20 @@ export const SocketProvider = ({ children }) => {
         upgrade: true,
         rememberUpgrade: true,
         rejectUnauthorized: false,
+        // Add these options to improve performance
+        perMessageDeflate: false,
+        maxHttpBufferSize: 1e8,
+        pingTimeout: 60000,
+        pingInterval: 25000,
       });
 
       // Set up event listeners
       newSocket.on("connect", async () => {
         try {
-          console.log("Socket connection is working properly - Connection ID:", newSocket.id);
+          console.log(
+            "Socket connection is working properly - Connection ID:",
+            newSocket.id
+          );
           setIsConnected(true);
           connectionAttemptsRef.current = 0;
           isInitializingRef.current = false;
@@ -137,8 +191,10 @@ export const SocketProvider = ({ children }) => {
           await handleRoomJoin(newSocket, userId);
           // toast.success("Connected to real-time updates");
 
-          // Start ping interval
-          startPingInterval();
+          // Start ping interval only if page is visible
+          if (isPageVisibleRef.current) {
+            startPingInterval();
+          }
 
           // Verify room membership
           newSocket.emit("get_rooms", (rooms) => {
@@ -166,7 +222,7 @@ export const SocketProvider = ({ children }) => {
         if (error.message === "Authentication error: Invalid token") {
           console.error("Authentication error, redirecting to login...");
           window.location.href = "/login";
-        } else {
+        } else if (isPageVisibleRef.current) {
           connectionAttemptsRef.current += 1;
           if (connectionAttemptsRef.current < MAX_RECONNECTION_ATTEMPTS) {
             const delay = Math.min(
@@ -205,14 +261,14 @@ export const SocketProvider = ({ children }) => {
         setIsConnected(false);
         isInitializingRef.current = false;
         setConnectionError(`Disconnected: ${reason}`);
-        
+
         if (reason === "client namespace disconnect") {
           // The socket will automatically attempt to reconnect
         } else {
           toast.warning("Disconnected from real-time updates");
         }
 
-        if (reason !== "io client disconnect") {
+        if (reason !== "io client disconnect" && isPageVisibleRef.current) {
           if (connectionAttemptsRef.current < MAX_RECONNECTION_ATTEMPTS) {
             const delay = Math.min(
               INITIAL_RECONNECTION_DELAY *
@@ -251,8 +307,10 @@ export const SocketProvider = ({ children }) => {
           setConnectionError(null);
           toast.success("Reconnected to real-time updates");
 
-          // Restart ping interval
-          startPingInterval();
+          // Restart ping interval only if page is visible
+          if (isPageVisibleRef.current) {
+            startPingInterval();
+          }
 
           if (userId) {
             await handleRoomJoin(newSocket, userId);
@@ -291,7 +349,14 @@ export const SocketProvider = ({ children }) => {
       toast.error("Failed to establish real-time connection");
       cleanupSocket();
     }
-  }, [cleanupSocket, handleRoomJoin, user, userId, startPingInterval, isAuthenticated]);
+  }, [
+    cleanupSocket,
+    handleRoomJoin,
+    user,
+    userId,
+    startPingInterval,
+    isAuthenticated,
+  ]);
 
   useEffect(() => {
     if (!userId || !isAuthenticated) {

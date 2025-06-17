@@ -1,6 +1,6 @@
 import { statusColors } from "../../utils/colors";
 
-export const StatusBadge = ({ status, size = 'md', className = '' }) => {
+export const StatusBadge = ({ status, size = "md", className = "" }) => {
   // const statusColors = {
   //   pending: {
   //     bg: 'bg-warning-base/10 dark:bg-warning-base/20',
@@ -39,21 +39,22 @@ export const StatusBadge = ({ status, size = 'md', className = '' }) => {
   //   },
   //   default: {
   //     bg: 'bg-secondary-light/10 dark:bg-secondary-dark/20',
-  //     text: 'text-secondary-light dark:text-secondary-dark',
+  //     text: 'text-secondary-light dark:text-text-secondaryDark',
   //     border: 'border-secondary-light/30 dark:border-secondary-dark/40'
   //   }
   // };
 
   const sizeClasses = {
-    sm: 'px-2 py-0.5 text-xs font-medium',
-    md: 'px-2.5 py-1 text-sm font-medium',
-    lg: 'px-3 py-1.5 text-base font-medium'
+    sm: "px-2 py-0.5 text-xs font-medium",
+    md: "px-2.5 py-1 text-sm font-medium",
+    lg: "px-3 py-1.5 text-base font-medium",
   };
 
   const colors = statusColors[status] || statusColors.default;
+  // console.log("StatusBadge rendered with status:", colors);
 
   return (
-    <span 
+    <span
       className={`
         inline-flex items-center justify-center capitalize rounded-full
         ${colors.bg}

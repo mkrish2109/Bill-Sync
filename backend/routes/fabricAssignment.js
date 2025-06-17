@@ -1,4 +1,3 @@
-// routes/fabricAssignment.js (backend)
 const express = require('express');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const { getAssignmentHistory } = require('../controllers/fabric/commonController');

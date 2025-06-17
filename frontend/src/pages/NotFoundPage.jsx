@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { FaHome, FaHeadset } from "react-icons/fa";
+import { PageMeta } from "../components/common/PageMeta";
 
 export default function NotFoundPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
+      <PageMeta title="404 - Page Not Found | Bill Sync" />
       <main className="flex-grow flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8 text-center">
           <div className="flex justify-center">
@@ -30,7 +32,7 @@ export default function NotFoundPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/"
-              className="group relative flex items-center justify-center py-3 px-6 dark:border dark:border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-primary-light to-accent-light dark:from-primary-dark dark:to-accent-dark hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-light dark:focus:ring-accent-dark transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="group relative flex items-center justify-center py-3 px-6 dark:border dark:border-transparent text-sm font-medium rounded-lg text-text-dark dark:text-text-light bg-gradient-to-r from-primary-light to-secondary-light dark:from-primary-dark dark:to-secondary-dark hover:opacity-90 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-accent-light dark:focus:ring-accent-dark transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <FaHome className="mr-2 h-5 w-5" />
               Go back home
@@ -38,7 +40,7 @@ export default function NotFoundPage() {
 
             <button
               onClick={() => window.history.back()}
-              className="group relative flex items-center justify-center py-3 px-6 border border-border-light dark:border-border-dark text-sm font-medium rounded-lg text-text-light dark:text-text-dark bg-surface-light dark:bg-surface-dark hover:bg-surface-hoverLight dark:hover:bg-surface-hoverDark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-light dark:focus:ring-accent-dark transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              className="group relative flex items-center justify-center py-3 px-6 border border-border-light dark:border-border-dark text-sm font-medium rounded-lg text-text-light dark:text-text-dark bg-background-surfaceLight dark:bg-background-surfaceDark  focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-accent-light dark:focus:ring-accent-dark transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               <svg
                 className="mr-2 h-5 w-5 text-text-secondaryLight dark:text-text-secondaryDark"

@@ -1,40 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { api } from '../../helper/apiHelper';
-import { confirmAlert } from 'react-confirm-alert';
-import { FabricList } from '../fabrics/FabricList';
-import { useSocket } from '../../contexts/SocketContext';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from "react";
+import { api } from "../../helper/apiHelper";
+import { confirmAlert } from "react-confirm-alert";
+import { FabricList } from "../fabrics/FabricList";
+import { useSocket } from "../../contexts/SocketContext";
+import { toast } from "react-toastify";
+import { PageMeta } from "../common/PageMeta";
 
 const BuyerFabricList = () => {
   const [fabricData, setFabricData] = useState({
     fabrics: [],
     loading: true,
-    error: null
+    error: null,
   });
   const { socket, isConnected } = useSocket();
 
   const fetchFabrics = async () => {
     try {
-      setFabricData(prev => ({ ...prev, loading: true }));
-      const response = await api.get('/buyers/fabrics');
-      
-      const flattenedData = response.data.data.map(item => ({
+      setFabricData((prev) => ({ ...prev, loading: true }));
+      const response = await api.get("/buyers/fabrics");
+
+      const flattenedData = response.data.data.map((item) => ({
         ...item.fabric,
         buyer: item.buyer,
         worker: item.worker || null,
-        assignmentCount: item.assignmentCount
+        assignmentCount: item.assignmentCount,
       }));
 
       setFabricData({
         fabrics: flattenedData,
         loading: false,
-        error: null
+        error: null,
       });
     } catch (err) {
       setFabricData({
         fabrics: [],
         loading: false,
-        error: err.message
+        error: err.message,
       });
     }
   };
@@ -44,82 +45,94 @@ const BuyerFabricList = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Socket connection status:', { isConnected, socket: !!socket });
-    
+    console.log("Socket connection status:", { isConnected, socket: !!socket });
+
     if (!socket || !isConnected) {
-      console.log('Socket not connected, skipping event listener setup');
+      console.log("Socket not connected, skipping event listener setup");
       return;
     }
 
     // Listen for fabric assignment notifications
     const handleFabricAssignment = (data) => {
-      console.log('Received fabric assignment notification:', data);
+      console.log("Received fabric assignment notification:", data);
       toast.info(data.message);
       // Refresh the fabric list to show updated assignments
       fetchFabrics();
     };
 
-    console.log('Setting up socket event listener for new_fabric_assignment');
-    socket.on('new_fabric_assignment', handleFabricAssignment);
+    console.log("Setting up socket event listener for new_fabric_assignment");
+    socket.on("new_fabric_assignment", handleFabricAssignment);
 
     return () => {
-      console.log('Cleaning up socket event listener');
-      socket.off('new_fabric_assignment', handleFabricAssignment);
+      console.log("Cleaning up socket event listener");
+      socket.off("new_fabric_assignment", handleFabricAssignment);
     };
   }, [socket, isConnected]);
 
   const handleDelete = async (id) => {
     confirmAlert({
-      title: 'Confirm to delete',
-      message: 'Are you sure you want to delete this fabric?',
+      title: "Confirm to delete",
+      message: "Are you sure you want to delete this fabric?",
       buttons: [
         {
-          label: 'Yes',
+          label: "Yes",
           onClick: async () => {
             try {
               await api.delete(`/buyers/fabrics/${id}`);
-              setFabricData(prev => ({
+              setFabricData((prev) => ({
                 ...prev,
-                fabrics: prev.fabrics.filter(fabric => fabric._id !== id)
+                fabrics: prev.fabrics.filter((fabric) => fabric._id !== id),
               }));
             } catch (err) {
-              setFabricData(prev => ({
+              setFabricData((prev) => ({
                 ...prev,
-                error: err.message
+                error: err.message,
               }));
             }
-          }
+          },
         },
         {
-          label: 'No'
-        }
-      ]
+          label: "No",
+        },
+      ],
     });
   };
 
   const handleFabricUpdate = (updatedFabric) => {
-    setFabricData(prev => ({
+    setFabricData((prev) => ({
       ...prev,
-      fabrics: prev.fabrics.map(fabric => 
-        fabric._id === updatedFabric._id ? {
-          ...fabric,
-          ...updatedFabric,
-          worker: updatedFabric.worker !== undefined ? updatedFabric.worker : fabric.worker
-        } : fabric
-      )
+      fabrics: prev.fabrics.map((fabric) =>
+        fabric._id === updatedFabric._id
+          ? {
+              ...fabric,
+              ...updatedFabric,
+              worker:
+                updatedFabric.worker !== undefined
+                  ? updatedFabric.worker
+                  : fabric.worker,
+            }
+          : fabric
+      ),
     }));
   };
 
   return (
-    <FabricList
-      fabrics={fabricData.fabrics}
-      loading={fabricData.loading}
-      error={fabricData.error}
-      viewType="buyer"
-      onDelete={handleDelete}
-      onUpdate={handleFabricUpdate}
-      showAddButton={true}
-    />
+    <>
+      <PageMeta
+        title="My Fabrics | Bill Sync - Fabric Management"
+        description="Manage your fabric inventory, track assignments, and monitor the status of your fabrics. Add, edit, or remove fabrics as needed."
+        keywords="fabric management, fabric inventory, fabric tracking, fabric assignments, fabric status"
+      />
+      <FabricList
+        fabrics={fabricData.fabrics}
+        loading={fabricData.loading}
+        error={fabricData.error}
+        viewType="buyer"
+        onDelete={handleDelete}
+        onUpdate={handleFabricUpdate}
+        showAddButton={true}
+      />
+    </>
   );
 };
 

@@ -8,9 +8,17 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authAPI.login(credentials);
-      return response.data;
+      console.log(response);
+      if (response.data.success) {
+        return response.data;
+      }else {
+        throw new Error(response.data.message || "Login failed");
+      }
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Login failed" });
+      console.log(error);
+      return rejectWithValue(
+        error.response?.data || { message: "Login failed" }
+      );
     }
   }
 );
@@ -22,7 +30,9 @@ export const logoutUser = createAsyncThunk(
       const response = await authAPI.logout();
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Logout failed" });
+      return rejectWithValue(
+        error.response?.data || { message: "Logout failed" }
+      );
     }
   }
 );
@@ -34,7 +44,9 @@ export const fetchUser = createAsyncThunk(
       const response = await authAPI.verifyAuth();
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Failed to fetch user" });
+      return rejectWithValue(
+        error.response?.data || { message: "Failed to fetch user" }
+      );
     }
   }
 );
@@ -46,7 +58,9 @@ export const restoreUser = createAsyncThunk(
       const response = await authAPI.verifyAuth();
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Session expired" });
+      return rejectWithValue(
+        error.response?.data || { message: "Failed to refresh token" }
+      );
     }
   }
 );
@@ -116,7 +130,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
-        state.error = action.payload?.message || "Session expired";
+        state.error = action.payload?.message || "Failed to restore user";
         toast.error(state.error);
       })
       .addCase(logoutUser.pending, (state) => {

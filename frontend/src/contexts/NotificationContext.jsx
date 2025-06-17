@@ -29,12 +29,13 @@ export const NotificationProvider = ({ children }) => {
   const { socket } = useSocket();
   const { user, isAuthenticated } = useAuth();
   const role = user?.role;
-  const userId = user?._id;
+  
+  const userId = user?.userId || user?._id;
 
   // Fetch notifications from the server
   const fetchNotifications = async () => {
     if (!isAuthenticated) return;
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -53,7 +54,7 @@ export const NotificationProvider = ({ children }) => {
   // Handle marking a notification as read
   const handleMarkAsRead = async (notificationId) => {
     if (!isAuthenticated) return;
-    
+
     try {
       const response = await markAsRead(notificationId);
       if (response.success) {
@@ -74,7 +75,7 @@ export const NotificationProvider = ({ children }) => {
   // Handle marking all notifications as read
   const handleMarkAllAsRead = async () => {
     if (!isAuthenticated) return;
-    
+
     try {
       const response = await markAllAsRead();
       if (response.success) {
@@ -91,7 +92,7 @@ export const NotificationProvider = ({ children }) => {
   // Handle deleting a notification
   const handleDeleteNotification = async (notificationId) => {
     if (!isAuthenticated) return;
-    
+
     try {
       const response = await deleteNotification(notificationId);
       if (response.success) {
@@ -112,7 +113,7 @@ export const NotificationProvider = ({ children }) => {
   // Handle clearing all notifications
   const handleClearAllNotifications = async () => {
     if (!isAuthenticated) return;
-    
+
     try {
       const response = await clearAllNotifications();
       if (response.success) {

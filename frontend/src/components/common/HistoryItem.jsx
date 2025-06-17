@@ -16,8 +16,8 @@ const HistoryItem = ({ item, field }) => {
     <TimelineItem key={item._id || item.changedAt} className="mb-4 sm:mb-5">
       {/* <TimelinePoint icon={getIcon()} className="text-primary-light dark:text-primary-dark" /> */}
       <TimelineContent>
-        <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-all duration-200 w-full overflow-x-auto">
-          <TimelineTime className="text-xs text-secondary-light dark:text-secondary-dark mb-2 block whitespace-nowrap">
+        <div className="bg-background-surfaceLight dark:bg-background-surfaceDark border border-border-light dark:border-border-dark rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-all duration-200 w-full overflow-x-auto">
+          <TimelineTime className="text-xs text-secondary-light dark:text-text-secondaryDark mb-2 block whitespace-nowrap">
             {new Date(item.changedAt).toLocaleString()}
           </TimelineTime>
 
@@ -29,11 +29,11 @@ const HistoryItem = ({ item, field }) => {
             ) : (
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium">{item.field}</span> changed from{" "}
-                <span className="font-mono bg-surface-light dark:bg-surface-dark px-2 py-1 rounded-lg break-all text-sm">
+                <span className="font-mono bg-background-surfaceLight dark:bg-background-surfaceDark px-2 py-1 rounded-lg break-all text-sm">
                   {JSON.stringify(item.previousValue)}
                 </span>{" "}
                 to{" "}
-                <span className="font-mono bg-surface-light dark:bg-surface-dark px-2 py-1 rounded-lg break-all text-sm">
+                <span className="font-mono bg-background-surfaceLight dark:bg-background-surfaceDark px-2 py-1 rounded-lg break-all text-sm">
                   {JSON.stringify(item.newValue)}
                 </span>
               </div>
@@ -41,7 +41,7 @@ const HistoryItem = ({ item, field }) => {
           </TimelineTitle>
 
           {item.changedBy && (
-            <TimelineBody className="text-xs sm:text-sm text-secondary-light dark:text-secondary-dark mb-2">
+            <TimelineBody className="text-xs sm:text-sm text-secondary-light dark:text-text-secondaryDark mb-2">
               <span className="inline-flex flex-wrap items-center gap-1.5">
                 <FaUser className="text-primary-light dark:text-primary-dark flex-shrink-0" />
                 <span className="font-medium">Changed by:</span>
@@ -53,7 +53,7 @@ const HistoryItem = ({ item, field }) => {
           )}
 
           {item.notes && (
-            <TimelineBody className="text-xs sm:text-sm text-secondary-light dark:text-secondary-dark">
+            <TimelineBody className="text-xs sm:text-sm text-secondary-light dark:text-text-secondaryDark">
               <span className="inline-flex flex-wrap items-start gap-1.5">
                 <FaInfoCircle className="text-primary-light dark:text-primary-dark flex-shrink-0 mt-1" />
                 <span className="font-medium">Notes:</span>

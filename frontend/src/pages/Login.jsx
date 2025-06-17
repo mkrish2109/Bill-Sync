@@ -14,7 +14,27 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
+
+  // Redirect if user is already authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const role = user.role;
+      switch (role) {
+        case "admin":
+          navigate("/admin/dashboard");
+          break;
+        case "buyer":
+          navigate("/buyer/dashboard");
+          break;
+        case "worker":
+          navigate("/worker/dashboard");
+          break;
+        default:
+          navigate("/");
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,11 +104,11 @@ function Login() {
   }, [error]);
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-65px)] bg-gradient-to-br from-background-secondaryLight to-background-light dark:from-background-secondaryDark dark:to-surface-dark">
-      <PageMeta title="Login | Text Bill" />
+    <div className="flex items-center justify-center min-h-[calc(100vh-65px)] bg-gradient-to-br from-background-surfaceLight to-background-light dark:from-background-surfaceDark dark:to-background-surfaceDark">
+      <PageMeta title="Login | Bill Sync" />
 
       <div className="w-full max-w-md px-4 py-8">
-        <div className="p-8 rounded-lg shadow-xl bg-background-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+        <div className="p-8 rounded-lg shadow-xl bg-background-light dark:bg-background-surfaceDark border border-border-light dark:border-border-dark">
           <h1 className="text-2xl font-bold text-center mb-6 text-text-light dark:text-text-dark">
             Welcome Back
           </h1>
@@ -107,7 +127,7 @@ function Login() {
                 placeholder="name@example.com"
                 required
                 value={email}
-                className="w-full bg-background-light dark:bg-surface-dark text-text-light dark:text-text-dark border-border-light dark:border-border-dark focus:border-primary-light dark:focus:border-primary-dark focus:ring-primary-light dark:focus:ring-primary-dark"
+                className="w-full bg-background-light dark:bg-background-surfaceDark text-text-light dark:text-text-dark border-border-light dark:border-border-dark focus:border-primary-light dark:focus:border-primary-dark focus:ring-primary-light dark:focus:ring-primary-dark"
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="username"
               />
@@ -122,7 +142,7 @@ function Login() {
                 />
                 <Link
                   to="/forgot-password"
-                  className="text-sm underline text-secondary-light hover:text-primary-light dark:text-secondary-dark dark:hover:text-primary-dark"
+                  className="text-sm underline text-secondary-light hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-dark"
                 >
                   Forgot password?
                 </Link>
@@ -131,7 +151,7 @@ function Login() {
                 id="password"
                 name="password"
                 value={password}
-                className="w-full bg-background-light dark:bg-surface-dark text-text-light dark:text-text-dark border-border-light dark:border-border-dark focus:border-primary-light dark:focus:border-primary-dark focus:ring-primary-light dark:focus:ring-primary-dark"
+                className="w-full bg-background-light dark:bg-background-surfaceDark text-text-light dark:text-text-dark border-border-light dark:border-border-dark focus:border-primary-light dark:focus:border-primary-dark focus:ring-primary-light dark:focus:ring-primary-dark"
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
               />
@@ -190,7 +210,7 @@ function Login() {
               )}
             </Button>
 
-            <div className="text-center text-sm text-secondary-light dark:text-secondary-dark">
+            <div className="text-center text-sm text-secondary-light dark:text-text-secondaryDark">
               Don't have an account?{" "}
               <Link
                 to="/register"

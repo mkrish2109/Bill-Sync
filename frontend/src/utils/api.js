@@ -1,13 +1,13 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true, // Important for cookies
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -33,13 +33,13 @@ api.interceptors.response.use(
 
       try {
         // Try to refresh the token
-        await api.post('/auth/refresh');
-        
+        await api.post("/auth/refresh");
+
         // Retry the original request
         return api(originalRequest);
       } catch (refreshError) {
         // If refresh fails, redirect to login
-        window.location.href = '/login';
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
@@ -50,21 +50,21 @@ api.interceptors.response.use(
 
 // Auth API calls
 export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  register: (userData) => api.post('/auth/register', userData),
-  logout: () => api.post('/auth/logout'),
-  verifyEmail: (data) => api.post('/auth/verify-email', data),
-  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
-  resetPassword: (data) => api.post('/auth/reset-password', data),
-  verifyAuth: () => api.get('/auth/verify-auth'),
+  login: (credentials) => api.post("/auth/login", credentials),
+  register: (userData) => api.post("/auth/register", userData),
+  logout: () => api.post("/auth/logout"),
+  verifyEmail: (data) => api.post("/auth/verify-email", data),
+  forgotPassword: (email) => api.post("/auth/forgot-password", { email }),
+  resetPassword: (data) => api.post("/auth/reset-password", data),
+  verifyAuth: () => api.get("/auth/verify-auth"),
 };
 
 // User API calls
 export const userAPI = {
-  getProfile: () => api.get('/user/profile'),
-  updateProfile: (data) => api.put('/user/profile', data),
-  updateAddress: (data) => api.put('/user/profile/address', data),
+  getProfile: () => api.get("/user/profile"),
+  updateProfile: (data) => api.put("/user/profile", data),
+  updateAddress: (data) => api.put("/user/profile/address", data),
 };
 
 // Export the api instance for custom calls
-export default api; 
+export default api;

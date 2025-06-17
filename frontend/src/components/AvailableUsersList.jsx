@@ -16,12 +16,12 @@ const AvailableUsersList = ({
     return (
       <div className="text-center py-12">
         <div className="flex justify-center mb-4">
-          <FaSearch className="text-text-secondaryLight dark:text-text-secondaryDark text-4xl" />
+          <FaSearch className="text-primary-light dark:text-primary-dark text-4xl" />
         </div>
-        <p className="text-text-light dark:text-text-dark text-lg mb-2">
+        <p className="text-primary-light dark:text-primary-dark text-lg mb-2">
           No workers found
         </p>
-        <p className="text-text-secondaryLight dark:text-text-secondaryDark text-sm">
+        <p className="text-secondary-light dark:text-secondary-dark text-sm">
           Try adjusting your search or filters to find more workers
         </p>
       </div>

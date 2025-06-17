@@ -15,7 +15,7 @@ export const HistoryTab = ({ statusHistory, changeHistory, loading }) => {
 
   if (!statusHistory.length && !changeHistory.length) {
     return (
-      <div className="text-center py-8 sm:py-12 text-secondary-light dark:text-secondary-dark">
+      <div className="text-center py-8 sm:py-12 text-secondary-light dark:text-text-secondaryDark">
         <FaHistory className="mx-auto text-4xl sm:text-5xl mb-4 sm:mb-5 text-primary-light dark:text-primary-dark opacity-50" />
         <p className="text-base sm:text-lg">No history available</p>
       </div>
@@ -39,7 +39,7 @@ export const HistoryTab = ({ statusHistory, changeHistory, loading }) => {
               </TimelineContent>
             </TimelineItem>
 
-            <div className="max-h-[50vh] sm:max-h-[60vh] overflow-y-auto pr-2 sm:pr-4 space-y-4 sm:space-y-5 scrollbar-thin scrollbar-thumb-primary-light dark:scrollbar-thumb-primary-dark scrollbar-track-surface-light dark:scrollbar-track-surface-dark">
+            <div className="max-h-[50vh] sm:max-h-[60vh] overflow-y-auto pr-2 sm:pr-4 space-y-4 sm:space-y-5 scrollbar-thin scrollbar-thumb-primary-light dark:scrollbar-thumb-primary-dark scrollbar-track-background-surfaceLight dark:scrollbar-track-background-surfaceDark">
               {statusHistory.map((item) => (
                 <div key={item._id} className="transform hover:scale-[1.01] sm:hover:scale-[1.02] transition-transform duration-200">
                   <HistoryItem item={item} field="status" />
@@ -59,7 +59,7 @@ export const HistoryTab = ({ statusHistory, changeHistory, loading }) => {
                 </TimelineTitle>
               </TimelineContent>
             </TimelineItem>
-            <div className="space-y-4 sm:space-y-5 max-h-[50vh] sm:max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-primary-light dark:scrollbar-thumb-primary-dark scrollbar-track-surface-light dark:scrollbar-track-surface-dark">
+            <div className="space-y-4 sm:space-y-5 max-h-[50vh] sm:max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-primary-light dark:scrollbar-thumb-primary-dark scrollbar-track-background-surfaceLight dark:scrollbar-track-background-surfaceDark">
               {changeHistory.map((item) => (
                 <div key={item._id} className="transform hover:scale-[1.01] sm:hover:scale-[1.02] transition-transform duration-200">
                   <HistoryItem item={item} />

@@ -21,7 +21,7 @@ const sendMail = async ({ to, subject, html }) => {
     html,
   });
 
-  console.log("Message sent: ", response.messageId);
+  // console.log("Message sent: ", response.messageId);
 };
 
 // Function to send verification email

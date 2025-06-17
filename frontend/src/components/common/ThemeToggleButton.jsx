@@ -8,7 +8,14 @@ const ThemeToggleButton = () => {
     <button
       onClick={toggleTheme}
       aria-label="Toggle dark mode"
-      className="relative flex items-center justify-center text-gray-700 transition-colors bg-white border border-gray-200 rounded-full hover:text-gray-900 h-11 w-11 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
+      className="relative flex items-center justify-center h-11 w-11 rounded-full transition-colors
+        bg-background-surfaceLight dark:bg-background-surfaceDark
+        text-text-light dark:text-text-dark
+        border border-border-light dark:border-border-dark
+        hover:bg-background-surfaceLight dark:hover:bg-background-surfaceDark
+        hover:text-text-light dark:hover:text-text-dark
+        focus:outline-none focus:ring-1 focus:ring-info-base focus:ring-offset-2
+        dark:focus:ring-info-base dark:focus:ring-offset-background-dark"
     >
       {/* Moon icon (shown in dark mode) */}
       <span className="sr-only">Dark mode</span>

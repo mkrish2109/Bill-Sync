@@ -13,7 +13,6 @@ function UserLayout() {
   return (
     <SidebarProvider>
       <AppNavbar variant="default" />
-      
       <Outlet />
       {!isLoginRegister && <UserFooter />}
     </SidebarProvider>

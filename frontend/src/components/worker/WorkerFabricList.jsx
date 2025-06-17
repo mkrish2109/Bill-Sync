@@ -4,6 +4,7 @@ import { confirmAlert } from "react-confirm-alert";
 import { FabricList } from "../fabrics/FabricList";
 import { useSocket } from "../../contexts/SocketContext";
 import { toast } from "react-toastify";
+import { PageMeta } from "../common/PageMeta";
 
 const WorkerFabricList = () => {
   const [fabrics, setFabrics] = useState([]);
@@ -58,19 +59,19 @@ const WorkerFabricList = () => {
 
     // Listen for fabric assignment notifications
     const handleFabricAssignment = (data) => {
-      console.log("Worker received fabric assignment notification:", data);
+      // console.log("Worker received fabric assignment notification:", data);
       toast.info(data.message);
       // Refresh the fabric list to show new assignment
       fetchWorkerFabrics();
     };
 
-    console.log(
-      "Setting up worker socket event listener for new_fabric_assignment"
-    );
+    // console.log(
+    //   "Setting up worker socket event listener for new_fabric_assignment"
+    // );
     socket.on("new_fabric_assignment", handleFabricAssignment);
 
     return () => {
-      console.log("Cleaning up worker socket event listener");
+      // console.log("Cleaning up worker socket event listener");
       socket.off("new_fabric_assignment", handleFabricAssignment);
     };
   }, [socket, isConnected, fetchWorkerFabrics]);
@@ -102,15 +103,22 @@ const WorkerFabricList = () => {
   };
 
   return (
-    <FabricList
-      fabrics={fabrics}
-      loading={loading}
-      error={error}
-      viewType="worker"
-      onStatusChange={handleStatusUpdate}
-      onFilterChange={setStatusFilter}
-      statusFilter={statusFilter}
-    />
+    <>
+      <PageMeta 
+        title="My Tasks | Bill Sync - Worker Assignment List"
+        description="View and manage your assigned fabric tasks. Track progress, update status, and handle your work assignments efficiently."
+        keywords="worker tasks, fabric assignments, task management, work progress, assignment tracking"
+      />
+      <FabricList
+        fabrics={fabrics}
+        loading={loading}
+        error={error}
+        viewType="worker"
+        onStatusChange={handleStatusUpdate}
+        onFilterChange={setStatusFilter}
+        statusFilter={statusFilter}
+      />
+    </>
   );
 };
 

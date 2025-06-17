@@ -2,14 +2,14 @@
 import { motion } from "framer-motion";
 import { Card, Avatar } from "flowbite-react";
 
-const TeamMemberCard = ({ 
-  name, 
-  position, 
-  bio, 
-  image, 
-  socialLinks, 
+const TeamMemberCard = ({
+  name,
+  position,
+  bio,
+  image,
+  socialLinks,
   delay = 0,
-  className = ""
+  className = "",
 }) => {
   return (
     <motion.div
@@ -19,7 +19,7 @@ const TeamMemberCard = ({
       viewport={{ once: true }}
       className={className}
     >
-      <Card className="text-center hover:shadow-xl transition-shadow dark:bg-gray-700 h-full">
+      <Card className="text-center hover:shadow-xl transition-shadow bg-background-surfaceLight dark:bg-background-surfaceDark h-full">
         <Avatar
           img={image}
           alt={name}
@@ -27,18 +27,20 @@ const TeamMemberCard = ({
           size="xl"
           className="mx-auto mb-4"
         />
-        <h3 className="text-xl font-bold text-gray-800 dark:text-white">{name}</h3>
-        <p className="text-blue-500 dark:text-blue-400 mb-2">{position}</p>
-        <p className="text-gray-600 dark:text-gray-300 mb-4">{bio}</p>
+        <h3 className="text-xl font-bold text-text-light dark:text-text-dark">
+          {name}
+        </h3>
+        <p className="text-primary-light dark:text-primary-dark mb-2">{position}</p>
+        <p className="text-text-secondaryLight dark:text-text-secondaryDark mb-4">{bio}</p>
         {socialLinks && (
           <div className="flex justify-center space-x-3">
             {socialLinks.map((link, i) => (
-              <a 
-                key={i} 
-                href={link.url} 
-                target="_blank" 
+              <a
+                key={i}
+                href={link.url}
+                target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                className="text-text-secondaryLight hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-dark transition-colors"
               >
                 {link.icon}
               </a>

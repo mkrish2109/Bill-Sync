@@ -1,5 +1,5 @@
 // controllers/fabric/workerController.js
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const FabricAssignment = require("../../models/FabricAssignment");
 const commonController = require("./commonController");
 // Get all fabrics assigned to a worker
@@ -8,48 +8,50 @@ const getAllFabricsForWorker = async (req, res) => {
     const { userId } = req.user;
 
     const assignments = await FabricAssignment.find({
-      'workerId': userId
+      workerId: userId,
     })
       .populate({
-        path: 'fabricId',
+        path: "fabricId",
         populate: {
-          path: 'buyerId',
-          select: 'name contact company'
-        }
+          path: "buyerId",
+          select: "name contact company",
+        },
       })
       .populate({
-        path: 'workerId',
-        select: 'name contact'
+        path: "workerId",
+        select: "name contact",
       });
 
-    const workerFabrics = assignments.map(assignment => {
-      const fabric = assignment.fabricId?.toObject?.() || {};
-      const buyer = fabric.buyerId || {};
-      const worker = assignment.workerId || {};
+    const workerFabrics = assignments
+      .map((assignment) => {
+        const fabric = assignment.fabricId?.toObject?.() || {};
+        const buyer = fabric.buyerId || {};
+        const worker = assignment.workerId || {};
 
-      // Remove buyer from fabric to avoid duplication
-      delete fabric.buyerId;
+        // Remove buyer from fabric to avoid duplication
+        delete fabric.buyerId;
 
-      return {
-        fabric,
-        buyer,
-        worker,
-        assignmentStatus: assignment.status,
-        assignedAt: assignment.createdAt,
-        assignmentId: assignment._id,
-        statusHistory: assignment.statusHistory
-      };
-    }).filter(Boolean);
+        return {
+          fabric,
+          buyer,
+          worker,
+          assignmentStatus: assignment.status,
+          assignedAt: assignment.createdAt,
+          assignmentId: assignment._id,
+          statusHistory: assignment.statusHistory,
+        };
+      })
+      .filter(Boolean);
     res.status(200).json({
       success: true,
       count: workerFabrics.length,
-      data: workerFabrics
+      data: workerFabrics,
     });
   } catch (error) {
-    console.error('Error fetching fabrics:', error);
+    console.error("Error fetching fabrics:", error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -65,16 +67,16 @@ const updateAssignmentStatus = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(assignmentId)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid assignment ID format'
+        error: "Invalid assignment ID format",
       });
     }
 
     // Validate status
-    const validStatuses = ['assigned', 'in-progress', 'completed', 'cancelled'];
+    const validStatuses = ["assigned", "in-progress", "completed", "cancelled"];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid status'
+        error: "Invalid status",
       });
     }
 
@@ -83,7 +85,7 @@ const updateAssignmentStatus = async (req, res) => {
     if (!assignment) {
       return res.status(404).json({
         success: false,
-        error: 'Assignment not found'
+        error: "Assignment not found",
       });
     }
 
@@ -92,7 +94,7 @@ const updateAssignmentStatus = async (req, res) => {
       previousStatus: assignment.status,
       newStatus: status,
       changedBy: userId,
-      changedAt: new Date()
+      changedAt: new Date(),
     };
 
     assignment.status = status;
@@ -104,21 +106,20 @@ const updateAssignmentStatus = async (req, res) => {
 
     // Populate history for response
     await assignment.populate({
-      path: 'statusHistory.changedBy',
-      select: 'name role',
-      model: 'User'
+      path: "statusHistory.changedBy",
+      select: "name role",
+      model: "User",
     });
 
     res.status(200).json({
       success: true,
-      data: assignment
+      data: assignment,
     });
-
   } catch (error) {
-    console.error('Error updating assignment status:', error);
+    console.error("Error updating assignment status:", error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -126,5 +127,5 @@ const updateAssignmentStatus = async (req, res) => {
 module.exports = {
   getAllFabricsForWorker,
   updateAssignmentStatus,
-  getFabricById: commonController.getFabricById
+  getFabricById: commonController.getFabricById,
 };

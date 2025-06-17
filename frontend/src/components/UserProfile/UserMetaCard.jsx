@@ -21,18 +21,18 @@ export default function UserMetaCard({ user, address, onUpdate }) {
   const [formData, setFormData] = useState({
     fname: user?.fname || "",
     lname: user?.lname || "",
-    image: user?.image || []
+    image: user?.image || [],
   });
   const [loading, setLoading] = useState(false);
 
   const handleChange = useCallback((e) => {
     if (e.target.name === "image") {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        image: e.target.files ? Array.from(e.target.files) : []
+        image: e.target.files ? Array.from(e.target.files) : [],
       }));
     } else {
-      setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+      setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     }
   }, []);
 
@@ -48,10 +48,10 @@ export default function UserMetaCard({ user, address, onUpdate }) {
 
       const response = await api.put("/user/profile", formDataToSend, {
         headers: {
-          "Content-Type": "multipart/form-data"
-        }
+          "Content-Type": "multipart/form-data",
+        },
       });
-      
+
       if (response.data.success) {
         onUpdate(response.data.data);
         toast.success("Profile updated successfully");
@@ -60,7 +60,11 @@ export default function UserMetaCard({ user, address, onUpdate }) {
         throw new Error(response.data.message || "Failed to update profile");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message || "Failed to update profile");
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to update profile"
+      );
     } finally {
       setLoading(false);
     }
@@ -68,36 +72,36 @@ export default function UserMetaCard({ user, address, onUpdate }) {
 
   return (
     <>
-      <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+      <div className="p-5 border border-border-light hover:border-border-hoverLight rounded-2xl dark:border-border-dark dark:hover:border-border-hoverDark lg:p-6">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
-            <div className="relative w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
-              <img 
-                src={user?.image?.[0] || "/images/profile.webp"} 
-                alt={`${user?.fname} ${user?.lname}`} 
+            <div className="relative w-20 h-20 overflow-hidden border border-border-light rounded-full dark:border-border-dark">
+              <img
+                src={user?.image?.[0] || "/images/profile.webp"}
+                alt={`${user?.fname} ${user?.lname}`}
                 className="object-cover w-full h-full"
                 loading="lazy"
               />
             </div>
             <div className="order-3 xl:order-2">
-              <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-text-dark/90 xl:text-left">
+              <h4 className="mb-2 text-lg font-semibold text-center text-text-light dark:text-text-dark xl:text-left">
                 {user?.fname} {user?.lname}
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
-                <p className="text-sm text-text-secondaryLight dark:text-gray-400 capitalize">
+                <p className="text-sm text-text-mutedLight dark:text-text-mutedDark capitalize">
                   {user?.role}
                 </p>
                 {user?.role && (
                   <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
                 )}
-                <p className="text-sm text-text-secondaryLight dark:text-gray-400">
+                <p className="text-sm text-text-mutedLight dark:text-text-mutedDark">
                   {address?.country || "Location not specified"}
                 </p>
               </div>
             </div>
             <UserSocialLinks />
           </div>
-          <Button 
+          <Button
             color="primary"
             onClick={openModal}
             variant="outline"
