@@ -13,7 +13,7 @@ const createFabric = async (req, res) => {
     const buyerId = req.user.userId;
     const io = req.app.get("io");
 
-    console.log("Creating fabric with Socket.IO instance:", !!io);
+    // console.log("Creating fabric with Socket.IO instance:", !!io);
 
     const buyer = await Buyer.findById(buyerId);
     if (!buyer) {
@@ -68,7 +68,7 @@ const createFabric = async (req, res) => {
 
     let assignment = null;
     if (workerId) {
-      console.log("Creating assignment for worker:", workerId);
+      // console.log("Creating assignment for worker:", workerId);
 
       // Create worker assignment
       assignment = new FabricAssignment({
@@ -90,15 +90,15 @@ const createFabric = async (req, res) => {
 
       // Get worker details for notification
       const worker = await Worker.findById(workerId);
-      console.log("Found worker for notification:", {
-        workerId,
-        workerFound: !!worker,
-        workerUserId: worker?.userId,
-        workerName: worker?.name,
-      });
+      // console.log("Found worker for notification:", {
+      //   workerId,
+      //   workerFound: !!worker,
+      //   workerUserId: worker?.userId,
+      //   workerName: worker?.name,
+      // });
 
       if (worker && worker.userId) {
-        console.log("Creating notification for worker:", worker.userId);
+        // console.log("Creating notification for worker:", worker.userId);
 
         // Create notification for worker
         const notificationData = {
@@ -108,7 +108,7 @@ const createFabric = async (req, res) => {
           message: `New fabric "${name}" has been assigned to you by ${buyer.name}`,
         };
 
-        console.log("Notification data prepared:", notificationData);
+        // console.log("Notification data prepared:", notificationData);
 
         // Store notification in database
         await createNotification(
@@ -118,28 +118,28 @@ const createFabric = async (req, res) => {
           notificationData
         );
 
-        console.log("Notification stored in database");
+        // console.log("Notification stored in database");
 
         // Get all sockets in the worker's room
         const workerRoom = io.sockets.adapter.rooms.get(
           worker.userId.toString()
         );
-        console.log("Worker room status:", {
-          roomExists: !!workerRoom,
-          socketCount: workerRoom?.size || 0,
-          workerUserId: worker.userId.toString(),
-          allRooms: Array.from(io.sockets.adapter.rooms.keys()),
-        });
+        // console.log("Worker room status:", {
+        //   roomExists: !!workerRoom,
+        //   socketCount: workerRoom?.size || 0,
+        //   workerUserId: worker.userId.toString(),
+        //   allRooms: Array.from(io.sockets.adapter.rooms.keys()),
+        // });
 
         // Emit notification to worker's room
         io.to(worker.userId.toString()).emit(
           "new_fabric_assignment",
           notificationData
         );
-        console.log(
-          "Notification emitted to worker room:",
-          worker.userId.toString()
-        );
+        // console.log(
+        //   "Notification emitted to worker room:",
+        //   worker.userId.toString()
+        // );
       } else {
         console.log("Worker or worker.userId not found:", {
           worker: worker
@@ -198,7 +198,7 @@ const getAllFabricsForBuyer = async (req, res) => {
     const fabrics = await Fabric.find({ buyerId: userId }).populate(
       populateOptions
     );
-    console.log(fabrics);
+    // console.log(fabrics);
     const buyerFabrics = fabrics.map((fabric) => {
       const fabricObj = fabric.toObject();
       const buyer = fabricObj.buyerId || {};

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import AvailableUsersList from "../components/AvailableUsersList";
 import { useAvailableWorkers } from "../hooks/useRequests";
-import { FaSearch, FaSort } from "react-icons/fa";
+import { FaSort } from "react-icons/fa";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import { ErrorAlert } from "../components/common/Alert";
 import { useSocket } from "../contexts/SocketContext";
@@ -9,6 +9,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { Button } from "flowbite-react";
 import { PageMeta } from "../components/common/PageMeta";
+import SearchInput from "../components/common/SearchInput";
 
 const NetworkPage = () => {
   const { user } = useAuth();
@@ -208,16 +209,11 @@ const NetworkPage = () => {
 
             <div className="flex gap-4">
               {/* Search Input */}
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search workers..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-primary-light dark:border-primary-dark rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-light dark:focus:ring-primary-dark bg-background-surfaceLight dark:bg-background-surfaceDark text-primary-light dark:text-primary-dark"
-                />
-                <FaSearch className="absolute left-3 top-3 text-secondary-light dark:text-secondary-dark" />
-              </div>
+              <SearchInput
+                value={searchTerm}
+                onChange={setSearchTerm}
+                placeholder="Search workers..."
+              />
 
               {/* Sort Buttons */}
               <div className="flex gap-2">

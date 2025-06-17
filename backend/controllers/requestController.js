@@ -11,7 +11,6 @@ const { createNotification } = require("./notificationController");
 // Send request from buyer to worker
 exports.sendRequest = async (req, res) => {
   try {
-    console.log(req.body);
     const senderId = req.user.userId; // Get sender ID from authenticated user
     const { receiverId, message } = req.body;
     const io = req.app.get("io");
@@ -588,4 +587,3 @@ exports.getConnectedUsers = async (req, res) => {
     sendErrorResponse(res, "Failed to fetch connected users", 500);
   }
 };
-

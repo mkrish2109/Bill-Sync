@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getAllUsers } from "../../../services/apiServices";
 import { api } from "../../../helper/apiHelper";
+import LoadingSpinner from "../../common/LoadingSpinner";
 
 // Lazy load chart components with dynamic import
 const Line = lazy(() =>
@@ -28,8 +29,8 @@ const Pie = lazy(() =>
 
 ChartJS.register(...registerables);
 
-// Static chart options
-const chartOptions = {
+// Static chart options for Line chart
+const lineChartOptions = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
@@ -40,6 +41,91 @@ const chartOptions = {
         padding: 20,
         usePointStyle: true,
         pointStyle: "circle",
+        color: "#1A1A1A", // text-light color
+      },
+    },
+  },
+  scales: {
+    x: {
+      grid: {
+        color: "rgba(0, 0, 0, 0.1)",
+      },
+      ticks: {
+        color: "#1A1A1A", // text-light color
+      },
+    },
+    y: {
+      grid: {
+        color: "rgba(0, 0, 0, 0.1)",
+      },
+      ticks: {
+        color: "#1A1A1A", // text-light color
+      },
+    },
+  },
+};
+
+// Static chart options for Pie chart
+const pieChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: "bottom",
+      labels: {
+        boxWidth: 12,
+        padding: 20,
+        usePointStyle: true,
+        pointStyle: "circle",
+        color: "#1A1A1A", // text-light color
+      },
+    },
+  },
+};
+
+// Dark mode chart options for Line chart
+const darkLineChartOptions = {
+  ...lineChartOptions,
+  plugins: {
+    ...lineChartOptions.plugins,
+    legend: {
+      ...lineChartOptions.plugins.legend,
+      labels: {
+        ...lineChartOptions.plugins.legend.labels,
+        color: "#F5F5F5", // text-dark color
+      },
+    },
+  },
+  scales: {
+    x: {
+      grid: {
+        color: "rgba(255, 255, 255, 0.1)",
+      },
+      ticks: {
+        color: "#F5F5F5", // text-dark color
+      },
+    },
+    y: {
+      grid: {
+        color: "rgba(255, 255, 255, 0.1)",
+      },
+      ticks: {
+        color: "#F5F5F5", // text-dark color
+      },
+    },
+  },
+};
+
+// Dark mode chart options for Pie chart
+const darkPieChartOptions = {
+  ...pieChartOptions,
+  plugins: {
+    ...pieChartOptions.plugins,
+    legend: {
+      ...pieChartOptions.plugins.legend,
+      labels: {
+        ...pieChartOptions.plugins.legend.labels,
+        color: "#F5F5F5", // text-dark color
       },
     },
   },
@@ -66,14 +152,14 @@ const StatCard = React.memo(({ icon: Icon, title, value, trend, color }) => {
   const colorClasses = {
     blue: "text-primary-light dark:text-primary-dark bg-background-surfaceLight dark:bg-background-surfaceDark",
     green:
-      "text-success-base dark:text-success-dark bg-background-surfaceLight dark:bg-background-surfaceDark",
+      "text-success-base dark:text-success-base bg-background-surfaceLight dark:bg-background-surfaceDark",
     yellow:
-      "text-warning-base dark:text-warning-dark bg-background-surfaceLight dark:bg-background-surfaceDark",
-    red: "text-error-base dark:text-error-dark bg-background-surfaceLight dark:bg-background-surfaceDark",
+      "text-warning-base dark:text-warning-base bg-background-surfaceLight dark:bg-background-surfaceDark",
+    red: "text-error-base dark:text-error-base bg-background-surfaceLight dark:bg-background-surfaceDark",
   };
 
   return (
-    <div className="p-6 rounded-lg shadow bg-background-surfaceLight dark:bg-background-surfaceDark">
+    <div className="p-6 rounded-lg shadow bg-background-surfaceLight dark:bg-background-dark">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-text-secondaryLight dark:text-text-secondaryDark">
@@ -133,18 +219,18 @@ const ChartCard = React.memo(({ title, children }) => {
 
   return (
     <div className="p-6 rounded-lg shadow bg-background-light dark:bg-background-dark">
-      <h2 className="text-lg font-semibold mb-4">{title}</h2>
+      <h2 className="text-lg font-semibold mb-4 text-text-light dark:text-text-dark">
+        {title}
+      </h2>
       <div className="h-[300px]">
         <ChartErrorBoundary>
           {isLoading ? (
-            <div className="flex justify-center items-center h-full">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-light"></div>
-            </div>
+           <LoadingSpinner/>
           ) : (
             <Suspense
               fallback={
                 <div className="flex justify-center items-center h-full">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-light"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-light dark:border-primary-dark"></div>
                 </div>
               }
             >
@@ -160,12 +246,12 @@ const ChartCard = React.memo(({ title, children }) => {
 // Memoized ActivityItem component
 const ActivityItem = React.memo(({ user, action, time }) => (
   <div className="flex items-start space-x-3">
-    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-      <HiUserCircle className="text-blue-500 text-xl" />
+    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-light/10 dark:bg-primary-dark/10 flex items-center justify-center">
+      <HiUserCircle className="text-secondary-light dark:text-secondary-dark text-xl" />
     </div>
     <div>
-      <p className="font-medium">{user}</p>
-      <p className="text-sm text-gray-500 dark:text-gray-400">
+      <p className="font-medium text-text-light dark:text-text-dark">{user}</p>
+      <p className="text-sm text-text-secondaryLight dark:text-text-secondaryDark">
         {action} · {time}
       </p>
     </div>
@@ -178,7 +264,7 @@ const QuickActionButton = React.memo(({ icon: Icon, text, color, onClick }) => (
     onClick={onClick}
     className={`w-full flex items-center space-x-2 p-3 rounded-lg ${color} hover:opacity-90 transition-opacity`}
   >
-    <Icon className={`text-${color.split("-")[1]}-500 text-xl`} />
+    <Icon className="text-xl" />
     <span>{text}</span>
   </button>
 ));
@@ -198,6 +284,7 @@ const AdminDashboard = () => {
   const [userData, setUserData] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const [fabricData, setFabricData] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -244,6 +331,28 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    // Check if dark mode is enabled
+    const isDark = document.documentElement.classList.contains("dark");
+    setIsDarkMode(isDark);
+
+    // Listen for dark mode changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === "class") {
+          setIsDarkMode(document.documentElement.classList.contains("dark"));
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   // Function to calculate user growth data
   const calculateUserGrowthData = (users) => {
     const months = [
@@ -283,8 +392,10 @@ const AdminDashboard = () => {
         {
           label: "New Users",
           data: monthlyData,
-          borderColor: "#3b82f6",
-          backgroundColor: "rgba(59, 130, 246, 0.1)",
+          borderColor: isDarkMode ? "#D4B483" : "#7A4F2A", // primary-dark : primary-light
+          backgroundColor: isDarkMode
+            ? "rgba(212, 180, 131, 0.1)"
+            : "rgba(122, 79, 42, 0.1)", // primary-dark : primary-light with opacity
           tension: 0.3,
         },
       ],
@@ -421,7 +532,7 @@ const AdminDashboard = () => {
         <AdminPageTitle title="Admin Dashboard" />
 
         {error && (
-          <div className="mb-6 p-4 bg-yellow-100 text-yellow-700 rounded-lg">
+          <div className="mb-6 p-4 bg-warning-base/10 text-warning-base rounded-lg">
             {error}
           </div>
         )}
@@ -462,17 +573,23 @@ const AdminDashboard = () => {
         {isMobile && !showMobileCharts ? (
           <button
             onClick={() => setShowMobileCharts(true)}
-            className="w-full mb-6 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300 font-medium"
+            className="w-full mb-6 p-3 bg-background-surfaceLight dark:bg-background-surfaceDark rounded-lg text-text-light dark:text-text-dark font-medium"
           >
             Show Charts
           </button>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <ChartCard title="User Growth">
-              <Line data={chartData.userGrowthData} options={chartOptions} />
+              <Line
+                data={chartData.userGrowthData}
+                options={isDarkMode ? darkLineChartOptions : lineChartOptions}
+              />
             </ChartCard>
             <ChartCard title="Fabric Status Distribution">
-              <Pie data={chartData.fabricStatusData} options={chartOptions} />
+              <Pie
+                data={chartData.fabricStatusData}
+                options={isDarkMode ? darkPieChartOptions : pieChartOptions}
+              />
             </ChartCard>
           </div>
         )}
@@ -480,10 +597,10 @@ const AdminDashboard = () => {
         {/* Bottom Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Activity */}
-          <div
-            className={`p-6 rounded-lg shadow bg-background-light dark:bg-background-dark lg:col-span-2`}
-          >
-            <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
+          <div className="p-6 rounded-lg shadow bg-background-light dark:bg-background-dark lg:col-span-2">
+            <h2 className="text-lg font-semibold mb-4 text-text-light dark:text-text-dark">
+              Recent Activity
+            </h2>
             <div className="space-y-4">
               {recentActivity.length > 0 ? (
                 recentActivity.map((item) => (
@@ -503,10 +620,10 @@ const AdminDashboard = () => {
           </div>
 
           {/* Quick Actions */}
-          <div
-            className={`p-6 rounded-lg shadow bg-background-light dark:bg-background-dark`}
-          >
-            <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+          <div className="p-6 rounded-lg shadow bg-background-light dark:bg-background-dark">
+            <h2 className="text-lg font-semibold mb-4 text-text-light dark:text-text-dark">
+              Quick Actions
+            </h2>
             <div className="space-y-3">
               <QuickActionButton
                 icon={FaUsersCog}
@@ -517,19 +634,19 @@ const AdminDashboard = () => {
               <QuickActionButton
                 icon={HiDocumentDownload}
                 text="View Fabrics"
-                color="bg-success-base dark:bg-success-dark text-text-dark dark:text-text-light"
+                color="bg-success-base dark:bg-success-base text-text-dark dark:text-text-light"
                 onClick={() => navigate("/admin/fabrics")}
               />
               <QuickActionButton
                 icon={HiSpeakerphone}
                 text="Manage Assignments"
-                color="bg-warning-base dark:bg-warning-dark text-text-dark dark:text-text-light"
+                color="bg-warning-base dark:bg-warning-base text-text-dark dark:text-text-light"
                 onClick={() => navigate("/admin/assignments")}
               />
               <QuickActionButton
                 icon={HiDatabase}
                 text="System Settings"
-                color="bg-info-base dark:bg-info-dark text-text-dark dark:text-text-light"
+                color="bg-info-base dark:bg-info-base text-text-dark dark:text-text-light"
                 onClick={() => navigate("/admin/settings")}
               />
             </div>
