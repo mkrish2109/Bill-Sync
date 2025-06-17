@@ -16,7 +16,7 @@ import SearchInput from "../common/SearchInput";
 import { ErrorAlert } from "../common/Alert";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { Button } from "flowbite-react";
-import { PageMeta } from "../common/PageMeta";
+import { GrFormPrevious, GrFormNext } from "react-icons/gr";
 
 // Lazy load chart components with dynamic import
 const Line = lazy(() =>
@@ -172,6 +172,8 @@ const Dashboard = ({
   const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useIsMobile();
   const [showMobileCharts, setShowMobileCharts] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9; // Show 9 items per page (3x3 grid)
 
   // Memoize status counts calculation
   const statusCounts = useMemo(
@@ -206,6 +208,21 @@ const Dashboard = ({
       }),
     [items, filter, searchQuery, statusKey, searchKeys]
   );
+
+  // Memoize paginated items
+  const paginatedItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredItems.slice(startIndex, endIndex);
+  }, [filteredItems, currentPage]);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+  // Reset to first page when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, searchQuery]);
 
   // Memoize chart data
   const chartData = useMemo(
@@ -425,9 +442,40 @@ const Dashboard = ({
             searchQuery={searchQuery}
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredItems.map((item) => renderCard(item))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {paginatedItems.map((item) => renderCard(item))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-6">
+                <Button
+                  color="secondary"
+                  size="sm"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                >
+                  <GrFormPrevious />
+                </Button>
+                <span className="text-text-light dark:text-text-dark">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  color="secondary"
+                  size="sm"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  <GrFormNext />
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </>

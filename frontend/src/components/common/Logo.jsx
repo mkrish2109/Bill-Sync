@@ -16,7 +16,9 @@ export const Logo = memo(
       <div className={`inline-flex items-center ${className}`}>
         {variant === "icon" ? (
           <img
-            src="/logo/icon.svg"
+            src={
+              theme === "dark" ? "/logo/icon-dark.svg" : "/logo/icon-light.svg"
+            }
             alt="Bill Sync Icon"
             className={sizeClasses[size]}
             loading="eager"
@@ -75,5 +77,3 @@ export const Logo = memo(
 );
 
 Logo.displayName = "Logo";
-
-// Monochrome version remains the same

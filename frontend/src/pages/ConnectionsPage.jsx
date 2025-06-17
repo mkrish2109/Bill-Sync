@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FaUser,
   FaPhone,
   FaBuilding,
   FaBriefcase,
@@ -15,6 +14,7 @@ import { StatusBadge } from "../components/common/StatusBadge";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "flowbite-react";
 import { PageMeta } from "../components/common/PageMeta";
+import SearchInput from "../components/common/SearchInput";
 
 const ConnectionsPage = () => {
   const [connections, setConnections] = useState([]);
@@ -115,16 +115,11 @@ const ConnectionsPage = () => {
 
           <div className="flex gap-4">
             {/* Search Input */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search by name or contact..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-primary-light dark:border-primary-dark rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-light dark:focus:ring-primary-dark bg-background-surfaceLight dark:bg-background-surfaceDark text-text-secondaryLight dark:text-text-secondaryDark"
-              />
-              <FaSearch className="absolute left-3 top-3 text-text-secondaryLight dark:text-secondary-dark" />
-            </div>
+            <SearchInput
+              value={searchTerm}
+              onChange={setSearchTerm}
+              placeholder="Search by name or contact..."
+            />
 
             {/* Sort Buttons */}
             <div className="flex gap-2">
