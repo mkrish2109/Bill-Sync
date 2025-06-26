@@ -44,7 +44,7 @@ const WorkerDashboard = () => {
         setAssignments(assignmentsResponse?.data?.data);
 
         // Process request status data
-        const { sentRequests, receivedRequests } = requestsResponse?.data;
+        const { sentRequests, receivedRequests } = requestsResponse?.data?.data;
         const allRequests = [...sentRequests, ...receivedRequests];
 
         const statusCounts = allRequests.reduce(
