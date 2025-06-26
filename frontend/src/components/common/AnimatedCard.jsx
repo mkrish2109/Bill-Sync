@@ -13,7 +13,14 @@ const colorMap = {
   red: "text-red-500 dark:text-red-400",
 };
 
-const AnimatedCard = ({ icon, title, description, color = "blue", delay = 0, className = "" }) => {
+const AnimatedCard = ({
+  icon,
+  title,
+  description,
+  color = "blue",
+  delay = 0,
+  className = "",
+}) => {
   const controls = useAnimation();
   const [ref, inView] = useInView();
   const iconColorClass = colorMap[color] || colorMap.blue;
@@ -31,17 +38,19 @@ const AnimatedCard = ({ icon, title, description, color = "blue", delay = 0, cla
       animate={controls}
       variants={{
         visible: { opacity: 1, y: 0 },
-        hidden: { opacity: 0, y: 20 }
+        hidden: { opacity: 0, y: 20 },
       }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -5 }}
       className={className}
     >
       <Card className="h-full hover:shadow-xl transition-all bg-background-surfaceLight dark:bg-background-surfaceDark border-border-light dark:border-border-dark">
-        <div className={`${iconColorClass} text-4xl mb-4`}>
-          {icon}
+        <div className="flex sm:flex-col align-center ">
+          <div className={`${iconColorClass} text-4xl mb-4`}>{icon}</div>
+          <h3 className="text-xl font-bold mb-2 text-text-light dark:text-text-dark">
+            {title}
+          </h3>
         </div>
-        <h3 className="text-xl font-bold mb-2 text-text-light dark:text-text-dark">{title}</h3>
         <p className="text-text-secondaryLight dark:text-text-secondaryDark">
           {description}
         </p>

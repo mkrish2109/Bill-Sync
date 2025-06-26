@@ -20,6 +20,7 @@ import SideBarToggle from "../components/common/SideBarToggle";
 import { useSidebar } from "../contexts/SidebarContext";
 import { Logo } from "../components/common/Logo";
 import NotificationBell from "../components/NotificationBell";
+import TokenRefreshIndicator from "../components/common/TokenRefreshIndicator";
 import { FaSearch } from "react-icons/fa";
 
 const NavLink = ({ to, children, exact = false, className = "" }) => {
@@ -216,6 +217,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
           <div className="flex md:order-2 gap-2 items-center">
             <ThemeToggleButton />
 
+            {user && <TokenRefreshIndicator />}
             {user && <NotificationBell />}
 
             <Dropdown
@@ -233,7 +235,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
               className="z-50 w-60"
             >
               <DropdownHeader className="bg-background-light dark:bg-gray-900">
-                <span className="block text-sm font-semibold text-gray-800 dark:text-text-dark">
+                <span className="block text-sm font-semibold text-text-light dark:text-text-dark">
                   {userName}
                 </span>
                 <span className="block truncate text-sm font-medium text-text-secondaryLight dark:text-gray-300">
@@ -274,7 +276,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-background-dark dark:text-text-dark/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  className="h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-4 text-sm text-text-light shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-background-dark dark:text-text-dark/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />

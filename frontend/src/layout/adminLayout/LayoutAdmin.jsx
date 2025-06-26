@@ -10,12 +10,11 @@ const LayoutContent = () => {
 
   return (
     <div className="min-h-screen xl:flex bg-background-surfaceLight dark:bg-background-surfaceDark">
-      
       <div>
         <Sidebar />
         <Backdrop />
       </div>
-      
+
       <div
         className={`flex-1 transition-all duration-300 ease-in-out ${
           isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"

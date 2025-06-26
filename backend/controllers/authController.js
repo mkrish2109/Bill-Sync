@@ -405,6 +405,40 @@ const verifyAuth = async (req, res) => {
   }
 };
 
+// Get token expiry information
+const getTokenExpiry = async (req, res) => {
+  try {
+    const accessToken = req.cookies.accessToken;
+
+    if (!accessToken) {
+      return sendErrorResponse(res, "No access token found", 401);
+    }
+
+    try {
+      const decoded = verifyJWT(accessToken);
+      const currentTime = Math.floor(Date.now() / 1000);
+      const timeUntilExpiry = decoded.exp - currentTime;
+
+      res.status(200).json({
+        success: true,
+        data: {
+          expiresAt: decoded.exp,
+          timeUntilExpiry: timeUntilExpiry,
+          expiresInMinutes: Math.floor(timeUntilExpiry / 60),
+          currentTime: currentTime,
+        },
+      });
+    } catch (error) {
+      if (error.name === "TokenExpiredError") {
+        return sendErrorResponse(res, "Token has expired", 401);
+      }
+      return sendErrorResponse(res, "Invalid token", 401);
+    }
+  } catch (error) {
+    sendErrorResponse(res, error.message);
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -414,4 +448,5 @@ module.exports = {
   resetPassword,
   verifyAuth,
   refreshToken,
+  getTokenExpiry,
 };

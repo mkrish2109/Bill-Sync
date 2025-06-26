@@ -79,7 +79,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="bg-background-surfaceLight dark:bg-background-surfaceDark min-h-screen py-12 px-4">
+    <div className="bg-background-light dark:bg-background-dark min-h-screen py-12 px-4">
       <PageMeta
         title="Contact | Bill Sync - Get Support & Assistance"
         description="Get in touch with Bill Sync's support team. We're here to help with any questions about our billing and payment management solutions."
@@ -105,15 +105,15 @@ export default function ContactPage() {
 
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           {/* Contact Form */}
-          <Card className="bg-background-light dark:bg-background-dark">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+          <Card className="bg-background-surfaceLight dark:bg-background-surfaceDark">
+            <h2 className="text-2xl font-bold text-text-light dark:text-text-dark mb-6">
               Send us a message
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label
                   htmlFor="name"
-                  className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="block mb-2 text-sm font-medium text-text-secondaryLight dark:text-text-secondaryDark"
                 >
                   Your Name *
                 </label>
@@ -125,9 +125,10 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={handleChange}
                   color={errors.name ? "failure" : "gray"}
+                  className="text-text-light dark:text-text-dark"
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+                  <p className="mt-1 text-sm text-error-base">
                     {errors.name}
                   </p>
                 )}
@@ -136,7 +137,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="block mb-2 text-sm font-medium text-text-secondaryLight dark:text-text-secondaryDark"
                 >
                   Your Email *
                 </label>
@@ -148,9 +149,10 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={handleChange}
                   color={errors.email ? "failure" : "gray"}
+                  className="text-text-light dark:text-text-dark"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+                  <p className="mt-1 text-sm text-error-base">
                     {errors.email}
                   </p>
                 )}
@@ -159,7 +161,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="message"
-                  className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="block mb-2 text-sm font-medium text-text-secondaryLight dark:text-text-secondaryDark"
                 >
                   Your Message *
                 </label>
@@ -171,9 +173,10 @@ export default function ContactPage() {
                   value={formData.message}
                   onChange={handleChange}
                   color={errors.message ? "failure" : "gray"}
+                  className="text-text-light dark:text-text-dark"
                 />
                 {errors.message && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+                  <p className="mt-1 text-sm text-error-base">
                     {errors.message}
                   </p>
                 )}
@@ -192,7 +195,7 @@ export default function ContactPage() {
                   </>
                 ) : (
                   <>
-                    <FaPaperPlane className="mr-2" />
+                    <FaPaperPlane className="mr-2 text-primary-light dark:text-primary-dark" />
                     Send Message
                   </>
                 )}
@@ -202,20 +205,20 @@ export default function ContactPage() {
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <Card className="bg-background-light dark:bg-background-dark">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+            <Card className="bg-background-surfaceLight dark:bg-background-surfaceDark">
+              <h2 className="text-2xl font-bold text-text-light dark:text-text-dark mb-6">
                 Contact Information
               </h2>
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <div className="p-3 rounded-full bg-blue-50 dark:bg-gray-700 mr-4">
-                    <FaMapMarkerAlt className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <div className="p-3 rounded-full bg-primary-light/10 dark:bg-primary-dark/10 mr-4">
+                    <FaMapMarkerAlt className="w-5 h-5 text-primary-light dark:text-primary-dark" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                    <h3 className="text-lg font-semibold text-text-light dark:text-text-dark">
                       Address
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-text-secondaryLight dark:text-text-secondaryDark">
                       203 Angle Square, Digital Valley
                       <br />
                       Surat, Gujarat 394105
@@ -224,14 +227,14 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="p-3 rounded-full bg-blue-50 dark:bg-gray-700 mr-4">
-                    <FaPhone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <div className="p-3 rounded-full bg-primary-light/10 dark:bg-primary-dark/10 mr-4">
+                    <FaPhone className="w-5 h-5 text-primary-light dark:text-primary-dark" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                    <h3 className="text-lg font-semibold text-text-light dark:text-text-dark">
                       Phone
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-text-secondaryLight dark:text-text-secondaryDark">
                       +1 (555) 123-4567
                       <br />
                       Mon-Fri, 9am-5pm EST
@@ -240,14 +243,14 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="p-3 rounded-full bg-blue-50 dark:bg-gray-700 mr-4">
-                    <FaEnvelope className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <div className="p-3 rounded-full bg-primary-light/10 dark:bg-primary-dark/10 mr-4">
+                    <FaEnvelope className="w-5 h-5 text-primary-light dark:text-primary-dark" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                    <h3 className="text-lg font-semibold text-text-light dark:text-text-dark">
                       Email
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-text-secondaryLight dark:text-text-secondaryDark">
                       info@example.com
                       <br />
                       support@example.com
@@ -258,32 +261,32 @@ export default function ContactPage() {
             </Card>
 
             {/* Business Hours */}
-            <Card className="bg-background-light dark:bg-background-dark">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+            <Card className="bg-background-surfaceLight dark:bg-background-surfaceDark">
+              <h2 className="text-2xl font-bold text-text-light dark:text-text-dark mb-4">
                 Business Hours
               </h2>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">
+                  <span className="text-text-secondaryLight dark:text-text-secondaryDark">
                     Monday - Friday
                   </span>
-                  <span className="font-medium text-gray-800 dark:text-white">
+                  <span className="font-medium text-text-light dark:text-text-dark">
                     9:00 AM - 5:00 PM
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">
+                  <span className="text-text-secondaryLight dark:text-text-secondaryDark">
                     Saturday
                   </span>
-                  <span className="font-medium text-gray-800 dark:text-white">
+                  <span className="font-medium text-text-light dark:text-text-dark">
                     10:00 AM - 2:00 PM
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">
+                  <span className="text-text-secondaryLight dark:text-text-secondaryDark">
                     Sunday
                   </span>
-                  <span className="font-medium text-gray-800 dark:text-white">
+                  <span className="font-medium text-text-light dark:text-text-dark">
                     Closed
                   </span>
                 </div>
@@ -293,9 +296,17 @@ export default function ContactPage() {
         </div>
 
         {/* Map */}
-        <Card className="p-0 overflow-hidden bg-background-light dark:bg-background-dark">
+        <Card className="p-0 overflow-hidden bg-background-surfaceLight dark:bg-background-surfaceDark">
+          {/*
+            To change the address shown on the map, update the "src" attribute below with a new Google Maps embed link.
+            1. Go to https://www.google.com/maps
+            2. Search for your desired address/location.
+            3. Click the "Share" button, then select "Embed a map".
+            4. Copy the HTML <iframe> code and extract the src URL.
+            5. Replace the src value below with your new URL.
+          */}
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14874.692024199153!2d72.8311!3d21.1702!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04e8466bcf6eb%3A0x6ab1d4013788d700!2s6VM7%2BJP%20Surat%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1715765634561!5m2!1sen!2sin"
+            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d353.6119322754972!2d72.86451814684085!3d21.234075849804668!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04f3b45ba648f%3A0x17c0bea5b8fc836f!2sDigit%20Software%20Solutions!5e0!3m2!1sen!2sin!4v1750658973734!5m2!1sen!2sin"
             width="100%"
             height="350"
             style={{ border: 0 }}

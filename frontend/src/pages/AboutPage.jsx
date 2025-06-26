@@ -49,7 +49,7 @@ const AboutPage = () => {
       />
 
       {/* Stats Section */}
-      <section className="py-12 bg-background-light dark:bg-background-dark">
+      <section className="py-12 bg-background-light dark:bg-background-dark border-b-[1px] border-border-light dark:border-border-dark">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <StatItem
@@ -88,20 +88,20 @@ const AboutPage = () => {
       </section>
 
       {/* Mission Section */}
-      <section className="py-16 px-4 max-w-6xl mx-auto bg-background-light dark:bg-background-dark">
+      <section className="py-16 px-4  mx-auto bg-background-light dark:bg-background-dark ">
         <SectionHeader
           tagline="OUR PURPOSE"
           title="Our Mission & Vision"
           subtitle="To empower businesses with intuitive tools that simplify complex processes, enabling growth and efficiency at every level."
         />
 
-        <div className="grid md:grid-cols-2 gap-8 mb-16 ">
+        <div className="grid md:grid-cols-2 gap-8 mb-16 max-w-6xl mx-auto ">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="bg-background-surfaceLight dark:bg-background-surfaceDark border-border-light dark:border-border-dark p-8 rounded-xl shadow-lg"
+            className="bg-background-surfaceLight dark:bg-background-surfaceDark border-border-light dark:border-border-dark p-8 rounded-xl shadow-card dark:shadow-card-dark hover:shadow-xl transition-shadow duration-300"
           >
             <h3 className="text-2xl font-bold text-text-light dark:text-text-dark mb-4 flex items-center">
               <FaLightbulb className="text-[#BCFD4C] dark:text-green-400 mr-3" />
@@ -119,7 +119,7 @@ const AboutPage = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="bg-background-surfaceLight dark:bg-background-surfaceDark border-border-light dark:border-border-dark p-8 rounded-xl shadow-lg"
+            className="bg-background-surfaceLight dark:bg-background-surfaceDark border-border-light dark:border-border-dark p-8 rounded-xl shadow-card dark:shadow-card-dark hover:shadow-xl transition-shadow duration-300"
           >
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center">
               <FaChartLine className="text-[#44b8ff] dark:text-blue-400 mr-3" />
@@ -132,11 +132,11 @@ const AboutPage = () => {
             </p>
           </motion.div>
         </div>
-
+        <hr className="my-6 border-border-light dark:border-border-dark sm:mx-auto lg:my-8" />
         {/* Values Section */}
         <SectionHeader tagline="OUR VALUES" title="What We Stand For" />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
           <AnimatedCard
             icon={<FaUsers />}
             title="Customer Focus"
@@ -169,7 +169,7 @@ const AboutPage = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-16 px-4 bg-background-light dark:bg-background-dark">
+      <section className="py-16 px-4 bg-background-light dark:bg-background-dark border-b-[1px] border-t-[1px] border-border-light dark:border-border-dark">
         <div className="max-w-6xl mx-auto">
           <SectionHeader
             tagline="OUR TEAM"

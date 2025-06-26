@@ -6,7 +6,7 @@ import { FaBox } from "react-icons/fa";
 import Dashboard from "../dashboard/Dashboard";
 import FabricCard from "./fabric/FabricCard";
 import { getUserRequests } from "../../services/apiServices";
-import {PageMeta} from "../common/PageMeta";
+import { PageMeta } from "../common/PageMeta";
 
 const BuyerDashboard = () => {
   const navigate = useNavigate();
@@ -29,11 +29,10 @@ const BuyerDashboard = () => {
           api.get(`/buyers/fabrics`),
           getUserRequests(),
         ]);
-
-        setFabrics(fabricsResponse.data.data);
+        setFabrics(fabricsResponse?.data?.data);
 
         // Process request status data
-        const { sentRequests, receivedRequests } = requestsResponse.data.data;
+        const { sentRequests, receivedRequests } = requestsResponse?.data;
         const allRequests = [...sentRequests, ...receivedRequests];
         const statusCounts = allRequests.reduce(
           (acc, request) => {

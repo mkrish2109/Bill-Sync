@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-import { authAPI } from "../../utils/api";
+import { authAPI, stopBackgroundTokenRefresh } from "../../utils/api";
 
 // Async thunks
 export const loginUser = createAsyncThunk(
@@ -11,7 +11,7 @@ export const loginUser = createAsyncThunk(
       console.log(response);
       if (response.data.success) {
         return response.data;
-      }else {
+      } else {
         throw new Error(response.data.message || "Login failed");
       }
     } catch (error) {
@@ -27,6 +27,8 @@ export const logoutUser = createAsyncThunk(
   "user/logout",
   async (_, { rejectWithValue }) => {
     try {
+      // Stop background token refresh before logout
+      stopBackgroundTokenRefresh();
       const response = await authAPI.logout();
       return response.data;
     } catch (error) {
