@@ -1,6 +1,5 @@
 import { api } from "../helper/apiHelper";
 
-
 export const forgotPassword = async (data) => {
   try {
     const response = await api.post("/auth/forgot-password", data);
