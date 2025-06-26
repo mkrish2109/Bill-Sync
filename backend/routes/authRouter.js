@@ -7,18 +7,21 @@ const {
   forgotPassword,
   resetPassword,
   verifyAuth,
-  refreshToken
+  refreshToken,
+  getTokenExpiry
 } = require('../controllers/authController');
 
 const router = express.Router();
 
+// Public routes
 router.post('/register', register);
 router.post('/login', login);
-router.post('/verify-email', verifyEmail);
 router.post('/logout', logout);
+router.post('/refresh', refreshToken);
+router.post('/verify-email', verifyEmail);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.get('/verify-auth', verifyAuth);
-router.post('/refresh', refreshToken);
+router.get('/token-expiry', getTokenExpiry);
 
 module.exports = router;

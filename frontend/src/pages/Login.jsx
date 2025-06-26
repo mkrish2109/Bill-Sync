@@ -14,12 +14,14 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.user
+  );
 
   // Redirect if user is already authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
-      const role = user.role;
+      const role = user?.role;
       switch (role) {
         case "admin":
           navigate("/admin/dashboard");

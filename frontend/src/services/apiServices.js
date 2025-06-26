@@ -1,27 +1,10 @@
 import { api } from "../helper/apiHelper";
 
-export const login = async (data) => {
-  try {
-    const response = await api.post("/auth/login", data);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Login failed");
-  }
-};
-
-export const logout = async () => {
-  try {
-    const response = await api.post("/auth/logout");
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Logout failed");
-  }
-};
 
 export const forgotPassword = async (data) => {
   try {
     const response = await api.post("/auth/forgot-password", data);
-    return response.data;
+    return response;
   } catch (error) {
     throw new Error(
       error.response?.data?.message || "Failed to send reset password email"
@@ -32,7 +15,7 @@ export const forgotPassword = async (data) => {
 export const resetPassword = async (data) => {
   try {
     const response = await api.post("/auth/reset-password", data);
-    return response.data;
+    return response;
   } catch (error) {
     throw new Error(
       error.response?.data?.message || "Failed to reset password"
@@ -40,11 +23,10 @@ export const resetPassword = async (data) => {
   }
 };
 
+// --- User API ---
 export const getUserById = async (userId) => {
   try {
-    if (!userId) {
-      throw new Error("User ID is required");
-    }
+    if (!userId) throw new Error("User ID is required");
     const response = await api.get(`/users/${userId}`);
     return response.data;
   } catch (error) {
@@ -61,9 +43,67 @@ export const getAllUsers = async () => {
   }
 };
 
-export const getAvailableWorkers = () => api.get('/requests/available/workers');
-export const sendRequest = (requestData) => api.post('/requests', requestData);
-export const acceptRequest = (requestId) => api.put(`/requests/${requestId}/accept`);
-export const rejectRequest = (requestId) => api.put(`/requests/${requestId}/reject`);
-export const cancelRequest = (requestId) => api.put(`/requests/${requestId}/cancel`);
-export const getUserRequests = () => api.get('/requests');
+// --- Requests API ---
+export const getAvailableWorkers = async () => {
+  try {
+    const response = await api.get("/requests/available/workers");
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch available workers"
+    );
+  }
+};
+
+export const sendRequest = async (requestData) => {
+  try {
+    const response = await api.post("/requests", requestData);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to send request");
+  }
+};
+
+export const acceptRequest = async (requestId) => {
+  try {
+    const response = await api.put(`/requests/${requestId}/accept`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to accept request"
+    );
+  }
+};
+
+export const rejectRequest = async (requestId) => {
+  try {
+    const response = await api.put(`/requests/${requestId}/reject`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to reject request"
+    );
+  }
+};
+
+export const cancelRequest = async (requestId) => {
+  try {
+    const response = await api.put(`/requests/${requestId}/cancel`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to cancel request"
+    );
+  }
+};
+
+export const getUserRequests = async () => {
+  try {
+    const response = await api.get("/requests");
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch user requests"
+    );
+  }
+};

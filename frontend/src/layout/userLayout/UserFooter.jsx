@@ -6,131 +6,132 @@ import {
   BsWhatsapp,
 } from "react-icons/bs";
 import { Logo } from "../../components/common/Logo";
+import { Link } from "react-router-dom";
 
 function UserFooter() {
   return (
-    <footer className="bg-gray-50 dark:bg-background-dark border-t border-gray-200 dark:border-background-dark">
+    <footer className="bg-background-surfaceLight dark:bg-background-dark border-t border-border-light dark:border-border-dark">
       <div className="w-full  p-4 py-6 lg:py-8">
         <div className="md:flex md:justify-between w-full">
           <div className="mb-6 md:mb-0">
-            <a href="/" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <Logo variant="full" size="lg" />
-            </a>
+            </Link>
           </div>
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             <div>
-              <h2 className="mb-6 text-sm font-semibold uppercase text-gray-900 dark:text-white">
+              <h2 className="mb-6 text-sm font-semibold uppercase text-text-light dark:text-text-dark">
                 Company
               </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium">
+              <ul className="text-text-mutedLight dark:text-text-mutedDark font-medium">
                 <li className="mb-4">
-                  <a href="/about" className="hover:underline">
+                  <Link to="/about" className="hover:underline">
                     About Us
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-4">
-                  <a href="/contact" className="hover:underline">
+                  <Link to="contact" className="hover:underline">
                     Contact
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-4">
-                  <a href="/" className="hover:underline">
+                  <Link to="/" className="hover:underline">
                     Careers
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h2 className="mb-6 text-sm font-semibold uppercase text-gray-900 dark:text-white">
+              <h2 className="mb-6 text-sm font-semibold uppercase text-text-light dark:text-text-dark">
                 Help Center
               </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium">
+              <ul className="text-text-mutedLight dark:text-text-mutedDark font-medium">
                 <li className="mb-4">
-                  <a href="/" className="hover:underline">
+                  <Link to="/" className="hover:underline">
                     Support
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-4">
-                  <a href="/" className="hover:underline">
+                  <Link to="/" className="hover:underline">
                     FAQs
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-4">
-                  <a href="/" className="hover:underline">
+                  <Link to="/" className="hover:underline">
                     Documentation
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h2 className="mb-6 text-sm font-semibold uppercase text-gray-900 dark:text-white">
+              <h2 className="mb-6 text-sm font-semibold uppercase text-text-light dark:text-text-dark">
                 Legal
               </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium">
+              <ul className="text-text-mutedLight dark:text-text-mutedDark font-medium">
                 <li className="mb-4">
-                  <a href="/" className="hover:underline">
+                  <Link to="/" className="hover:underline">
                     Privacy Policy
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-4">
-                  <a href="/" className="hover:underline">
+                  <Link to="/" className="hover:underline">
                     Terms &amp; Conditions
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-4">
-                  <a href="/" className="hover:underline">
+                  <Link to="/" className="hover:underline">
                     Cookie Policy
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-        <hr className="my-6 border-gray-200 dark:border-gray-700 sm:mx-auto lg:my-8" />
+        <hr className="my-6 border-border-light dark:border-border-dark sm:mx-auto lg:my-8" />
         <div className="sm:flex sm:items-center sm:justify-between">
-          <span className="text-sm text-gray-500 dark:text-gray-400 sm:text-center">
+          <span className="text-sm text-text-mutedLight dark:text-text-mutedDark sm:text-center">
             © {new Date().getFullYear()}{" "}
-            <a href="/" className="hover:underline">
+            <Link to="/" className="hover:underline">
               Bill-Sync™
-            </a>
+            </Link>
             . All Rights Reserved.
           </span>
           <div className="mt-4 flex space-x-5 sm:mt-0 sm:justify-center">
-            <a
-              href="/"
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+            <Link
+              to="/"
+              className="text-text-mutedLight hover:text-text-light dark:hover:text-text-dark"
             >
               <BsFacebook className="h-5 w-5" />
               <span className="sr-only">Facebook page</span>
-            </a>
-            <a
-              href="/"
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+            </Link>
+            <Link
+              to="/"
+              className="text-text-mutedLight hover:text-text-light dark:hover:text-text-dark"
             >
               <BsInstagram className="h-5 w-5" />
               <span className="sr-only">Instagram page</span>
-            </a>
-            <a
-              href="/"
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+            </Link>
+            <Link
+              to="/"
+              className="text-text-mutedLight hover:text-text-light dark:hover:text-text-dark"
             >
               <BsTwitter className="h-5 w-5" />
               <span className="sr-only">Twitter page</span>
-            </a>
-            <a
-              href="/"
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+            </Link>
+            <Link
+              to="/"
+              className="text-text-mutedLight hover:text-text-light dark:hover:text-text-dark"
             >
               <BsLinkedin className="h-5 w-5" />
               <span className="sr-only">LinkedIn page</span>
-            </a>
-            <a
-              href="/"
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+            </Link>
+            <Link
+              to="/"
+              className="text-text-mutedLight hover:text-text-light dark:hover:text-text-dark"
             >
               <BsWhatsapp className="h-5 w-5" />
               <span className="sr-only">WhatsApp</span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

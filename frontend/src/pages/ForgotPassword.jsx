@@ -23,7 +23,7 @@ function ForgotPassword() {
 
   return (
     <>
-      <PageMeta 
+      <PageMeta
         title="Forgot Password | Bill Sync"
         description="Reset your Bill Sync account password securely. Follow our simple steps to regain access to your account."
         keywords="password reset, forgot password, account recovery, secure password reset"

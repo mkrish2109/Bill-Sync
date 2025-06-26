@@ -40,7 +40,7 @@ const TeamMemberCard = ({
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-text-secondaryLight hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-dark transition-colors"
+                className="text-text-mutedLight hover:text-primary-light dark:text-text-mutedDark dark:hover:text-primary-dark transition-colors"
               >
                 {link.icon}
               </a>

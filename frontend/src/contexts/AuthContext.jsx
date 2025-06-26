@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { restoreUser } from "../redux/slices/userSlice";
+import { startBackgroundTokenRefresh, stopBackgroundTokenRefresh } from "../utils/api";
 
 const AuthContext = createContext();
 
@@ -27,6 +28,24 @@ export const AuthProvider = ({ children }) => {
 
     initializeAuth();
   }, [dispatch]);
+
+  // Start/stop background token refresh based on authentication status
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      // Start background token refresh when user is authenticated
+      console.log("Starting background token refresh");
+      startBackgroundTokenRefresh();
+    } else {
+      // Stop background token refresh when user is not authenticated
+      console.log("Stopping background token refresh");
+      stopBackgroundTokenRefresh();
+    }
+
+    // Cleanup function to stop refresh when component unmounts
+    return () => {
+      stopBackgroundTokenRefresh();
+    };
+  }, [isAuthenticated, user]);
 
   const value = {
     user,

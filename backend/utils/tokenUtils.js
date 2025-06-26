@@ -1,9 +1,10 @@
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 // Token expiration times
-const ACCESS_TOKEN_EXPIRY = "15m";
-const REFRESH_TOKEN_EXPIRY = "7d";
+const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY || "1h"; // Default to 1 hour if not set
+const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY || "30d"; // Default to 30 days if not set
 
 // Function to generate a random crypto token
 const getCryptoToken = (randomBytes = 40) => {

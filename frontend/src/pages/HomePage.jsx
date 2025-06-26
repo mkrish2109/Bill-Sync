@@ -25,7 +25,7 @@ const HomePage = () => {
       />
       <div className="bg-background-light dark:bg-background-dark min-h-screen">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-primary-dark to-secondary-dark dark:from-primary-light dark:to-secondary-light text-text-light dark:text-text-dark py-20 overflow-hidden">
+        <section className="relative bg-gradient-to-r  from-primary-dark to-secondary-dark dark:from-primary-light dark:to-secondary-light text-text-light dark:text-text-dark py-20 overflow-hidden">
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-center relative ">
             <div className="md:w-1/2 mb-10 md:mb-0">
               <motion.h1
@@ -53,13 +53,13 @@ const HomePage = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex sm:flex gap-4 "
               >
                 <Button
                   size="xl"
                   color="primary"
                   onClick={() => navigate("/register")}
-                  className="w-full sm:w-auto"
+                  className="w-fit sm:w-fit px-2 sm:px-4 text-sm sm:text-base "
                 >
                   Get Started Free
                 </Button>
@@ -68,7 +68,7 @@ const HomePage = () => {
                   color="outline"
                   size="xl"
                   onClick={() => navigate("/pricing")}
-                  // className="mx-2 text-secondary-light dark:text-secondary-dark border-border-light dark:border-border-dark hover:bg-secondary-light  dark:hover:bg-secondary-dark transition-colors"
+                  className="w-fit sm:w-fit px-2 sm:px-4 text-sm sm:text-base"
                 >
                   View Pricing
                 </Button>
@@ -103,7 +103,7 @@ const HomePage = () => {
                 </p>
               </motion.div>
             </div>
-            <div className="md:w-1/2">
+            <div className="md:w-1/2 hidden md:block">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -113,7 +113,7 @@ const HomePage = () => {
                 <img
                   src="/images/hero-image.webp"
                   alt="Modern billing dashboard interface showing analytics and payment processing"
-                  className="relative w-full max-w-2xl mx-auto object-cover"
+                  className="relative w-full max-w-2xl mx-auto object-cover "
                   fetchpriority="high"
                   width="800"
                   height="600"
@@ -145,14 +145,14 @@ const HomePage = () => {
         </section>
 
         {/* Features Section */}
-        <section className="py-16 bg-background-light dark:bg-background-dark">
+        <section className="py-16 bg-background-light dark:bg-background-dark border-b-[1px] border-border-light dark:border-border-dark">
           <div className="container mx-auto px-4">
             <SectionHeader
               tagline="WHY CHOOSE US"
               title="Powerful Features Designed for You"
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <AnimatedCard
                 icon={<FaRegLightbulb />}
                 title="Intuitive Interface"
@@ -182,7 +182,7 @@ const HomePage = () => {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-16 bg-background-light dark:bg-background-dark">
+        <section className="py-16 bg-background-light dark:bg-background-dark border-b-[1px] border-border-light dark:border-border-dark">
           <div className="container mx-auto px-4">
             <SectionHeader tagline="GET STARTED" title="How Bill Sync Works" />
 

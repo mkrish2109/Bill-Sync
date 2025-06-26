@@ -39,11 +39,12 @@ const WorkerDashboard = () => {
           api.get(`/workers/fabrics`),
           getUserRequests(),
         ]);
+        console.log(assignmentsResponse, requestsResponse);
 
-        setAssignments(assignmentsResponse.data.data);
+        setAssignments(assignmentsResponse?.data?.data);
 
         // Process request status data
-        const { sentRequests, receivedRequests } = requestsResponse.data.data;
+        const { sentRequests, receivedRequests } = requestsResponse?.data;
         const allRequests = [...sentRequests, ...receivedRequests];
 
         const statusCounts = allRequests.reduce(
