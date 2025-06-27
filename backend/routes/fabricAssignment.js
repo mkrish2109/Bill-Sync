@@ -1,5 +1,5 @@
 const express = require('express');
-const { authMiddleware } = require('../middleware/authMiddleware');
+const { authMiddleware } = require('../middlewares/authMiddleware');
 const { getAssignmentHistory } = require('../controllers/fabric/commonController');
 const { updateFabric } = require('../controllers/fabric/buyerController');
 const { updateAssignmentStatus } = require('../controllers/fabricAssignment');

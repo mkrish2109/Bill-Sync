@@ -1,6 +1,6 @@
 const express = require("express");
 const fabricRouter = express.Router();
-const { authMiddleware } = require("../middleware/authMiddleware");
+const { authMiddleware } = require("../middlewares/authMiddleware");
 const { updateFabric } = require("../controllers/fabric/buyerController");
 const {
   getFabricWithHistory,
