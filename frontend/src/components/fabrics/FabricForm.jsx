@@ -365,7 +365,10 @@ const FabricForm = ({
             className="focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
           >
             {loading ? (
-              <LoadingSpinner inline text={isEditing ? "Updating..." : "Saving..."} />
+              <LoadingSpinner
+                inline
+                text={isEditing ? "Updating..." : "Saving..."}
+              />
             ) : isEditing ? (
               "Update Fabric"
             ) : (

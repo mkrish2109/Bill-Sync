@@ -21,6 +21,7 @@ const FabricDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
+  const isBuyer = user?.role === "buyer";
   const [fabric, setFabric] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,7 +47,7 @@ const FabricDetails = () => {
     };
 
     fetchFabricDetails();
-  }, [id]);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleStatusUpdate = async (newStatus) => {
     if (!fabric?.assignmentId) {
@@ -129,7 +130,6 @@ const FabricDetails = () => {
         Fabric not found
       </div>
     );
-  console.log(statusColors[fabric.assignmentStatus]);
 
   return (
     <>
@@ -166,7 +166,7 @@ const FabricDetails = () => {
                 Details
               </TabButton>
 
-              {fabric.workers?.length > 0 && (
+              {fabric.worker && (
                 <TabButton
                   active={activeTab === "assignments"}
                   onClick={() => setActiveTab("assignments")}
@@ -192,7 +192,10 @@ const FabricDetails = () => {
           <div className="p-4 sm:p-6 md:p-8 bg-background-light dark:bg-background-dark">
             {activeTab === "details" && <DetailsTab fabric={fabric} />}
             {activeTab === "assignments" && (
-              <AssignmentsTab workers={fabric.workers} />
+              <AssignmentsTab
+                worker={isBuyer ? fabric.worker : undefined}
+                buyer={!isBuyer ? fabric.buyer : undefined}
+              />
             )}
             {activeTab === "history" && (
               <HistoryTab

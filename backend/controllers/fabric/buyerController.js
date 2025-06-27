@@ -6,7 +6,15 @@ const commonController = require("./commonController");
 const { createNotification } = require("../notificationController");
 const path = require("path");
 const fs = require("fs");
+<<<<<<< HEAD
 const cloudinary = require("../../config/cloudinary");
+=======
+const {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+} = require("../../utils/cloudinaryUpload");
+const UPLOAD_TARGET = process.env.UPLOAD_TARGET || "local";
+>>>>>>> 51216b8 (fix: unify image deletion for local and Cloudinary, and improve frontend delete logic)
 
 // Create a new fabric (buyer only)
 const createFabric = async (req, res) => {
@@ -203,15 +211,10 @@ const getAllFabricsForBuyer = async (req, res) => {
     const buyerFabrics = fabrics.map((fabric) => {
       const fabricObj = fabric.toObject();
       const buyer = fabricObj.buyerId || {};
+      const worker = fabricObj.assignments[0].workerId || {};
 
       // Handle single assignment object
       const assignment = fabric.assignments?.toObject() || {};
-      const worker = {
-        id: assignment.workerId?._id,
-        name: assignment.workerId?.name,
-        contact: assignment.workerId?.contact,
-        status: assignment.status,
-      };
 
       delete fabricObj.buyerId;
       delete fabricObj.workerId;
@@ -497,6 +500,7 @@ const deleteFabric = async (req, res) => {
       });
     }
 
+<<<<<<< HEAD
     // Delete the image from Cloudinary if it exists and is a Cloudinary URL
     if (fabric.imageUrl && fabric.imageUrl.includes("cloudinary.com")) {
       // Extract public_id from the imageUrl for images in the 'bill-sync' folder
@@ -509,6 +513,18 @@ const deleteFabric = async (req, res) => {
           console.log("Image deleted from Cloudinary:", public_id);
         } catch (err) {
           console.error("Error deleting image from Cloudinary:", err);
+=======
+    // Delete the image file if it exists
+    if (fabric.imageUrl) {
+      const filename = fabric.imageUrl.split("/").pop();
+      if (UPLOAD_TARGET === "cloudinary") {
+        const publicId = filename.replace(/\.[^/.]+$/, ""); // removes extension
+        await deleteFromCloudinary(publicId);
+      } else {
+        const filePath = path.join(__dirname, "../../uploads", filename);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+>>>>>>> 51216b8 (fix: unify image deletion for local and Cloudinary, and improve frontend delete logic)
         }
       }
     }

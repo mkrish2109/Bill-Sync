@@ -19,19 +19,19 @@ const ImageUploader = (
     }
   }, [initialImageUrl]);
 
-  const deleteImage = async (filename) => {
-    try {
-      const response = await api.delete(`/upload/${filename}`);
-      if (!response.data.success) {
-        console.error("Failed to delete image");
-      }
-      setPreview("");
-      setTempFile(null);
-      if (onDelete) onDelete();
-    } catch (error) {
-      console.error("Error deleting image:", error);
-    }
-  };
+  // const deleteImage = async (filename) => {
+  //   try {
+  //     const response = await api.delete(`/upload/${filename}`);
+  //     if (!response.data.success) {
+  //       console.error("Failed to delete image");
+  //     }
+  //     setPreview("");
+  //     setTempFile(null);
+  //     if (onDelete) onDelete();
+  //   } catch (error) {
+  //     console.error("Error deleting image:", error);
+  //   }
+  // };
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -54,6 +54,11 @@ const ImageUploader = (
     const previewUrl = URL.createObjectURL(file);
     setPreview(previewUrl);
   }, []);
+  const handleDelete = () => {
+    setPreview("");
+    setTempFile(null);
+    if (onDelete) onDelete();
+  };
 
   // Function to handle actual upload
   const handleUpload = async () => {
@@ -164,7 +169,7 @@ const ImageUploader = (
             }}
           />
           <button
-            onClick={() => deleteImage(preview.split("/").pop())}
+            onClick={handleDelete}
             className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-colors duration-200"
             title="Delete image"
           >
