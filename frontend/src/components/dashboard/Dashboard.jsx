@@ -313,7 +313,7 @@ const Dashboard = ({
     [statusCounts, userRequests, items]
   );
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <LoadingSpinner  />;
   if (error)
     return <ErrorAlert error={error} onDismiss={() => setError(null)} />;
 

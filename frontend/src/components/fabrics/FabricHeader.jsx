@@ -17,7 +17,7 @@ export const FabricHeader = ({
   return (
     <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
       <Button
-      color="secondary"
+        color="secondary"
         onClick={() => navigate(-1)}
         className="transition-all duration-200 shadow hover:shadow-md focus:ring-1"
       >

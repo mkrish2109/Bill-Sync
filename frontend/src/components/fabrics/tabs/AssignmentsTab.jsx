@@ -1,10 +1,12 @@
-import React from 'react';
-import { StatusBadge } from '../../common/StatusBadge';
-import { FaUser, FaPhone, FaCalendarAlt } from 'react-icons/fa';
+import React from "react";
+import { StatusBadge } from "../../common/StatusBadge";
+import { FaUser, FaPhone, FaCalendarAlt } from "react-icons/fa";
 
 export const AssignmentsTab = ({ workers }) => (
   <div className="space-y-8">
-    <h3 className="font-semibold text-xl text-text-light dark:text-text-dark">Worker Assignments</h3>
+    <h3 className="font-semibold text-xl text-text-light dark:text-text-dark">
+      Worker Assignments
+    </h3>
     <div className="overflow-x-auto rounded-xl border border-border-light dark:border-border-dark shadow-sm">
       <table className="min-w-full divide-y divide-border-light dark:divide-border-dark">
         <thead className="bg-background-surfaceLight dark:bg-background-surfaceDark">
@@ -34,21 +36,30 @@ export const AssignmentsTab = ({ workers }) => (
         </thead>
         <tbody className="bg-background-light dark:bg-background-dark divide-y divide-border-light dark:divide-border-dark">
           {workers?.map((worker, index) => (
-            <tr key={index} className="hover:bg-background-surfaceLight/50 dark:hover:bg-background-surfaceDark/50 transition-colors duration-150">
+            <tr
+              key={index}
+              className="hover:bg-background-surfaceLight/50 dark:hover:bg-background-surfaceDark/50 transition-colors duration-150"
+            >
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
-                  <div className="text-sm font-medium text-text-light dark:text-text-dark">{worker.name}</div>
+                  <div className="text-sm font-medium text-text-light dark:text-text-dark">
+                    {worker.name}
+                  </div>
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-secondary-light dark:text-text-secondaryDark">{worker.contact}</div>
+                <div className="text-sm text-secondary-light dark:text-text-secondaryDark">
+                  {worker.contact}
+                </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <StatusBadge status={worker.status} />
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-secondary-light dark:text-text-secondaryDark">
-                  {worker.assignedAt ? new Date(worker.assignedAt).toLocaleDateString() : 'N/A'}
+                  {worker.assignedAt
+                    ? new Date(worker.assignedAt).toLocaleDateString()
+                    : "N/A"}
                 </div>
               </td>
             </tr>
