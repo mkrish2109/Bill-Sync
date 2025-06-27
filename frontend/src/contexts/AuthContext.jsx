@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreUser } from "../redux/slices/userSlice";
 import { startBackgroundTokenRefresh, stopBackgroundTokenRefresh } from "../utils/api";
+import { restoreUser } from "../store/slices/userSlice";
 
 const AuthContext = createContext();
 

@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
-import { FabricCard } from "./FabricCard";
-import { ErrorAlert } from "../common/Alert";
-import LoadingSpinner from "../common/LoadingSpinner";
-import { statusColors } from "../../utils/colors";
 import { Button } from "flowbite-react";
+import LoadingSpinner from "../common/LoadingSpinner";
+import { ErrorAlert } from "../common/Alert";
+import FabricCard from "../../features/buyer/components/fabric/FabricCard";
+import { statusColors } from "../../utils/colors";
 
 export const FabricList = ({
   fabrics,

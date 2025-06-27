@@ -8,33 +8,33 @@ import { NotificationProvider } from "./contexts/NotificationContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import VerifyEmail from "./pages/VerifyEmail";
-import BillList from "./components/BillList";
-import BillForm from "./components/BillForm";
-import AdminDashboard from "./components/admin/adminDashbord/AdminDashboard";
-import WorkerDashboard from "./components/worker/WorkerDashboard";
-import UserLayout from "./layout/userLayout/UserLayout";
-import LayoutAdmin from "./layout/adminLayout/LayoutAdmin";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
+import BillList from "./features/bill/components/BillList";
+import BillForm from "./features/bill/components/BillForm";
+import AdminDashboard from "./features/admin/components/adminDashboard/AdminDashboard";
+import WorkerDashboard from "./features/worker/components/WorkerDashboard";
+import UserLayout from "./layouts/userLayout/UserLayout";
+import LayoutAdmin from "./layouts/adminLayout/LayoutAdmin";
 import UserAuthGuard from "./guards/UserAuthGuard";
 import AdminAuthGuard from "./guards/AdminAuthGuard";
-import UsersListAdmin from "./components/admin/usersListAdmin/UsersListAdmin";
+import UsersListAdmin from "./features/admin/components/usersListAdmin/UsersListAdmin";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
-import UserProfile from "./pages/UserProfile";
-import store from "./redux/store";
+import UserProfilePage from "./pages/UserProfilePage";
+import store from "./store";
 import LoadingSpinner from "./components/common/LoadingSpinner";
-import LayoutUser from "./layout/userLayout/LayoutUser";
+import LayoutUser from "./layouts/userLayout/LayoutUser";
 import HomePage from "./pages/HomePage";
-import BuyerDashboard from "./components/buyer/BuyerDashboard";
-import AddFabricForm from "./components/buyer/AddFabricForm";
-import EditFabricForm from "./components/buyer/EditFabricForm";
-import WorkerFabricList from "./components/worker/WorkerFabricList";
-import BuyerFabricList from "./components/buyer/BuyerFabricList";
-import FabricDetails from "./components/fabrics/FabricDetails";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+import BuyerDashboard from "./features/buyer/components/BuyerDashboard";
+import AddFabricForm from "./features/buyer/components/AddFabricForm";
+import EditFabricForm from "./features/buyer/components/EditFabricForm";
+import WorkerFabricList from "./features/worker/components/WorkerFabricList";
+import BuyerFabricList from "./features/buyer/components/BuyerFabricList";
+import FabricDetails from "./features/fabrics/components/FabricDetails";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import NetworkPage from "./pages/NetworkPage";
 import RequestsPage from "./pages/RequestsPage";
@@ -57,11 +57,11 @@ const AppRoutes = () => {
             role === "admin" ? <Navigate to="/admin/dashboard" /> : <HomePage />
           }
         />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="reset-password" element={<ResetPassword />} />
-        <Route path="verify-email" element={<VerifyEmail />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="reset-password" element={<ResetPasswordPage />} />
+        <Route path="verify-email" element={<VerifyEmailPage />} />
         <Route path="bills" element={<BillList />} />
         <Route path="create-bill" element={<BillForm />} />
         <Route path="about" element={<AboutPage />} />
@@ -80,7 +80,7 @@ const AppRoutes = () => {
       >
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<UsersListAdmin />} />
-        <Route path="account/profile" element={<UserProfile />} />
+        <Route path="account/profile" element={<UserProfilePage />} />
       </Route>
 
       {/* Buyer Routes */}
@@ -100,7 +100,7 @@ const AppRoutes = () => {
         <Route path="fabrics/add" element={<AddFabricForm />} />
         <Route path="fabrics/edit/:id" element={<EditFabricForm />} />
         <Route path="fabrics/:id" element={<FabricDetails />} />
-        <Route path="account/profile" element={<UserProfile />} />
+        <Route path="account/profile" element={<UserProfilePage />} />
       </Route>
 
       {/* Worker Routes */}
@@ -117,7 +117,7 @@ const AppRoutes = () => {
         <Route path="connections" element={<ConnectionsPage />} />
         <Route path="fabrics/:id" element={<FabricDetails />} />
         <Route path="tasks" element={<WorkerFabricList />} />
-        <Route path="account/profile" element={<UserProfile />} />
+        <Route path="account/profile" element={<UserProfilePage />} />
       </Route>
     </Routes>
   );
