@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import { StatusBadge } from "../common/StatusBadge";
 import Modal from "../ui/modal/Modal";
-import EditFabricForm from "../buyer/EditFabricForm";
+import EditFabricForm from "../../features/buyer/components/EditFabricForm";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { statusColors } from "../../utils/colors";
 

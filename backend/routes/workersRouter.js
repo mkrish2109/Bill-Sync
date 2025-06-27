@@ -1,7 +1,7 @@
 // routes/worker.js (backend)
 const express = require('express');
 const FabricAssignment = require('../models/FabricAssignment');
-const { authMiddleware } = require('../middleware/authMiddleware');
+const { authMiddleware } = require('../middlewares/authMiddleware');
 const { getallWorkers, getReceivedRequests } = require('../controllers/workerController');
 const { getAllFabricsForWorker, updateAssignmentStatus } = require('../controllers/fabric/workerController');
 const router = express.Router();

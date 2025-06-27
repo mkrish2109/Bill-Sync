@@ -9,7 +9,7 @@ const {
   updateUserProfile,
   updateAddress
 } = require("../controllers/userController");
-const { authMiddleware, adminMiddleware } = require("../middleware/authMiddleware");
+const { authMiddleware, adminMiddleware } = require("../middlewares/authMiddleware");
 const { check } = require("express-validator");
 
 // Admin routes (require admin privileges)

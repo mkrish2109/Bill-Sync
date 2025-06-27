@@ -114,14 +114,35 @@ const getFabricWithHistory = async (req, res) => {
 
     const fabricObj = fabric.toObject();
 
+    // Rename buyerId to buyer
+    if (fabricObj.buyerId) {
+      fabricObj.buyer = fabricObj.buyerId;
+      delete fabricObj.buyerId;
+    }
     // Process assignments data
     if (fabric.assignments && fabric.assignments.length > 0) {
-      fabricObj.workers = fabric.assignments.map((assignment) => ({
-        ...(assignment.workerId?.toObject() || {}),
-        status: assignment.status,
-        assignedAt: assignment.createdAt,
-        assignmentId: assignment._id,
-      }));
+      if (fabric.assignments.length === 1) {
+        // Only one assignment, use 'worker' key
+        const assignment = fabric.assignments[0];
+        fabricObj.worker = {
+          ...(assignment.workerId && assignment.workerId.toObject
+            ? assignment.workerId.toObject()
+            : {}),
+          status: assignment.status,
+          assignedAt: assignment.createdAt,
+          assignmentId: assignment._id,
+        };
+      } else {
+        // Multiple assignments, use 'workers' array
+        fabricObj.workers = fabric.assignments.map((assignment) => {
+          return {
+            worker: assignment.workerId?.toObject() || {},
+            status: assignment.status,
+            assignedAt: assignment.createdAt,
+            assignmentId: assignment._id,
+          };
+        });
+      }
 
       // For buyers and workers, include relevant assignment info
       let relevantAssignment;

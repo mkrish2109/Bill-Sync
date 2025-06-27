@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import { Button } from "flowbite-react";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { ErrorAlert } from "../common/Alert";
-import FabricCard from "../../features/buyer/components/fabric/FabricCard";
 import { statusColors } from "../../utils/colors";
+import { FabricCard } from "./FabricCard";
 
 export const FabricList = ({
-  fabrics,
+  fabrics: fabricsProp,
   loading,
   error,
   viewType = "buyer",
@@ -19,9 +19,27 @@ export const FabricList = ({
   showAddButton = false,
   onUpdate,
 }) => {
+  // Use local state for fabrics so we can update them on edit
+  const [fabrics, setFabrics] = useState(fabricsProp || []);
+
+  // Keep local fabrics in sync with prop
+  useEffect(() => {
+    setFabrics(fabricsProp || []);
+  }, [fabricsProp]);
+
   const navigate = useNavigate();
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorAlert error={error} />;
+
+  // Handler to update a fabric in the list
+  const handleFabricUpdate = (updatedFabric) => {
+    setFabrics((prevFabrics) =>
+      prevFabrics.map((fabric) =>
+        fabric._id === updatedFabric._id ? updatedFabric : fabric
+      )
+    );
+    if (onUpdate) onUpdate(updatedFabric);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -74,7 +92,7 @@ export const FabricList = ({
               onStatusChange={onStatusChange}
               onDelete={onDelete}
               statusColors={statusColors}
-              onUpdate={onUpdate}
+              onUpdate={handleFabricUpdate}
             />
           ))}
         </div>
