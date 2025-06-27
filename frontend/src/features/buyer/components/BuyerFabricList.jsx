@@ -18,7 +18,7 @@ const BuyerFabricList = () => {
     try {
       setFabricData((prev) => ({ ...prev, loading: true }));
       const response = await api.get("/buyers/fabrics");
-
+console.log(response);
       const flattenedData = response.data.data.map((item) => ({
         ...item.fabric,
         buyer: item.buyer,
