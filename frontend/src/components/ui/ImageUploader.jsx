@@ -19,19 +19,19 @@ const ImageUploader = (
     }
   }, [initialImageUrl]);
 
-  const deleteImage = async (filename) => {
-    try {
-      const response = await api.delete(`/upload/${filename}`);
-      if (!response.data.success) {
-        console.error("Failed to delete image");
-      }
-      setPreview("");
-      setTempFile(null);
-      if (onDelete) onDelete();
-    } catch (error) {
-      console.error("Error deleting image:", error);
-    }
-  };
+  // const deleteImage = async (filename) => {
+  //   try {
+  //     const response = await api.delete(`/upload/${filename}`);
+  //     if (!response.data.success) {
+  //       console.error("Failed to delete image");
+  //     }
+  //     setPreview("");
+  //     setTempFile(null);
+  //     if (onDelete) onDelete();
+  //   } catch (error) {
+  //     console.error("Error deleting image:", error);
+  //   }
+  // };
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -54,6 +54,11 @@ const ImageUploader = (
     const previewUrl = URL.createObjectURL(file);
     setPreview(previewUrl);
   }, []);
+  const handleDelete = () => {
+    setPreview("");
+    setTempFile(null);
+    if (onDelete) onDelete();
+  };
 
   // Function to handle actual upload
   const handleUpload = async () => {
@@ -108,8 +113,8 @@ const ImageUploader = (
         className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors duration-200
           ${
             isDragActive
-              ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-              : "border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500"
+              ? "border-primary-light bg-background-surfaceLight dark:bg-primary-dark/20"
+              : "border-border-light dark:border-border-dark hover:border-primary-light dark:hover:border-primary-dark"
           }
           ${uploading ? "opacity-50 cursor-not-allowed" : ""}
         `}
@@ -117,7 +122,7 @@ const ImageUploader = (
         <input {...getInputProps()} />
         <div className="space-y-2">
           <svg
-            className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500"
+            className="mx-auto h-12 w-12 text-text-mutedLight dark:text-text-mutedDark"
             stroke="currentColor"
             fill="none"
             viewBox="0 0 48 48"
@@ -130,7 +135,7 @@ const ImageUploader = (
               strokeLinejoin="round"
             />
           </svg>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="text-sm text-text-secondaryLight dark:text-text-secondaryDark">
             {uploading ? (
               <LoadingSpinner inline text="Uploading..." />
             ) : isDragActive ? (
@@ -149,23 +154,23 @@ const ImageUploader = (
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        <p className="text-sm text-error-base dark:text-error-base">{error}</p>
       )}
 
       {preview && (
-        <div className="relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div className="relative rounded-lg overflow-hidden border border-border-light dark:border-border-dark">
           <img
             src={preview}
             alt="Preview"
-            className="w-full h-48 object-contain bg-gray-50 dark:bg-gray-800"
+            className="w-full h-48 object-contain bg-background-surfaceLight dark:bg-background-surfaceDark"
             onError={(e) => {
               console.error("Image load error:", e);
               setError("Failed to load image preview");
             }}
           />
           <button
-            onClick={() => deleteImage(preview.split("/").pop())}
-            className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-colors duration-200"
+            onClick={handleDelete}
+            className="absolute top-2 right-2 p-2 bg-error-base hover:bg-error-hover text-error-text rounded-full shadow-lg transition-colors duration-200"
             title="Delete image"
           >
             <svg

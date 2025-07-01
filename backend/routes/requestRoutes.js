@@ -4,7 +4,7 @@ const express = require("express");
 const router = express.Router();
 const availableUsersController = require("../controllers/availableUsersController");
 const requestController = require("../controllers/requestController");
-const { authMiddleware } = require("../middleware/authMiddleware");
+const { authMiddleware } = require("../middlewares/authMiddleware");
 
 // Get available users
 router.get(

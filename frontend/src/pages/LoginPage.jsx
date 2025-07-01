@@ -1,7 +1,7 @@
 import { Button, Label, TextInput } from "flowbite-react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import PasswordInput from "../components/common/PasswordInput";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../store/slices/userSlice";

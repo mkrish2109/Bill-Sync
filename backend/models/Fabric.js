@@ -42,7 +42,6 @@ const fabricSchema = new mongoose.Schema(
     },
     imageUrl: {
       type: String,
-      required: true,
     },
     createdAt: {
       type: Date,
@@ -52,10 +51,12 @@ const fabricSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    assignments: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "FabricAssignment",
-    },
+    assignments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "FabricAssignment",
+      },
+    ],
     changeHistory: [changeHistorySchema],
   },
   { timestamps: true }

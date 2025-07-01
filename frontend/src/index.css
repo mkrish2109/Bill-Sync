@@ -11,13 +11,13 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --logo-dark: #2C3639;
+  --logo-dark: #2c3639;
   --logo-light: #916e52;
 }
 
 .dark {
   --logo-dark: #916e52;
-  --logo-light: #2C3639;
+  --logo-light: #2c3639;
 }
 
 body {
@@ -25,6 +25,38 @@ body {
   font-family: "Inter", sans-serif;
   background-color: var(--background);
   color: var(--text);
+}
+
+@layer components {
+  .card-scale-hover {
+    @apply bg-background-light
+           dark:bg-gradient-to-br
+           dark:from-background-dark
+           dark:to-background-surfaceDark
+           p-4
+           rounded-lg
+           shadow-sm
+           border
+           border-border-light
+           dark:border-border-dark
+           transition-transform
+           hover:scale-[1.02];
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-background-light
+           dark:bg-gradient-to-br
+           dark:from-background-dark
+           dark:to-background-surfaceDark
+           p-4
+           rounded-lg
+           shadow-sm
+           border
+           border-border-light
+           dark:border-border-dark;
+  }
 }
 
 .smooth-scroll {

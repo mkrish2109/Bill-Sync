@@ -9,7 +9,7 @@ import React, {
 import io from "socket.io-client";
 import { useAuth } from "./AuthContext";
 import { getSocketURL } from "../helper/apiHelper";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const SocketContext = createContext();
 
@@ -39,6 +39,17 @@ export const SocketProvider = ({ children }) => {
   const PING_INTERVAL = 25000; // 25 seconds
   const userId = user?.userId || user?._id;
 
+  const startPingInterval = useCallback(() => {
+    if (pingIntervalRef.current) {
+      clearInterval(pingIntervalRef.current);
+    }
+    pingIntervalRef.current = setInterval(() => {
+      if (socketRef.current?.connected && isPageVisibleRef.current) {
+        socketRef.current.emit("client_ping");
+      }
+    }, PING_INTERVAL);
+  }, []);
+
   // Handle page visibility changes
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -64,7 +75,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, []);
+  }, [startPingInterval]);
 
   // Handle beforeunload event
   useEffect(() => {
@@ -117,19 +128,12 @@ export const SocketProvider = ({ children }) => {
     });
   }, []);
 
-  const startPingInterval = useCallback(() => {
-    if (pingIntervalRef.current) {
-      clearInterval(pingIntervalRef.current);
-    }
-    pingIntervalRef.current = setInterval(() => {
-      if (socketRef.current?.connected && isPageVisibleRef.current) {
-        socketRef.current.emit("client_ping");
-      }
-    }, PING_INTERVAL);
-  }, []);
-
   const initializeSocket = useCallback(async () => {
-    if (isInitializingRef.current || !isAuthenticated || !isPageVisibleRef.current) {
+    if (
+      isInitializingRef.current ||
+      !isAuthenticated ||
+      !isPageVisibleRef.current
+    ) {
       console.log("Socket initialization skipped:", {
         isInitializingRef: isInitializingRef.current,
         isAuthenticated,

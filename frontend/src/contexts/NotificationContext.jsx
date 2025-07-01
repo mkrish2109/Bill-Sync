@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useSocket } from "./SocketContext";
 import { useAuth } from "./AuthContext";
 import {
@@ -32,8 +32,7 @@ export const NotificationProvider = ({ children }) => {
 
   const userId = user?.userId || user?._id;
 
-  // Fetch notifications from the server
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     if (!isAuthenticated) return;
 
     try {
@@ -49,7 +48,7 @@ export const NotificationProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [isAuthenticated]);
 
   // Handle marking a notification as read
   const handleMarkAsRead = async (notificationId) => {
@@ -191,7 +190,7 @@ export const NotificationProvider = ({ children }) => {
       setNotifications([]);
       setUnreadCount(0);
     }
-  }, [userId, isAuthenticated]);
+  }, [userId, isAuthenticated, fetchNotifications]);
 
   const value = {
     notifications,

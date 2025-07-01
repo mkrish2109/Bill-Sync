@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { api } from "../helper/apiHelper";
 import { Button, Spinner } from "flowbite-react";
 import { FaCheckCircle, FaTimesCircle, FaEnvelope } from "react-icons/fa";

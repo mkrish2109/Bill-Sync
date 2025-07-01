@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { api } from "../../../helper/apiHelper";
 import { confirmAlert } from "react-confirm-alert";
 import { useSocket } from "../../../contexts/SocketContext";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { PageMeta } from "../../../components/common/PageMeta";
 import { FabricList } from "../../../components/fabrics/FabricList";
 

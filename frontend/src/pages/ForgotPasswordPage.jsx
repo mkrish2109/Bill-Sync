@@ -1,7 +1,7 @@
 import { Button, Card, Label, TextInput } from "flowbite-react";
 import React from "react";
 import { forgotPassword } from "../services/apiServices";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { PageMeta } from "../components/common/PageMeta";
 
 function ForgotPasswordPage() {

@@ -5,7 +5,7 @@ import LoadingSpinner from "../components/common/LoadingSpinner";
 import { ErrorAlert } from "../components/common/Alert";
 import { useSocket } from "../contexts/SocketContext";
 import { useAuth } from "../contexts/AuthContext";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { PageMeta } from "../components/common/PageMeta";
 
 const RequestsPage = () => {
@@ -16,7 +16,6 @@ const RequestsPage = () => {
     loading,
     error,
     acceptRequest,
-    rejectRequest,
     refetchRequests,
     cancelRequest,
   } = useRequests(userType);
@@ -48,7 +47,7 @@ const RequestsPage = () => {
 
       refetchRequests();
     },
-    [refetchRequests]
+    [refetchRequests, userType]
   );
 
   useEffect(() => {
@@ -139,14 +138,6 @@ const RequestsPage = () => {
       await acceptRequest(requestId);
     } catch (error) {
       toast.error(error.message || "Failed to accept request");
-    }
-  };
-
-  const handleRejectRequest = async (requestId) => {
-    try {
-      await rejectRequest(requestId);
-    } catch (error) {
-      toast.error(error.message || "Failed to reject request");
     }
   };
 

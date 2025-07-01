@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Button } from "flowbite-react";
 import { EditAddressModal } from "./EditModals";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { api } from "../../helper/apiHelper";
 
 export default function UserAddressCard({ address, onUpdate }) {
@@ -75,7 +75,7 @@ export default function UserAddressCard({ address, onUpdate }) {
   ];
 
   return (
-    <div className="p-5 border border-border-light hover:border-border-hoverLight rounded-2xl dark:border-border-dark dark:hover:border-border-hoverDark lg:p-6">
+    <div className="p-5 border card lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h4 className="text-lg font-semibold text-text-light dark:text-text-dark lg:mb-6">

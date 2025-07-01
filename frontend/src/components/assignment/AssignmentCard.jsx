@@ -22,7 +22,7 @@ const AssignmentCard = ({ assignment, onClick, onStatusUpdate }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-background-surfaceLight dark:bg-background-surfaceDark rounded-xl shadow-md overflow-hidden border border-border-light dark:border-border-dark cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+      className="card-scale-hover cursor-pointer hover:shadow-xl p-0"
     >
       <div className="p-5">
         <div className="flex justify-between items-start mb-3">
@@ -52,18 +52,30 @@ const AssignmentCard = ({ assignment, onClick, onStatusUpdate }) => {
 
         {status !== "completed" && (
           <div className="flex space-x-3">
+            {status === "assigned" && (
             <button
               onClick={(e) => handleStatusClick(e, "in-progress")}
               className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg text-sm flex items-center justify-center transition-colors duration-200 font-medium"
             >
               <FaClock className="mr-2" /> Start
             </button>
+            )}
+            {status === "in-progress" && (
+              <button
+                onClick={(e) => handleStatusClick(e, "completed")}
+                className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg text-sm flex items-center justify-center transition-colors duration-200 font-medium"
+              >
+                <FaCheckCircle className="mr-2" /> Complete
+              </button>
+            )}
+            {status === "assigned" && (
             <button
               onClick={(e) => handleStatusClick(e, "completed")}
               className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg text-sm flex items-center justify-center transition-colors duration-200 font-medium"
             >
               <FaCheckCircle className="mr-2" /> Complete
             </button>
+            )}
           </div>
         )}
       </div>

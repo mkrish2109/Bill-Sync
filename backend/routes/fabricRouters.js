@@ -1,6 +1,6 @@
 const express = require("express");
 const fabricRouter = express.Router();
-const { authMiddleware } = require("../middleware/authMiddleware");
+const { authMiddleware } = require("../middlewares/authMiddleware");
 const { updateFabric } = require("../controllers/fabric/buyerController");
 const {
   getFabricWithHistory,
@@ -9,10 +9,17 @@ const {
 } = require("../controllers/fabric/commonController");
 const buyerController = require("../controllers/fabric/buyerController");
 
-fabricRouter.get("/all", authMiddleware, getAllFabrics);
+fabricRouter.get("/", authMiddleware, getAllFabrics);
+// Get fabric by ID with history
 fabricRouter.get("/:id", authMiddleware, getFabricWithHistory);
-fabricRouter.get("/test/:id", authMiddleware, getFabricById);
-fabricRouter.put("/:id", authMiddleware, updateFabric);
+
+// Get fabric by ID (simple version)
+fabricRouter.get("/edit/:id", authMiddleware, getFabricById);
+
+// Create new fabric
 fabricRouter.post("/", authMiddleware, buyerController.createFabric);
+
+// Update fabric
+fabricRouter.put("/:id", authMiddleware, updateFabric);
 
 module.exports = fabricRouter;

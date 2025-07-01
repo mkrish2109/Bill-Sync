@@ -101,7 +101,7 @@ const verifyEmail = async (req, res) => {
     }
 
     if (existingUser.isVerified) {
-      return sendSuccessResponse(res, "Email is already verified.",409);
+      return sendSuccessResponse(res, "Email is already verified.");
     }
 
     if (existingUser.verificationToken !== verificationToken) {

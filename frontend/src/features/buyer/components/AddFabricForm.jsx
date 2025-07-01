@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useSocket } from "../../../contexts/SocketContext";
 import { api } from "../../../helper/apiHelper";
 import { PageMeta } from "../../../components/common/PageMeta";

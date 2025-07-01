@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { confirmAlert } from "react-confirm-alert";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { api } from "../../../helper/apiHelper";
 import { useSocket } from "../../../contexts/SocketContext";
 import { PageMeta } from "../../../components/common/PageMeta";
@@ -18,7 +18,6 @@ const BuyerFabricList = () => {
     try {
       setFabricData((prev) => ({ ...prev, loading: true }));
       const response = await api.get("/buyers/fabrics");
-
       const flattenedData = response.data.data.map((item) => ({
         ...item.fabric,
         buyer: item.buyer,
@@ -45,7 +44,7 @@ const BuyerFabricList = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Socket connection status:", { isConnected, socket: !!socket });
+    // console.log("Socket connection status:", { isConnected, socket: !!socket });
 
     if (!socket || !isConnected) {
       console.log("Socket not connected, skipping event listener setup");
@@ -54,7 +53,7 @@ const BuyerFabricList = () => {
 
     // Listen for fabric assignment notifications
     const handleFabricAssignment = (data) => {
-      console.log("Received fabric assignment notification:", data);
+      // console.log("Received fabric assignment notification:", data);
       toast.info(data.message);
       // Refresh the fabric list to show updated assignments
       fetchFabrics();

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import { StatusBadge } from "../common/StatusBadge";
 import Modal from "../ui/modal/Modal";
-import EditFabricForm from "../buyer/EditFabricForm";
+import EditFabricForm from "../../features/buyer/components/EditFabricForm";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { statusColors } from "../../utils/colors";
 
@@ -126,7 +126,7 @@ export const FabricCard = ({
                 <>
                   <button
                     onClick={handleEditClick}
-                    className="flex-1 sm:flex-none bg-warning-base/50 hover:bg-warning-hover/50 text-text-light px-3 py-1 rounded-md text-sm flex items-center justify-center gap-1 transition-colors duration-200"
+                    className="flex-1 sm:flex-none bg-warning-base/50 hover:bg-warning-hover/50 text-text-light dark:text-text-dark px-3 py-1 rounded-md text-sm flex items-center justify-center gap-1 transition-colors duration-200"
                   >
                     <FaEdit size={12} />{" "}
                     <span className="sm:inline hidden">Edit</span>

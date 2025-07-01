@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTokenRefresh } from "../../hooks/useTokenRefresh";
 import { FaSync } from "react-icons/fa";
 

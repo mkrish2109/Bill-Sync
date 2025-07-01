@@ -1,7 +1,6 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import UserFooter from "./UserFooter";
-import "react-toastify/dist/ReactToastify.css";
 import { SidebarProvider } from "../../contexts/SidebarContext";
 import AppNavbar from "../AppNavbar";
 

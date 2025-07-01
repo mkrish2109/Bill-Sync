@@ -1,4 +1,11 @@
-import React, { useEffect, useState, useMemo, lazy, Suspense } from "react";
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  lazy,
+  Suspense,
+  useCallback,
+} from "react";
 import { Chart as ChartJS, registerables } from "chart.js";
 import { PageMeta } from "../../../../components/common/PageMeta";
 import {
@@ -158,7 +165,7 @@ const StatCard = React.memo(({ icon: Icon, title, value, trend, color }) => {
   };
 
   return (
-    <div className="p-6 rounded-lg shadow bg-background-surfaceLight dark:bg-background-dark">
+    <div className="p-6 rounded-lg shadow bg-background-surfaceLight card-scale-hover">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-text-secondaryLight dark:text-text-secondaryDark">
@@ -217,14 +224,14 @@ const ChartCard = React.memo(({ title, children }) => {
   }, []);
 
   return (
-    <div className="p-6 rounded-lg shadow bg-background-light dark:bg-background-dark">
+    <div className="p-6 rounded-lg shadow bg-background-light card">
       <h2 className="text-lg font-semibold mb-4 text-text-light dark:text-text-dark">
         {title}
       </h2>
       <div className="h-[300px]">
         <ChartErrorBoundary>
           {isLoading ? (
-           <LoadingSpinner/>
+            <LoadingSpinner size="sm" inline/>
           ) : (
             <Suspense
               fallback={
@@ -285,6 +292,28 @@ const AdminDashboard = () => {
   const [fabricData, setFabricData] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  const processRecentActivity = useCallback((users) => {
+    const activities = [];
+
+    // Sort users by last update time
+    const sortedUsers = [...users].sort(
+      (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+    );
+
+    // Get the 5 most recent activities
+    sortedUsers.slice(0, 5).forEach((user) => {
+      const timeAgo = getTimeAgo(new Date(user.updatedAt));
+      activities.push({
+        id: user._id,
+        user: `${user.fname} ${user.lname}`,
+        action: getActivityAction(user),
+        time: timeAgo,
+      });
+    });
+
+    return activities;
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -297,13 +326,10 @@ const AdminDashboard = () => {
         setUserData(users);
 
         // Fetch fabrics data
-        const fabricsResponse = await api.get("/fabrics/all");
+        const fabricsResponse = await api.get("/fabrics");
         console.log("Fetched fabrics:", fabricsResponse.data.data);
         const fabrics = fabricsResponse.data.data;
         setFabricData(fabrics);
-
-        // Calculate user growth data
-        const userGrowthData = calculateUserGrowthData(users);
 
         // Process recent activity from user data
         const activities = processRecentActivity(users);
@@ -328,7 +354,7 @@ const AdminDashboard = () => {
     };
 
     fetchData();
-  }, []);
+  }, [processRecentActivity]);
 
   useEffect(() => {
     // Check if dark mode is enabled
@@ -353,76 +379,56 @@ const AdminDashboard = () => {
   }, []);
 
   // Function to calculate user growth data
-  const calculateUserGrowthData = (users) => {
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth();
+  const calculateUserGrowthData = useCallback(
+    (users) => {
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const currentYear = new Date().getFullYear();
+      const currentMonth = new Date().getMonth();
 
-    // Initialize data array with zeros up to current month
-    const monthlyData = new Array(currentMonth + 1).fill(0);
+      // Initialize data array with zeros up to current month
+      const monthlyData = new Array(currentMonth + 1).fill(0);
 
-    // Count users created in each month up to current month
-    users.forEach((user) => {
-      const createdAt = new Date(user.createdAt);
-      if (
-        createdAt.getFullYear() === currentYear &&
-        createdAt.getMonth() <= currentMonth
-      ) {
-        monthlyData[createdAt.getMonth()]++;
-      }
-    });
-
-    return {
-      labels: months.slice(0, currentMonth + 1),
-      datasets: [
-        {
-          label: "New Users",
-          data: monthlyData,
-          borderColor: isDarkMode ? "#D4B483" : "#7A4F2A", // primary-dark : primary-light
-          backgroundColor: isDarkMode
-            ? "rgba(212, 180, 131, 0.1)"
-            : "rgba(122, 79, 42, 0.1)", // primary-dark : primary-light with opacity
-          tension: 0.3,
-        },
-      ],
-    };
-  };
-
-  // Function to process recent activity from user data
-  const processRecentActivity = (users) => {
-    const activities = [];
-
-    // Sort users by last update time
-    const sortedUsers = [...users].sort(
-      (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-    );
-
-    // Get the 5 most recent activities
-    sortedUsers.slice(0, 5).forEach((user) => {
-      const timeAgo = getTimeAgo(new Date(user.updatedAt));
-      activities.push({
-        id: user._id,
-        user: `${user.fname} ${user.lname}`,
-        action: getActivityAction(user),
-        time: timeAgo,
+      // Count users created in each month up to current month
+      users.forEach((user) => {
+        const createdAt = new Date(user.createdAt);
+        if (
+          createdAt.getFullYear() === currentYear &&
+          createdAt.getMonth() <= currentMonth
+        ) {
+          monthlyData[createdAt.getMonth()]++;
+        }
       });
-    });
 
-    return activities;
-  };
+      return {
+        labels: months.slice(0, currentMonth + 1),
+        datasets: [
+          {
+            label: "New Users",
+            data: monthlyData,
+            borderColor: isDarkMode ? "#D4B483" : "#7A4F2A", // primary-dark : primary-light
+            backgroundColor: isDarkMode
+              ? "rgba(212, 180, 131, 0.1)"
+              : "rgba(122, 79, 42, 0.1)", // primary-dark : primary-light with opacity
+            tension: 0.3,
+          },
+        ],
+      };
+    },
+    [isDarkMode]
+  );
 
   // Helper function to get time ago string
   const getTimeAgo = (date) => {
@@ -490,14 +496,47 @@ const AdminDashboard = () => {
         datasets: [
           {
             data: [
-              fabricData.filter((f) => f.assignments.status === "assigned")
-                .length,
-              fabricData.filter((f) => f.assignments.status === "in-progress")
-                .length,
-              fabricData.filter((f) => f.assignments.status === "completed")
-                .length,
-              fabricData.filter((f) => f.assignments.status === "cancelled")
-                .length,
+              // Pending: assignments with status "assigned"
+              fabricData.reduce(
+                (acc, fabric) =>
+                  acc +
+                  (Array.isArray(fabric.assignments)
+                    ? fabric.assignments.filter((a) => a.status === "assigned")
+                        .length
+                    : 0),
+                0
+              ),
+              // In Progress: assignments with status "in-progress"
+              fabricData.reduce(
+                (acc, fabric) =>
+                  acc +
+                  (Array.isArray(fabric.assignments)
+                    ? fabric.assignments.filter(
+                        (a) => a.status === "in-progress"
+                      ).length
+                    : 0),
+                0
+              ),
+              // Completed: assignments with status "completed"
+              fabricData.reduce(
+                (acc, fabric) =>
+                  acc +
+                  (Array.isArray(fabric.assignments)
+                    ? fabric.assignments.filter((a) => a.status === "completed")
+                        .length
+                    : 0),
+                0
+              ),
+              // Cancelled: assignments with status "cancelled"
+              fabricData.reduce(
+                (acc, fabric) =>
+                  acc +
+                  (Array.isArray(fabric.assignments)
+                    ? fabric.assignments.filter((a) => a.status === "cancelled")
+                        .length
+                    : 0),
+                0
+              ),
             ],
             backgroundColor: [
               "#f59e0b", // yellow
@@ -509,9 +548,8 @@ const AdminDashboard = () => {
         ],
       },
     }),
-    [userData, fabricData]
+    [userData, fabricData, calculateUserGrowthData]
   );
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -596,7 +634,7 @@ const AdminDashboard = () => {
         {/* Bottom Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Activity */}
-          <div className="p-6 rounded-lg shadow bg-background-light dark:bg-background-dark lg:col-span-2">
+          <div className="p-6 rounded-lg shadow bg-background-light card lg:col-span-2">
             <h2 className="text-lg font-semibold mb-4 text-text-light dark:text-text-dark">
               Recent Activity
             </h2>
@@ -633,19 +671,19 @@ const AdminDashboard = () => {
               <QuickActionButton
                 icon={HiDocumentDownload}
                 text="View Fabrics"
-                color="bg-success-base dark:bg-success-base text-text-dark dark:text-text-light"
+                color="bg-success-base text-success-text"
                 onClick={() => navigate("/admin/fabrics")}
               />
               <QuickActionButton
                 icon={HiSpeakerphone}
                 text="Manage Assignments"
-                color="bg-warning-base dark:bg-warning-base text-text-dark dark:text-text-light"
+                color="bg-warning-base  text-warning-text"
                 onClick={() => navigate("/admin/assignments")}
               />
               <QuickActionButton
                 icon={HiDatabase}
                 text="System Settings"
-                color="bg-info-base dark:bg-info-base text-text-dark dark:text-text-light"
+                color="bg-info-base dark:bg-info-base text-text-dark dark:text-text-dark"
                 onClick={() => navigate("/admin/settings")}
               />
             </div>

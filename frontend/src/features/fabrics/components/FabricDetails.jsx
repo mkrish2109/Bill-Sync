@@ -21,6 +21,7 @@ const FabricDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
+  const isBuyer = user?.role === "buyer";
   const [fabric, setFabric] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,7 +47,7 @@ const FabricDetails = () => {
     };
 
     fetchFabricDetails();
-  }, [id]);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleStatusUpdate = async (newStatus) => {
     if (!fabric?.assignmentId) {
@@ -129,7 +130,6 @@ const FabricDetails = () => {
         Fabric not found
       </div>
     );
-  console.log(statusColors[fabric.assignmentStatus]);
 
   return (
     <>
@@ -138,21 +138,23 @@ const FabricDetails = () => {
         description="View comprehensive details about your fabric, including specifications, status, and related information. Track your fabric's progress and history."
         keywords="fabric details, fabric information, fabric specifications, fabric status, fabric tracking"
       />
-      <div className="container mx-auto px-4 py-4 sm:py-6 md:py-8 max-w-7xl">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 md:py-8 max-w-7xl">
         <FabricHeader fabric={fabric} onDelete={handleDelete} />
 
         <div className="bg-background-light dark:bg-background-dark rounded-xl shadow-lg overflow-hidden border border-border-light dark:border-border-dark">
           {/* Header with image and basic info */}
           <div className="flex flex-col lg:flex-row">
-            <div className="lg:w-1/3 p-4 sm:p-6 ">
+            <div className="w-full lg:w-1/3 p-4 sm:p-6 ">
               <FabricImage imageUrl={fabric.imageUrl} name={fabric.name} />
             </div>
-            <FabricBasicInfo
-              fabric={fabric}
-              handleStatusUpdate={handleStatusUpdate}
-              user={user}
-              statusColors={statusColors}
-            />
+            <div className="w-full">
+              <FabricBasicInfo
+                fabric={fabric}
+                handleStatusUpdate={handleStatusUpdate}
+                user={user}
+                statusColors={statusColors}
+              />
+            </div>
           </div>
 
           {/* Tabs for additional information */}
@@ -166,7 +168,7 @@ const FabricDetails = () => {
                 Details
               </TabButton>
 
-              {fabric.workers?.length > 0 && (
+              {fabric.worker && (
                 <TabButton
                   active={activeTab === "assignments"}
                   onClick={() => setActiveTab("assignments")}
@@ -189,10 +191,13 @@ const FabricDetails = () => {
           </div>
 
           {/* Tab content */}
-          <div className="p-4 sm:p-6 md:p-8 bg-background-light dark:bg-background-dark">
+          <div className="p-2 sm:p-4 md:p-8 bg-background-light dark:bg-background-dark text-base sm:text-lg">
             {activeTab === "details" && <DetailsTab fabric={fabric} />}
             {activeTab === "assignments" && (
-              <AssignmentsTab workers={fabric.workers} />
+              <AssignmentsTab
+                worker={isBuyer ? fabric.worker : undefined}
+                buyer={!isBuyer ? fabric.buyer : undefined}
+              />
             )}
             {activeTab === "history" && (
               <HistoryTab

@@ -2,7 +2,7 @@ import { Button, Card, Label } from "flowbite-react";
 import React, { useState } from "react";
 import { resetPassword } from "../services/apiServices";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import PasswordInput from "../components/common/PasswordInput";
 import bcrypt from "bcryptjs";
 

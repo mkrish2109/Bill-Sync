@@ -8,7 +8,7 @@ import {
   getUserRequests,
   cancelRequest,
 } from "../services/apiServices";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 // Hook for handling requests (sent/received)
 export const useRequests = (userType) => {

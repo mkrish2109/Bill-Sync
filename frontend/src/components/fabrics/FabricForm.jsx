@@ -4,9 +4,9 @@ import { api } from "../../helper/apiHelper";
 import ImageUploader from "../ui/ImageUploader";
 import { Button } from "flowbite-react";
 import { useAvailableWorkers } from "../../hooks/useRequests";
-import { toast } from "react-toastify";
 import { statusColors } from "../../utils/colors";
 import LoadingSpinner from "../common/LoadingSpinner";
+import toast from "react-hot-toast";
 
 const FabricForm = ({
   initialData = {},
@@ -365,7 +365,10 @@ const FabricForm = ({
             className="focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
           >
             {loading ? (
-              <LoadingSpinner inline text={isEditing ? "Updating..." : "Saving..."} />
+              <LoadingSpinner
+                inline
+                text={isEditing ? "Updating..." : "Saving..."}
+              />
             ) : isEditing ? (
               "Update Fabric"
             ) : (
