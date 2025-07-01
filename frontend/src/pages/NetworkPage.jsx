@@ -6,7 +6,7 @@ import LoadingSpinner from "../components/common/LoadingSpinner";
 import { ErrorAlert } from "../components/common/Alert";
 import { useSocket } from "../contexts/SocketContext";
 import { useAuth } from "../contexts/AuthContext";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { Button } from "flowbite-react";
 import { PageMeta } from "../components/common/PageMeta";
 import SearchInput from "../components/common/SearchInput";

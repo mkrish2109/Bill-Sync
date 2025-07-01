@@ -19,7 +19,7 @@ const EditFabricForm = ({ fabricId, onClose, onSuccess }) => {
       try {
         setIsFetching(true);
         // Fetch fabric data
-        const fabricResponse = await api.get(`/fabrics/test/${fabricId || id}`);
+        const fabricResponse = await api.get(`/fabrics/edit/${fabricId || id}`);
         const fabric = fabricResponse.data.data;
 
         // Fetch connected workers
@@ -77,12 +77,12 @@ const EditFabricForm = ({ fabricId, onClose, onSuccess }) => {
   if (workers.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-600 mb-4">No connected workers found.</p>
-        <p className="text-sm text-gray-500">
+        <p className="text-text-secondaryLight mb-4">No connected workers found.</p>
+        <p className="text-sm text-text-mutedLight">
           You need to connect with workers before editing fabrics.
           <a
             href="/buyer/network"
-            className="text-blue-500 hover:text-blue-600 ml-1"
+            className="text-primary-light hover:text-primary-hoverLight ml-1"
           >
             Find workers
           </a>
@@ -111,7 +111,7 @@ const EditFabricForm = ({ fabricId, onClose, onSuccess }) => {
       )}
 
       <FabricForm
-      // isModal={true}
+        // isModal={true}
         initialData={initialData}
         isEditing={true}
         fabricId={fabricId}

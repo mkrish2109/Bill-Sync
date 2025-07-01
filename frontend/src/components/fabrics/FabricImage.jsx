@@ -1,7 +1,7 @@
 import React from "react";
 
 export const FabricImage = ({ imageUrl, name, className = "" }) => (
-  <div className="relative aspect-square w-full max-w-md mx-auto">
+  <div className="relative aspect-square w-full max-w-xs sm:max-w-md mx-auto">
     <img
       src={imageUrl}
       alt={name}

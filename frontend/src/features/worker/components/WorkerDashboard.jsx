@@ -21,6 +21,9 @@ const WorkerDashboard = () => {
     total: 0,
   });
 
+  // Extract user ID to a separate variable for dependency array
+  const userId = useMemo(() => user?.userId || user?._id, [user?.userId, user?._id]);
+
   // Memoize the transformed assignments to prevent unnecessary recalculations
   const transformedAssignments = useMemo(
     () =>
@@ -39,7 +42,7 @@ const WorkerDashboard = () => {
           api.get(`/workers/fabrics`),
           getUserRequests(),
         ]);
-        console.log(assignmentsResponse, requestsResponse);
+        // console.log(assignmentsResponse, requestsResponse);
 
         setAssignments(assignmentsResponse?.data?.data);
 
@@ -65,7 +68,7 @@ const WorkerDashboard = () => {
     };
 
     fetchData();
-  }, [user?.userId || user?._id]);
+  }, [userId]);
 
   const handleStatusUpdate = async (assignmentId, newStatus) => {
     if (!assignmentId || !newStatus) {

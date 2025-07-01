@@ -62,14 +62,13 @@ const chartOptions = {
 
 // Memoized StatCard component
 const StatCard = React.memo(({ label, value, color }) => (
-  <div className="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-xs border border-border-light dark:border-border-dark transition-transform hover:scale-[1.02]">
-    <h3 className="text-sm font-medium text-text-secondaryLight dark:text-text-dark mb-1">
+  <div className={"card-scale-hover"}>
+    <h3 className="text-sm font-medium text-text-secondaryLight dark:text-text-secondaryDark mb-1">
       {label}
     </h3>
     <p className={`text-2xl font-bold ${color}`}>{value}</p>
   </div>
 ));
-
 // Memoized ChartCard component with intersection observer
 const ChartCard = React.memo(({ title, children }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -94,10 +93,7 @@ const ChartCard = React.memo(({ title, children }) => {
   }, []);
 
   return (
-    <div
-      ref={cardRef}
-      className="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-xs border border-border-light dark:border-border-dark"
-    >
+    <div ref={cardRef} className="card">
       <h3 className="text-sm font-medium text-text-light dark:text-text-dark mb-3">
         {title}
       </h3>
@@ -112,7 +108,7 @@ const ChartCard = React.memo(({ title, children }) => {
 
 // Memoized EmptyState component
 const EmptyState = React.memo(({ Icon, itemType, searchQuery }) => (
-  <div className="text-center py-12 bg-background-light dark:bg-background-dark rounded-lg shadow-xs border border-border-light dark:border-border-dark">
+  <div className="text-center py-12 bg-background-light dark:bg-gradient-to-br dark:from-background-dark dark:to-background-surfaceDark rounded-lg shadow-xs border border-border-light dark:border-border-dark">
     <Icon className="mx-auto text-4xl text-text-secondaryLight dark:text-text-secondaryDark mb-3" />
     <h3 className="text-lg font-medium text-text-light dark:text-text-dark mb-2">
       No {itemType} found
@@ -313,7 +309,7 @@ const Dashboard = ({
     [statusCounts, userRequests, items]
   );
 
-  if (loading) return <LoadingSpinner  />;
+  if (loading) return <LoadingSpinner />;
   if (error)
     return <ErrorAlert error={error} onDismiss={() => setError(null)} />;
 
@@ -419,7 +415,7 @@ const Dashboard = ({
         )}
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-xs border border-border-light dark:border-border-dark">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 bg-background-light dark:bg-gradient-to-tl dark:from-background-dark dark:to-background-surfaceDark p-4 rounded-lg shadow-xs border border-border-light dark:border-border-dark">
           <StatusFilter
             currentFilter={filter}
             onFilterChange={setFilter}

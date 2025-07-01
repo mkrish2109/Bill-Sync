@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { IoCloseSharp } from "react-icons/io5";
 
 function Modal({ isOpen, onClose, children, className = "" }) {
   useEffect(() => {
@@ -16,7 +17,7 @@ function Modal({ isOpen, onClose, children, className = "" }) {
 
   return (
     <div
-      className="fixed inset-0 z-modal flex items-center justify-center bg-overlay-dark backdrop-blur-sm overflow-y-auto py-4"
+      className="fixed inset-0 z-modal flex items-center justify-center bg-overlay-dark backdrop-blur-sm overflow-y-auto py-4 mt-0"
       onClick={onClose}
     >
       <div
@@ -25,22 +26,11 @@ function Modal({ isOpen, onClose, children, className = "" }) {
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full hover:bg-surface-tertiaryLight dark:hover:bg-background-elevatedDark transition-colors duration-200 focus:outline-none focus:ring-1 focus:ring-accent-light dark:focus:ring-accent-dark"
+          className="absolute top-4 right-4 p-2 rounded-full hover:bg-background-surfaceLight dark:hover:bg-background-elevatedDark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent-light dark:focus:ring-accent-dark"
           aria-label="Close modal"
+          type="button"
         >
-          <svg
-            className="w-5 h-5 text-text-secondaryLight dark:text-text-secondaryDark"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <IoCloseSharp size={22} className="text-text-light dark:text-text-dark"/>
         </button>
         <div className="p-6 text-text-light dark:text-text-dark">
           {children}

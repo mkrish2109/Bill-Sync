@@ -9,7 +9,7 @@ const LayoutContent = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   return (
-    <div className="min-h-screen xl:flex bg-background-surfaceLight dark:bg-background-surfaceDark">
+    <div className="min-h-screen xl:flex bg-background-surfaceLight dark:bg-background-dark">
       <div>
         <Sidebar />
         <Backdrop />
@@ -20,7 +20,7 @@ const LayoutContent = () => {
         } ${isMobileOpen ? "ml-0" : ""}`}
       >
         <AppNavbar variant="default" showSidebarToggle={true} />
-      <div className="p-1 mx-auto max-w-7xl md:p-6 dark:bg-background-surfaceDark">
+        <div className="p-1 mx-auto max-w-7xl md:p-6 dark:bg-background-dark">
           <Outlet />
         </div>
       </div>
@@ -35,6 +35,5 @@ const LayoutUser = () => {
     </SidebarProvider>
   );
 };
-
 
 export default LayoutUser;

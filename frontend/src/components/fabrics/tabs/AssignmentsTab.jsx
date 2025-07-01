@@ -36,25 +36,25 @@ export const AssignmentsTab = ({ worker, buyer }) => (
 
     {worker && (
       <div className="overflow-x-auto rounded-xl border border-border-light dark:border-border-dark shadow-sm">
-        <table className="min-w-full divide-y divide-border-light dark:divide-border-dark">
+        <table className="min-w-full divide-y divide-border-light dark:divide-border-dark text-sm sm:text-base">
           <thead className="bg-background-surfaceLight dark:bg-background-surfaceDark">
             <tr>
-              <th className="px-6 py-4 text-left text-xs font-medium text-secondary-light dark:text-text-secondaryDark uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm md:text-base font-medium text-secondary-light dark:text-text-secondaryDark uppercase tracking-wider min-w-[120px]">
                 <div className="flex items-center">
                   <FaUser className="mr-2" />
                   Worker
                 </div>
               </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-secondary-light dark:text-text-secondaryDark uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm md:text-base font-medium text-secondary-light dark:text-text-secondaryDark uppercase tracking-wider min-w-[120px]">
                 <div className="flex items-center">
                   <FaPhone className="mr-2" />
                   Contact
                 </div>
               </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-secondary-light dark:text-text-secondaryDark uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm md:text-base font-medium text-secondary-light dark:text-text-secondaryDark uppercase tracking-wider min-w-[100px]">
                 Status
               </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-secondary-light dark:text-text-secondaryDark uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm md:text-base font-medium text-secondary-light dark:text-text-secondaryDark uppercase tracking-wider min-w-[140px]">
                 <div className="flex items-center">
                   <FaCalendarAlt className="mr-2" />
                   Assigned Date
@@ -64,23 +64,23 @@ export const AssignmentsTab = ({ worker, buyer }) => (
           </thead>
           <tbody className="bg-background-light dark:bg-background-dark divide-y divide-border-light dark:divide-border-dark">
             <tr className="hover:bg-background-surfaceLight/50 dark:hover:bg-background-surfaceDark/50 transition-colors duration-150">
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-sm sm:text-base">
                 <div className="flex items-center">
-                  <div className="text-sm font-medium text-text-light dark:text-text-dark">
+                  <div className="text-sm sm:text-base font-medium text-text-light dark:text-text-dark">
                     {worker.name}
                   </div>
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-secondary-light dark:text-text-secondaryDark">
+              <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-sm sm:text-base">
+                <div className="text-sm sm:text-base text-secondary-light dark:text-text-secondaryDark">
                   {worker.contact}
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-sm sm:text-base">
                 <StatusBadge status={worker.status} />
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-secondary-light dark:text-text-secondaryDark">
+              <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-sm sm:text-base">
+                <div className="text-sm sm:text-base text-secondary-light dark:text-text-secondaryDark">
                   {worker.assignedAt
                     ? new Date(worker.assignedAt).toLocaleDateString()
                     : "N/A"}

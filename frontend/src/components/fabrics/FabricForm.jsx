@@ -4,9 +4,9 @@ import { api } from "../../helper/apiHelper";
 import ImageUploader from "../ui/ImageUploader";
 import { Button } from "flowbite-react";
 import { useAvailableWorkers } from "../../hooks/useRequests";
-import { toast } from "react-toastify";
 import { statusColors } from "../../utils/colors";
 import LoadingSpinner from "../common/LoadingSpinner";
+import toast from "react-hot-toast";
 
 const FabricForm = ({
   initialData = {},

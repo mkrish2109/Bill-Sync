@@ -6,15 +6,11 @@ const commonController = require("./commonController");
 const { createNotification } = require("../notificationController");
 const path = require("path");
 const fs = require("fs");
-<<<<<<< HEAD
 const {
   uploadToCloudinary,
   deleteFromCloudinary,
 } = require("../../utils/cloudinaryUpload");
 const UPLOAD_TARGET = process.env.UPLOAD_TARGET || "local";
-=======
-const cloudinary = require("../../config/cloudinary");
->>>>>>> 05bbb4219b665d145d518d236f520225328d9e6e
 
 // Create a new fabric (buyer only)
 const createFabric = async (req, res) => {
@@ -214,7 +210,7 @@ const getAllFabricsForBuyer = async (req, res) => {
       const worker = fabricObj.assignments[0].workerId || {};
 
       // Handle single assignment object
-      const assignment = fabric.assignments?.toObject() || {};
+      const assignment = fabric.assignments[0]?.toObject() || {};
 
       delete fabricObj.buyerId;
       delete fabricObj.workerId;
@@ -500,7 +496,6 @@ const deleteFabric = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
     // Delete the image file if it exists
     if (fabric.imageUrl) {
       const filename = fabric.imageUrl.split("/").pop();
@@ -511,20 +506,6 @@ const deleteFabric = async (req, res) => {
         const filePath = path.join(__dirname, "../../uploads", filename);
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
-=======
-    // Delete the image from Cloudinary if it exists and is a Cloudinary URL
-    if (fabric.imageUrl && fabric.imageUrl.includes("cloudinary.com")) {
-      // Extract public_id from the imageUrl for images in the 'bill-sync' folder
-      // Example: https://res.cloudinary.com/dmvfkesf3/image/upload/v1234567890/bill-sync/filename.png
-      const matches = fabric.imageUrl.match(/\/upload\/v\d+\/(.+)\.[a-zA-Z0-9]+$/);
-      const public_id = matches ? matches[1] : null;
-      if (public_id) {
-        try {
-          await cloudinary.uploader.destroy(public_id, { resource_type: "image" });
-          console.log("Image deleted from Cloudinary:", public_id);
-        } catch (err) {
-          console.error("Error deleting image from Cloudinary:", err);
->>>>>>> 05bbb4219b665d145d518d236f520225328d9e6e
         }
       }
     }

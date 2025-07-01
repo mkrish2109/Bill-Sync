@@ -2,6 +2,7 @@ import React from "react";
 import { FaBox, FaUser, FaCalendarAlt } from "react-icons/fa";
 import { StatusBadge } from "../../../../components/common/StatusBadge";
 
+
 const FabricCard = ({ fabric, onClick }) => {
   // Safely handle undefined/null values
   const status = fabric?.assignments?.status || "unassigned";
@@ -16,7 +17,7 @@ const FabricCard = ({ fabric, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-background-light dark:bg-background-dark rounded-xl shadow-md overflow-hidden border border-border-light dark:border-border-dark cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+      className={`card-scale-hover cursor-pointer hover:shadow-xl p-0`}
     >
       <div className="p-5">
         <div className="flex justify-between items-start mb-3">

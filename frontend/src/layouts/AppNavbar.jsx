@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useCallback, useMemo, useRef, useEffect, useState } from "react";
 import { logoutUser } from "../store/slices/userSlice";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import ThemeToggleButton from "../components/common/ThemeToggleButton";
 import SideBarToggle from "../components/common/SideBarToggle";
 import { useSidebar } from "../contexts/SidebarContext";
@@ -114,10 +114,16 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
     if (!user) {
       return (
         <>
-          <DropdownItem onClick={() => navigate("/login")}>
+          <DropdownItem
+            className="bg-background-elevatedLight dark:bg-background-elevatedDark"
+            onClick={() => navigate("/login")}
+          >
             Sign in
           </DropdownItem>
-          <DropdownItem onClick={() => navigate("/register")}>
+          <DropdownItem
+            className="bg-background-elevatedLight dark:bg-background-elevatedDark"
+            onClick={() => navigate("/register")}
+          >
             Sign up
           </DropdownItem>
         </>
@@ -127,25 +133,42 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
     return (
       <>
         {user.role === "admin" && (
-          <DropdownItem onClick={() => navigate("/admin/dashboard")}>
+          <DropdownItem
+            className="bg-background-elevatedLight dark:bg-background-elevatedDark"
+            onClick={() => navigate("/admin/dashboard")}
+          >
             Admin Dashboard
           </DropdownItem>
         )}
         {user.role === "buyer" && (
-          <DropdownItem onClick={() => navigate("/buyer/dashboard")}>
+          <DropdownItem
+            className="bg-background-elevatedLight dark:bg-background-elevatedDark"
+            onClick={() => navigate("/buyer/dashboard")}
+          >
             Buyer Dashboard
           </DropdownItem>
         )}
         {user.role === "worker" && (
-          <DropdownItem onClick={() => navigate("/worker/dashboard")}>
+          <DropdownItem
+            className="bg-background-elevatedLight dark:bg-background-elevatedDark"
+            onClick={() => navigate("/worker/dashboard")}
+          >
             Worker Dashboard
           </DropdownItem>
         )}
-        <DropdownItem onClick={() => navigate("/settings")}>
-          Settings
+        <DropdownItem
+          className="bg-background-elevatedLight dark:bg-background-elevatedDark"
+          onClick={() => navigate(`/${user.role}/account/profile`)}
+        >
+          Profile
         </DropdownItem>
-        <DropdownDivider />
-        <DropdownItem onClick={handleLogOut}>Sign out</DropdownItem>
+        <DropdownDivider className="bg-border-activeDark dark:bg-border-activeLight my-0" />
+        <DropdownItem
+          className="bg-background-elevatedLight dark:bg-background-elevatedDark"
+          onClick={handleLogOut}
+        >
+          Sign out
+        </DropdownItem>
       </>
     );
   }, [user, navigate, handleLogOut]);
@@ -154,7 +177,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
   const userEmail = user?.email || "Not logged in";
 
   return (
-    <Navbar className="sticky top-0 flex w-full z-10 bg-background-light dark:bg-background-dark shadow-md border-b border-gray-200 dark:border-gray-700">
+    <Navbar className="sticky top-0 flex w-full z-10 bg-background-light dark:bg-background-dark shadow-md border-b border-border-light dark:border-border-dark">
       <div className="flex flex-col items-center justify-between grow">
         <div className="flex items-center justify-between w-full gap-2 px-3 sm:gap-4 lg:px-0">
           {showSidebarToggle && (
@@ -186,20 +209,19 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
               <form onSubmit={handleSearch}>
                 <div className="relative">
                   <span className="absolute -translate-y-1/2 pointer-events-none left-4 top-1/2">
-                    {/* search logo */}
                     <FaSearch className="text-secondary-light dark:text-secondary-dark" />
                   </span>
                   <input
                     ref={inputRef}
                     type="text"
                     placeholder="Search or type command..."
-                    className="h-11 w-full rounded-lg border border-border-light bg-transparent py-2.5 pl-12 pr-14 text-sm text-text-secondaryLight dark:text-text-secondaryDark shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-border-light dark:bg-background-dark dark:placeholder:text-white/30 dark:focus:border-border-dark md:w-[300px] lg:w-[430px]"
+                    className="h-11 w-full rounded-lg border border-border-light dark:border-border-hoverDark bg-transparent py-2.5 pl-12 pr-14 text-sm text-text-light dark:text-text-dark shadow-theme-xs placeholder:text-text-mutedLight dark:placeholder:text-text-mutedDark focus:border-primary-light dark:focus:border-primary-dark focus:outline-none focus:ring-3 focus:ring-primary-light/10 dark:focus:ring-primary-dark/10 md:w-[300px] lg:w-[430px]"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                   <button
                     type="button"
-                    className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-background-surfaceLight px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-text-secondaryLight dark:border-background-surfaceDark dark:bg-background-surfaceDark dark:text-text-dark"
+                    className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-border-light bg-background-surfaceLight px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-text-secondaryLight dark:border-border-dark dark:bg-background-surfaceDark dark:text-text-secondaryDark"
                     onClick={() => inputRef.current?.focus()}
                   >
                     <span className="text-secondary-light dark:text-secondary-dark">
@@ -229,16 +251,16 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
                   img={user?.profilePicture || "/images/profile.webp"}
                   rounded
                   bordered
-                  className="border-gray-300 dark:border-gray-600"
+                  className="border-border-light dark:border-border-dark py-0"
                 />
               }
-              className="z-50 w-60"
+              className="z-50 w-60 [&>ul]:py-0"
             >
-              <DropdownHeader className="bg-background-light dark:bg-gray-900">
+              <DropdownHeader className="bg-background-light dark:bg-background-dark">
                 <span className="block text-sm font-semibold text-text-light dark:text-text-dark">
                   {userName}
                 </span>
-                <span className="block truncate text-sm font-medium text-text-secondaryLight dark:text-gray-300">
+                <span className="block truncate text-sm font-medium text-text-secondaryLight dark:text-text-secondaryDark">
                   {userEmail}
                 </span>
               </DropdownHeader>
@@ -246,7 +268,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
             </Dropdown>
 
             {variant === "default" && (
-              <NavbarToggle className="text-text-secondaryLight hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700" />
+              <NavbarToggle className="text-text-secondaryLight hover:bg-background-surfaceLight dark:text-text-secondaryDark dark:hover:bg-background-surfaceDark" />
             )}
           </div>
         </div>
@@ -258,7 +280,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
               <div className="relative">
                 <span className="absolute -translate-y-1/2 pointer-events-none left-4 top-1/2">
                   <svg
-                    className="fill-gray-500 dark:fill-gray-400"
+                    className="fill-text-secondaryLight dark:fill-text-secondaryDark"
                     width="20"
                     height="20"
                     viewBox="0 0 20 20"
@@ -276,7 +298,7 @@ const AppNavbar = ({ variant = "default", showSidebarToggle = false }) => {
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-4 text-sm text-text-light shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-background-dark dark:text-text-dark/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  className="h-11 w-full rounded-lg border border-border-light bg-transparent py-2.5 pl-12 pr-4 text-sm text-text-light shadow-theme-xs placeholder:text-text-mutedLight focus:border-primary-light focus:outline-none focus:ring-3 focus:ring-primary-light/10 dark:border-border-dark dark:bg-background-dark dark:text-text-dark dark:placeholder:text-text-mutedDark dark:focus:border-primary-dark dark:focus:ring-primary-dark/10"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />

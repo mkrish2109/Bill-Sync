@@ -4,7 +4,7 @@ import UserMetaCard from "../components/UserProfile/UserMetaCard";
 import UserInfoCard from "../components/UserProfile/UserInfoCard";
 import UserAddressCard from "../components/UserProfile/UserAddressCard";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { api } from "../helper/apiHelper";
 
 export default function UserProfilePage() {
@@ -87,7 +87,7 @@ export default function UserProfilePage() {
         description="Manage your Bill Sync profile, update personal information, and customize your account settings."
         keywords="user profile, account settings, personal information, profile management"
       />
-      <div className="rounded-2xl border border-gray-200 bg-background-light p-5 dark:border-gray-800 dark:bg-background-light/[0.03] lg:p-6">
+      <div className="rounded-2xl border border-gray-200 bg-background-light p-5 dark:border-gray-800 dark:bg-gradient-to-tl dark:from-background-dark dark:to-background-surfaceDark lg:p-6">
         <h3 className="mb-5 text-lg font-semibold text-text-light dark:text-text-dark lg:mb-7">
           Profile
         </h3>

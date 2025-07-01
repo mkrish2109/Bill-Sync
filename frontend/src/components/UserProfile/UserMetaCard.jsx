@@ -3,7 +3,7 @@ import { Button } from "flowbite-react";
 import { useModal } from "../../hooks/useModal";
 import UserSocialLinks from "./UserSocialLinks";
 import { api } from "../../helper/apiHelper";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { EditMetaProfile } from "./EditModals";
 
 const EditIcon = () => (
@@ -72,7 +72,7 @@ export default function UserMetaCard({ user, address, onUpdate }) {
 
   return (
     <>
-      <div className="p-5 border border-border-light hover:border-border-hoverLight rounded-2xl dark:border-border-dark dark:hover:border-border-hoverDark lg:p-6">
+      <div className="p-5 border card dark:hover:border-border-hoverDark lg:p-6">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
             <div className="relative w-20 h-20 overflow-hidden border border-border-light rounded-full dark:border-border-dark">

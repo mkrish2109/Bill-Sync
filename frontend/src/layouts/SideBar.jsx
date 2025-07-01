@@ -15,6 +15,7 @@ import { MdWork } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useSidebar } from "../contexts/SidebarContext";
 import { Logo } from "../components/common/Logo";
+
 // Lazy load menu configurations
 const menuConfigurations = {
   admin: {
@@ -206,12 +207,18 @@ function Sidebar() {
     }
   }, [location.pathname, isActive, mainItems, otherItems]);
 
-  const toggleSubmenu = (index, menuType) => {
+  const toggleSubmenu = (index, menuType, hasSubItems) => {
     setOpenSubmenu((prev) => {
+      // If clicking the same item that's already open, close it
       if (prev?.type === menuType && prev.index === index) {
         return null;
       }
-      return { type: menuType, index };
+      // If clicking an item with subitems, open it
+      if (hasSubItems) {
+        return { type: menuType, index };
+      }
+      // Otherwise (clicking a main item without subitems), close any open submenu
+      return null;
     });
   };
 
@@ -230,7 +237,7 @@ function Sidebar() {
       <li key={`${menuType}-${index}`}>
         {item.subItems ? (
           <button
-            onClick={() => toggleSubmenu(index, menuType)}
+            onClick={() => toggleSubmenu(index, menuType, true)}
             className={`flex items-center w-full p-2 rounded-lg transition-colors group ${
               isSubmenuOpen || hasActiveSubItem
                 ? "bg-primary-light dark:bg-primary-dark/10 text-white dark:text-primary-dark"
@@ -265,6 +272,7 @@ function Sidebar() {
           item.path && (
             <Link
               to={item.path}
+              onClick={() => toggleSubmenu(index, menuType, false)}
               className={`flex items-center w-full p-2 rounded-lg transition-colors group ${
                 isItemActive
                   ? "bg-primary-light dark:bg-primary-dark/10 text-white dark:text-primary-dark"
@@ -357,7 +365,7 @@ function Sidebar() {
 
         <div className="flex-1 overflow-y-auto px-2">
           <div className="mb-6">
-            <h2 className="mb-2 text-xs uppercase text-gray-500 dark:text-gray-400 flex justify-start px-2">
+            <h2 className="mb-2 text-xs uppercase text-text-mutedLight dark:text-text-mutedDark flex justify-start px-2">
               {isExpanded || isHovered || isMobileOpen ? (
                 "Main Menu"
               ) : (
@@ -372,7 +380,7 @@ function Sidebar() {
           </div>
 
           <div>
-            <h2 className="mb-2 text-xs uppercase text-gray-500 dark:text-gray-400 flex justify-start px-2">
+            <h2 className="mb-2 text-xs uppercase text-text-mutedLight dark:text-text-mutedDark flex justify-start px-2">
               {isExpanded || isHovered || isMobileOpen ? (
                 "Others"
               ) : (

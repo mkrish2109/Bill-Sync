@@ -30,7 +30,7 @@ export default function UserSocialLinks() {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-background-light text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-background-dark dark:text-gray-400 dark:hover:bg-background-light/[0.03] dark:hover:text-gray-200"
+          className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-border-light bg-background-light text-sm font-medium text-text-secondaryLight shadow-theme-xs hover:bg-background-surfaceLight hover:text-text-light dark:border-border-dark dark:bg-background-dark dark:text-text-secondaryDark dark:hover:bg-background-light/[0.03] dark:hover:text-text-dark"
           aria-label={link.name}
         >
           {link.icon}

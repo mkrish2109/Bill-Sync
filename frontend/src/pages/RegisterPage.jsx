@@ -6,7 +6,7 @@ import { api } from "../helper/apiHelper";
 import { PageMeta } from "../components/common/PageMeta";
 import bcrypt from "bcryptjs";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 
 function RegisterPage() {

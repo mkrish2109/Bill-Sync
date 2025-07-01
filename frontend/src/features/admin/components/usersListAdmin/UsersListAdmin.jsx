@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Select, Button, Spinner, Alert } from "flowbite-react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { HiTrash } from "react-icons/hi";
 import { getAllUsers } from "../../../../services/apiServices";
 import { api } from "../../../../helper/apiHelper";

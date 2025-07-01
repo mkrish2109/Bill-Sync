@@ -1,12 +1,11 @@
 import React from "react";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider } from "flowbite-react";
 import { SocketProvider } from "./contexts/SocketContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
 
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
@@ -47,7 +46,6 @@ const AppRoutes = () => {
   if (loading) {
     return <LoadingSpinner />;
   }
-
   return (
     <Routes>
       <Route path="/" element={<UserLayout />}>
@@ -170,17 +168,14 @@ function App() {
             <NotificationProvider>
               <BrowserRouter>
                 <AppRoutes />
-                <ToastContainer
-                  position="top-right"
-                  autoClose={5000}
-                  hideProgressBar={false}
-                  newestOnTop
-                  closeOnClick
-                  rtl={false}
-                  pauseOnFocusLoss
-                  draggable
-                  pauseOnHover
-                  theme="light"
+                <Toaster
+                  position="bottom-center"
+                  toastOptions={{
+                    className:
+                      "text-sm sm:text-base p-2 sm:p-3 rounded shadow-md",
+                    duration: 5000,
+                    style: { width: "90vw", maxWidth: 350 },
+                  }}
                 />
               </BrowserRouter>
             </NotificationProvider>

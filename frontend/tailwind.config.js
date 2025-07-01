@@ -10,11 +10,11 @@ module.exports = {
         // === Backgrounds ===
         background: {
           light: "#FFFFFF",
-          dark: "#121212",
+          dark: "#161616",
           surfaceLight: "#F9FAFB",
-          surfaceDark: "#1E1E24", // More contrast-safe for dark surfaces
+          surfaceDark: "#1E1E20", // More contrast-safe for dark surfaces
           elevatedLight: "#FFFFFF",
-          elevatedDark: "#2A2A31", // Better against text-primary-dark
+          elevatedDark: "#21262D", // Better against text-primary-dark
         },
 
         // === Text Colors ===

@@ -1,7 +1,7 @@
 export const TabButton = ({ active, onClick, children, icon: Icon }) => (
   <button
     onClick={onClick}
-    className={`py-3 sm:py-4 px-4 sm:px-6 text-center border-b-2 font-medium text-sm flex items-center justify-center transition-all duration-200 relative whitespace-nowrap ${
+    className={`py-2 sm:py-3 px-3 sm:px-6 min-w-[120px] text-center border-b-2 font-medium text-sm sm:text-base md:text-lg flex items-center justify-center transition-all duration-200 relative whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-light dark:focus-visible:ring-primary-dark ${
       active
         ? "border-primary-light dark:border-primary-dark text-primary-light dark:text-primary-dark bg-primary-light/5 dark:bg-primary-dark/5"
         : "border-transparent text-secondary-light dark:text-text-secondaryDark hover:text-text-light dark:hover:text-text-dark hover:border-border-light dark:hover:border-border-dark hover:bg-background-surfaceLight/50 dark:hover:bg-background-surfaceDark/50"

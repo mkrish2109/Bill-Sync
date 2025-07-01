@@ -21,6 +21,8 @@ const BuyerDashboard = () => {
     total: 0,
   });
 
+  const userId = user?.userId || user?._id;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -51,7 +53,7 @@ const BuyerDashboard = () => {
     };
 
     fetchData();
-  }, [user?.userId || user?._id]);
+  }, [userId]);
 
   // Transform fabrics to include status at root level for the dashboard
   const transformedFabrics = fabrics.map((item) => ({
