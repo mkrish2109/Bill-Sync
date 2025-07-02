@@ -334,7 +334,7 @@ const Dashboard = ({
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <StatCard
             label={`Total ${itemType}`}
             value={statusCounts.total || 0}
@@ -355,10 +355,10 @@ const Dashboard = ({
             value={statusCounts.completed || 0}
             color="text-success-base dark:text-success-dark"
           />
-        </div>
+        </div> */}
 
         {/* Request Stats Overview */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <StatCard
             label="Pending Requests"
             value={userRequests.pending || 0}
@@ -374,7 +374,7 @@ const Dashboard = ({
             value={userRequests.rejected || 0}
             color="text-error-base dark:text-error-dark"
           />
-        </div>
+        </div> */}
 
         {/* Charts Section */}
         {showCharts && (
