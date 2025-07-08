@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../components/common/LoadingSpinner";
+import { toastInfo } from "../utils/toastHelpers";
 
 function RegisterPage() {
   const [form, setForm] = useState({
@@ -103,16 +104,33 @@ function RegisterPage() {
 
     setIsSubmitting(true);
 
-    try {
-      const response = await api.post("/auth/register", form);
-      console.log(response);
-      if (response.data.success) {
-        toast.info(response.data.message);
-        navigate("/login");
+    const registerPromise = api.post("/auth/register", form);
+
+    toast.promise(
+      registerPromise,
+      {
+        loading: "Registering...",
+        success: (response) => {
+          navigate("/login");
+          return response.data.message || "Registration successful!";
+        },
+        error: (error) =>
+          error.response?.data?.message || "Registration failed",
+      },
+      {
+        success: {
+          duration: 3000,
+        },
+        error: {
+          duration: 4000,
+        },
       }
+    );
+
+    try {
+      await registerPromise;
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error(error.response?.data?.message || "Registration failed");
     } finally {
       setIsSubmitting(false);
     }

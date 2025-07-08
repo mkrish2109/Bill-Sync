@@ -6,6 +6,7 @@ import { PageMeta } from "../../../components/common/PageMeta";
 import { ErrorAlert } from "../../../components/common/Alert";
 import LoadingSpinner from "../../../components/common/LoadingSpinner";
 import FabricForm from "../../../components/fabrics/FabricForm";
+import { toastInfo } from "../../../utils/toastHelpers";
 
 const AddFabricForm = () => {
   const [workers, setWorkers] = useState([]);
@@ -39,7 +40,7 @@ const AddFabricForm = () => {
 
     // Listen for fabric assignment notifications
     const handleFabricAssignment = (data) => {
-      toast.info(data.message);
+      toastInfo(data.message);
     };
 
     socket.on("new_fabric_assignment", handleFabricAssignment);
@@ -61,7 +62,7 @@ const AddFabricForm = () => {
     <>
       <PageMeta
         title="Add New Fabric | Bill Sync - Create Fabric Entry"
-        description="Create a new fabric entry with detailed specifications, measurements, and requirements. Streamline your fabric management process."
+        description="Create a new fabric entry with detailed specifications, measurements, and requirements. You can also save incomplete entries as drafts and complete them later. Streamline your fabric management process."
         keywords="add fabric, new fabric entry, fabric creation, fabric specifications, fabric management"
       />
       <div className="space-y-6">

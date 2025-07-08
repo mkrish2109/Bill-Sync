@@ -7,6 +7,7 @@ import { FaCheckCircle, FaTimesCircle, FaEnvelope } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { fetchUser } from "../store/slices/userSlice";
 import { useRoleRedirect } from "../hooks/useRoleRedirect";
+import { toastInfo } from "../utils/toastHelpers";
 
 function VerifyEmailPage() {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ function VerifyEmailPage() {
         if (error.response?.status === 409) {
           setVerified(true);
           if (!toastShownRef.current) {
-            toast.info(error.response.data.message, {
+            toastInfo(error.response.data.message, {
               className: "bg-info-base text-info-text",
             });
             toastShownRef.current = true;
@@ -110,7 +111,7 @@ function VerifyEmailPage() {
   };
 
   const resendVerification = () => {
-    toast.info("Verification email resent!", {
+    toastInfo("Verification email resent!", {
       className: "bg-info-base text-info-text",
     });
   };

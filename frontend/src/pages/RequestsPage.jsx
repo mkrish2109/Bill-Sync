@@ -7,6 +7,7 @@ import { useSocket } from "../contexts/SocketContext";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
 import { PageMeta } from "../components/common/PageMeta";
+import { toastInfo } from "../utils/toastHelpers";
 
 const RequestsPage = () => {
   const { user } = useAuth();
@@ -25,7 +26,7 @@ const RequestsPage = () => {
 
   const handleNewRequest = useCallback(
     (data) => {
-      toast.info(`New request received from ${data.senderName}`);
+      toastInfo(`New request received from ${data.senderName}`);
       refetchRequests();
     },
     [refetchRequests]
@@ -72,8 +73,11 @@ const RequestsPage = () => {
 
     if (!socket || !isConnected) {
       if (socket && !isConnected) {
-        toast.warning(
-          "Connection to real-time updates is not available. Some features may be limited."
+        toast.custom(
+          <div className="bg-yellow-400 text-black p-3 rounded">
+            Connection to real-time updates is not available. Some features may
+            be limited.
+          </div>
         );
       }
       return;
@@ -94,7 +98,7 @@ const RequestsPage = () => {
       });
 
       socket.on("reconnect_attempt", (attemptNumber) => {
-        toast.info(`Attempting to reconnect (${attemptNumber}/5)...`);
+        toastInfo(`Attempting to reconnect (${attemptNumber}/5)...`);
       });
 
       socket.on("reconnect", () => {

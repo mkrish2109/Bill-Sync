@@ -171,10 +171,8 @@ function App() {
                 <Toaster
                   position="bottom-center"
                   toastOptions={{
-                    className:
-                      "text-sm sm:text-base p-2 sm:p-3 rounded shadow-md",
-                    duration: 5000,
-                    style: { width: "90vw", maxWidth: 350 },
+                    className: "text-sm rounded shadow-md",
+                    duration: 3000,
                   }}
                 />
               </BrowserRouter>

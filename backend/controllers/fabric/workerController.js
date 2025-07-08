@@ -1,4 +1,3 @@
-// controllers/fabric/workerController.js
 const mongoose = require("mongoose");
 const FabricAssignment = require("../../models/FabricAssignment");
 const commonController = require("./commonController");

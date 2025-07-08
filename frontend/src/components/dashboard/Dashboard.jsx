@@ -61,14 +61,14 @@ const chartOptions = {
 };
 
 // Memoized StatCard component
-const StatCard = React.memo(({ label, value, color }) => (
-  <div className={"card-scale-hover"}>
-    <h3 className="text-sm font-medium text-text-secondaryLight dark:text-text-secondaryDark mb-1">
-      {label}
-    </h3>
-    <p className={`text-2xl font-bold ${color}`}>{value}</p>
-  </div>
-));
+// const StatCard = React.memo(({ label, value, color }) => (
+//   <div className={"card-scale-hover"}>
+//     <h3 className="text-sm font-medium text-text-secondaryLight dark:text-text-secondaryDark mb-1">
+//       {label}
+//     </h3>
+//     <p className={`text-2xl font-bold ${color}`}>{value}</p>
+//   </div>
+// ));
 // Memoized ChartCard component with intersection observer
 const ChartCard = React.memo(({ title, children }) => {
   const [isVisible, setIsVisible] = useState(false);

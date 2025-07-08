@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
 import { api } from "../helper/apiHelper";
+import { toastInfo } from "./toastHelpers";
 
 // --- Token Refresh Utilities ---
 let refreshPromise = null;
@@ -59,12 +60,20 @@ const refreshTokenSilently = async () => {
   refreshPromise = api.post("/auth/refresh");
   try {
     await refreshPromise;
-    toast.info("Session refreshed automatically", {
+    toastInfo("Session refreshed automatically", {
       position: "top-right",
       autoClose: 2000,
       hideProgressBar: true,
     });
-  } catch {
+  } catch (error) {
+    // If refresh fails, stop timers and redirect to login
+    stopBackgroundTokenRefresh();
+    toast.error("Session expired. Please log in again.", {
+      position: "top-right",
+      autoClose: 3000,
+    });
+    window.location.href = "/login";
+    throw error; // rethrow for manualTokenRefresh to handle
   } finally {
     isRefreshing = false;
     refreshPromise = null;

@@ -5,6 +5,7 @@ import { useSocket } from "../../../contexts/SocketContext";
 import toast from "react-hot-toast";
 import { PageMeta } from "../../../components/common/PageMeta";
 import { FabricList } from "../../../components/fabrics/FabricList";
+import { toastInfo } from "../../../utils/toastHelpers";
 
 const WorkerFabricList = () => {
   const [fabrics, setFabrics] = useState([]);
@@ -60,7 +61,7 @@ const WorkerFabricList = () => {
     // Listen for fabric assignment notifications
     const handleFabricAssignment = (data) => {
       // console.log("Worker received fabric assignment notification:", data);
-      toast.info(data.message);
+      toastInfo(data.message);
       // Refresh the fabric list to show new assignment
       fetchWorkerFabrics();
     };

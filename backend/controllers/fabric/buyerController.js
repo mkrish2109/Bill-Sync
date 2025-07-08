@@ -28,31 +28,22 @@ const createFabric = async (req, res) => {
       });
     }
 
-    const { name, description, unit, quantity, unitPrice, imageUrl, workerId } =
-      req.body;
+    const {
+      name,
+      description,
+      unit,
+      quantity,
+      unitPrice,
+      imageUrl,
+      workerId,
+      status = "draft",
+    } = req.body;
 
-    if (
-      !name ||
-      !description ||
-      !unit ||
-      !quantity ||
-      !unitPrice ||
-      !imageUrl
-    ) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing required fields",
-      });
+    // Allow incomplete data if status is 'draft'
+    let totalPrice = undefined;
+    if (quantity && unitPrice) {
+      totalPrice = quantity * unitPrice;
     }
-
-    if (quantity <= 0 || unitPrice <= 0) {
-      return res.status(400).json({
-        success: false,
-        error: "Quantity and unit price must be positive numbers",
-      });
-    }
-
-    const totalPrice = quantity * unitPrice;
 
     const fabric = new Fabric({
       buyerId,
@@ -63,7 +54,18 @@ const createFabric = async (req, res) => {
       unitPrice,
       totalPrice,
       imageUrl,
+      status,
     });
+
+    // If status is not draft, check required fields
+    if (status !== "draft") {
+      if (!name || !description || !unit || !quantity || !unitPrice) {
+        return res.status(400).json({
+          success: false,
+          error: "Missing required fields for active fabric",
+        });
+      }
+    }
 
     const savedFabric = await fabric.save();
 
@@ -72,7 +74,8 @@ const createFabric = async (req, res) => {
     });
 
     let assignment = null;
-    if (workerId) {
+    // If workerId is provided and status is not draft, create assignment
+    if (workerId && status !== "draft") {
       // console.log("Creating assignment for worker:", workerId);
 
       // Create worker assignment
@@ -207,10 +210,8 @@ const getAllFabricsForBuyer = async (req, res) => {
     const buyerFabrics = fabrics.map((fabric) => {
       const fabricObj = fabric.toObject();
       const buyer = fabricObj.buyerId || {};
-      const worker = fabricObj.assignments[0].workerId || {};
-
-      // Handle single assignment object
-      const assignment = fabric.assignments[0]?.toObject() || {};
+      const worker = fabricObj.assignments?.[0]?.workerId || {};
+      const assignment = fabric.assignments?.[0]?.toObject?.() || {};
 
       delete fabricObj.buyerId;
       delete fabricObj.workerId;
@@ -253,6 +254,7 @@ const updateFabric = async (req, res) => {
       imageUrl,
       workerId,
       buyerId,
+      status,
       ...rest
     } = req.body;
 
@@ -280,6 +282,7 @@ const updateFabric = async (req, res) => {
     if (description !== undefined) updateFields.description = description;
     if (unit !== undefined) updateFields.unit = unit;
     if (imageUrl !== undefined) updateFields.imageUrl = imageUrl;
+    if (status !== undefined) updateFields.status = status;
 
     // Handle quantity and unitPrice together for totalPrice calculation
     if (quantity !== undefined || unitPrice !== undefined) {
@@ -288,7 +291,8 @@ const updateFabric = async (req, res) => {
         unitPrice !== undefined ? unitPrice : fabric.unitPrice;
       updateFields.quantity = newQuantity;
       updateFields.unitPrice = newUnitPrice;
-      updateFields.totalPrice = newQuantity * newUnitPrice;
+      updateFields.totalPrice =
+        newQuantity && newUnitPrice ? newQuantity * newUnitPrice : undefined;
     }
 
     // Check if the fabric belongs to the user
@@ -299,8 +303,28 @@ const updateFabric = async (req, res) => {
       });
     }
 
-    // Handle worker assignment if workerId is provided
-    if (workerId !== undefined) {
+    // If status is being set to 'active', check required fields
+    if (
+      (status === "active" || updateFields.status === "active") &&
+      ((!updateFields.name && !fabric.name) ||
+        (!updateFields.description && !fabric.description) ||
+        (!updateFields.unit && !fabric.unit) ||
+        (!updateFields.quantity && !fabric.quantity) ||
+        (!updateFields.unitPrice && !fabric.unitPrice) ||
+        (!updateFields.imageUrl && !fabric.imageUrl))
+    ) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing required fields for active fabric",
+      });
+    }
+
+    // Handle worker assignment if workerId is provided and status is not draft
+    if (
+      workerId !== undefined &&
+      status !== "draft" &&
+      updateFields.status !== "draft"
+    ) {
       const currentAssignment = await FabricAssignment.findOne({
         fabricId: id,
       });

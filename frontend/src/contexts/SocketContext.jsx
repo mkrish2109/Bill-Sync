@@ -10,6 +10,7 @@ import io from "socket.io-client";
 import { useAuth } from "./AuthContext";
 import { getSocketURL } from "../helper/apiHelper";
 import toast from "react-hot-toast";
+import { toastInfo } from "../utils/toastHelpers";
 
 const SocketContext = createContext();
 
@@ -20,6 +21,11 @@ export const useSocket = () => {
   }
   return context;
 };
+
+let isPageUnloading = false;
+window.addEventListener("beforeunload", () => {
+  isPageUnloading = true;
+});
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
@@ -268,8 +274,12 @@ export const SocketProvider = ({ children }) => {
 
         if (reason === "client namespace disconnect") {
           // The socket will automatically attempt to reconnect
-        } else {
-          toast.warning("Disconnected from real-time updates");
+        } else if (!isPageUnloading) {
+          toast.custom(
+            <div className="bg-yellow-400 text-black p-3 rounded">
+              Disconnected from real-time updates
+            </div>
+          );
         }
 
         if (reason !== "io client disconnect" && isPageVisibleRef.current) {
@@ -297,7 +307,7 @@ export const SocketProvider = ({ children }) => {
           newSocket.auth = { token };
         }
         setConnectionError(`Reconnection attempt ${attemptNumber}...`);
-        toast.info(
+        toastInfo(
           `Attempting to reconnect (${attemptNumber}/${MAX_RECONNECTION_ATTEMPTS})`
         );
       });
