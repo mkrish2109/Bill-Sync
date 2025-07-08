@@ -30,6 +30,7 @@ const FabricForm = ({
     unitPrice: 0,
     imageUrl: "",
     workerId: "",
+    status: initialData.status || "draft",
     ...initialData,
   });
   const [loading, setLoading] = useState(false);
@@ -75,19 +76,25 @@ const FabricForm = ({
     }
   };
 
-  const handleSubmit = async (e) => {
+  // Validation for active status
+  const validateActive = () => {
+    if (!formData.name || !formData.description || !formData.unit || !formData.quantity || !formData.unitPrice) {
+      setError("Please fill all required fields before saving as active.");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e, saveAsDraft = false) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
       let finalImageUrl = formData.imageUrl;
-
-      // If there's a new image to upload
       if (imageUploaderRef.current) {
         try {
-          const uploadedImageUrl =
-            await imageUploaderRef.current.handleUpload();
+          const uploadedImageUrl = await imageUploaderRef.current.handleUpload();
           if (uploadedImageUrl) {
             finalImageUrl = uploadedImageUrl;
           }
@@ -95,8 +102,6 @@ const FabricForm = ({
           throw new Error("Failed to upload image");
         }
       }
-
-      // If we're editing and have a new image, delete the old one
       if (isEditing && oldImageUrl && finalImageUrl !== oldImageUrl) {
         try {
           const filename = oldImageUrl.split("/").pop();
@@ -105,16 +110,40 @@ const FabricForm = ({
           console.error("Error deleting old image:", err);
         }
       }
-
-      // Update form data with final image URL
+      // Set status
+      const status = saveAsDraft ? "draft" : "active";
+      // Validate if not draft
+      if (!saveAsDraft && !validateActive()) {
+        setLoading(false);
+        return;
+      }
       const updatedFormData = {
         ...formData,
         imageUrl: finalImageUrl,
+        status,
       };
-
       let response;
       if (isEditing) {
         response = await api.put(`/fabrics/${fabricId}`, updatedFormData);
+        // Show a toast as a promise for the update operation
+        // (Assumes 'toast' is available in scope, e.g., from 'react-hot-toast')
+        await toast.promise(
+          Promise.resolve(response), // response is already awaited above, so wrap in Promise.resolve
+          {
+            loading: "Updating fabric...",
+            success: (res) => res.data.message || "Fabric updated successfully!",
+            error: (err) =>
+              err?.response?.data?.error || "Failed to update fabric",
+          },
+          {
+            success: {
+              duration: 3000,
+            },
+            error: {
+              duration: 4000,
+            },
+          }
+        );
         if (response.data.success) {
           if (onSuccess) {
             onSuccess(response.data.data);
@@ -128,8 +157,27 @@ const FabricForm = ({
           return;
         }
       } else {
-        response = await api.post("/fabrics", updatedFormData);
-        if (response.data.success) {
+        await toast.promise(
+          api.post("/fabrics", updatedFormData).then((res) => {
+            response = res;
+            return res;
+          }),
+          {
+            loading: "Adding fabric...",
+            success: (res) => res.data.message || "Fabric added successfully!",
+            error: (err) =>
+              err?.response?.data?.error || "Failed to add fabric",
+          },
+          {
+            success: {
+              duration: 3000,
+            },
+            error: {
+              duration: 4000,
+            },
+          }
+        );
+        if (response && response.data.success) {
           if (onSuccess) {
             onSuccess(response.data.data.fabric);
           }
@@ -140,7 +188,6 @@ const FabricForm = ({
           return;
         }
       }
-
       throw new Error(
         response.data.error ||
           (isEditing ? "Failed to update fabric" : "Failed to add fabric")
@@ -169,7 +216,7 @@ const FabricForm = ({
       )}
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => handleSubmit(e, false)}
         className="bg-background-light dark:bg-background-dark shadow-xl rounded-lg p-8 mb-4 border border-border-light dark:border-border-dark"
       >
         {/* Worker Assignment Field */}
@@ -260,7 +307,6 @@ const FabricForm = ({
             value={formData.name}
             onChange={handleChange}
             className="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-1 focus:ring-primary-light dark:focus:ring-primary-dark focus:border-transparent transition-all duration-200"
-            required
           />
         </div>
 
@@ -278,7 +324,6 @@ const FabricForm = ({
             onChange={handleChange}
             className="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-1 focus:ring-primary-light dark:focus:ring-primary-dark focus:border-transparent transition-all duration-200"
             rows="3"
-            required
           />
         </div>
 
@@ -296,7 +341,6 @@ const FabricForm = ({
               value={formData.unit}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-1 focus:ring-primary-light dark:focus:ring-primary-dark focus:border-transparent transition-all duration-200"
-              required
             >
               <option value="meters">Meters</option>
               <option value="yards">Yards</option>
@@ -319,7 +363,6 @@ const FabricForm = ({
               value={formData.quantity}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-1 focus:ring-primary-light dark:focus:ring-primary-dark focus:border-transparent transition-all duration-200"
-              required
             />
           </div>
 
@@ -339,7 +382,6 @@ const FabricForm = ({
               value={formData.unitPrice}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-1 focus:ring-primary-light dark:focus:ring-primary-dark focus:border-transparent transition-all duration-200"
-              required
             />
           </div>
         </div>
@@ -357,7 +399,7 @@ const FabricForm = ({
           />
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-border-light dark:border-border-dark">
+        <div className="flex items-center justify-between pt-4 border-t border-border-light dark:border-border-dark gap-4">
           <Button
             color="primary"
             type="submit"
@@ -382,6 +424,15 @@ const FabricForm = ({
             className="focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg"
           >
             Cancel
+          </Button>
+          <Button
+            color="gray"
+            type="button"
+            disabled={loading}
+            onClick={(e) => handleSubmit(e, true)}
+            className="focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg"
+          >
+            {isEditing ? "Save as Draft" : "Save as Draft"}
           </Button>
         </div>
       </form>

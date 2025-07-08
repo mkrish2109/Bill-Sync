@@ -33,7 +33,6 @@ const EditFabricForm = ({ fabricId, onClose, onSuccess }) => {
 
         // Get the first assigned worker ID if exists
         const workerId = fabric.worker?.[0]?.id || "";
-
         // Set initial data for form
         setInitialData({
           name: fabric.name,
@@ -43,6 +42,7 @@ const EditFabricForm = ({ fabricId, onClose, onSuccess }) => {
           unitPrice: fabric.unitPrice,
           imageUrl: fabric.imageUrl,
           workerId: workerId,
+          status: fabric.status,
         });
 
         // Set current assignment with worker details

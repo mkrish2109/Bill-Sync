@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { confirmAlert } from "react-confirm-alert";
-import toast from "react-hot-toast";
 import { api } from "../../../helper/apiHelper";
 import { useSocket } from "../../../contexts/SocketContext";
 import { PageMeta } from "../../../components/common/PageMeta";
 import { FabricList } from "../../../components/fabrics/FabricList";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import { toastInfo } from "../../../utils/toastHelpers";
 
 const BuyerFabricList = () => {
   const [fabricData, setFabricData] = useState({
@@ -13,6 +15,7 @@ const BuyerFabricList = () => {
     error: null,
   });
   const { socket, isConnected } = useSocket();
+  const [selectedTab, setSelectedTab] = useState(0); // 0: All, 1: Drafts
 
   const fetchFabrics = async () => {
     try {
@@ -22,6 +25,7 @@ const BuyerFabricList = () => {
         ...item.fabric,
         buyer: item.buyer,
         worker: item.worker || null,
+        assignment: item.assignments || [],
         assignmentCount: item.assignmentCount,
       }));
 
@@ -54,7 +58,7 @@ const BuyerFabricList = () => {
     // Listen for fabric assignment notifications
     const handleFabricAssignment = (data) => {
       // console.log("Received fabric assignment notification:", data);
-      toast.info(data.message);
+      toastInfo(data.message);
       // Refresh the fabric list to show updated assignments
       fetchFabrics();
     };
@@ -115,6 +119,18 @@ const BuyerFabricList = () => {
     }));
   };
 
+  // Filter fabrics based on selected tab
+  let displayedFabrics = fabricData.fabrics;
+  if (selectedTab === 0) {
+    displayedFabrics = fabricData.fabrics.filter(
+      (fabric) => fabric.status !== "draft"
+    );
+  } else if (selectedTab === 1) {
+    displayedFabrics = fabricData.fabrics.filter(
+      (fabric) => fabric.status === "draft"
+    );
+  }
+
   return (
     <>
       <PageMeta
@@ -122,8 +138,19 @@ const BuyerFabricList = () => {
         description="Manage your fabric inventory, track assignments, and monitor the status of your fabrics. Add, edit, or remove fabrics as needed."
         keywords="fabric management, fabric inventory, fabric tracking, fabric assignments, fabric status"
       />
+      <div className="mb-6">
+        <Tabs
+          value={selectedTab}
+          onChange={(_, newValue) => setSelectedTab(newValue)}
+          indicatorColor="primary"
+          textColor="primary"
+        >
+          <Tab label="All Fabrics" />
+          <Tab label="Drafts" />
+        </Tabs>
+      </div>
       <FabricList
-        fabrics={fabricData.fabrics}
+        fabrics={displayedFabrics}
         loading={fabricData.loading}
         error={fabricData.error}
         viewType="buyer"

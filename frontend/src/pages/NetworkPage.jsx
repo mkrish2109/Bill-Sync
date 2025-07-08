@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { Button } from "flowbite-react";
 import { PageMeta } from "../components/common/PageMeta";
 import SearchInput from "../components/common/SearchInput";
+import { toastInfo } from "../utils/toastHelpers";
 
 const NetworkPage = () => {
   const { user } = useAuth();
@@ -28,7 +29,7 @@ const NetworkPage = () => {
 
   const handleWorkerUpdate = useCallback(
     (data) => {
-      toast.info(
+      toastInfo(
         `Worker availability updated: ${data.workerName} is now ${data.status}`
       );
       refetchUsers();
@@ -66,8 +67,11 @@ const NetworkPage = () => {
 
     if (!socket || !isConnected) {
       if (socket && !isConnected) {
-        toast.warning(
-          "Connection to real-time updates is not available. Some features may be limited."
+        toast.custom(
+          <div className="bg-yellow-400 text-black p-3 rounded">
+            Connection to real-time updates is not available. Some features may
+            be limited.
+          </div>
         );
       }
       return;
@@ -88,7 +92,7 @@ const NetworkPage = () => {
       });
 
       socket.on("reconnect_attempt", (attemptNumber) => {
-        toast.info(`Attempting to reconnect (${attemptNumber}/5)...`);
+        toastInfo(`Attempting to reconnect (${attemptNumber}/5)...`);
       });
 
       socket.on("reconnect", () => {

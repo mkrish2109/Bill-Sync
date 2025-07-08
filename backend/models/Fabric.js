@@ -15,30 +15,29 @@ const fabricSchema = new mongoose.Schema(
       ref: "Buyer",
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["draft", "active", "archived"],
+      default: "draft",
+    },
     name: {
       type: String,
-      required: true,
     },
     description: {
       type: String,
-      required: true,
     },
     unit: {
       type: String,
       enum: ["meters", "yards"],
-      required: true,
     },
     quantity: {
       type: Number,
-      required: true,
     },
     unitPrice: {
       type: Number,
-      required: true,
     },
     totalPrice: {
       type: Number,
-      required: true,
     },
     imageUrl: {
       type: String,
@@ -89,6 +88,31 @@ fabricSchema.pre("save", function (next) {
     this.changeHistory = [...(this.changeHistory || []), ...changes];
   }
 
+  next();
+});
+
+// Custom validation: if status is not 'draft', require main fields
+fabricSchema.pre("validate", function (next) {
+  if (this.status !== "draft") {
+    if (!this.name) {
+      this.invalidate("name", "Name is required when not in draft");
+    }
+    if (!this.description) {
+      this.invalidate("description", "Description is required when not in draft");
+    }
+    if (!this.unit) {
+      this.invalidate("unit", "Unit is required when not in draft");
+    }
+    if (!this.quantity) {
+      this.invalidate("quantity", "Quantity is required when not in draft");
+    }
+    if (!this.unitPrice) {
+      this.invalidate("unitPrice", "Unit price is required when not in draft");
+    }
+    if (!this.totalPrice) {
+      this.invalidate("totalPrice", "Total price is required when not in draft");
+    }
+  }
   next();
 });
 

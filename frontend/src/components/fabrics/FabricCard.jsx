@@ -44,7 +44,8 @@ export const FabricCard = ({
       setIsUpdatingStatus(false);
     }
   };
-  const status = fabric.assignmentStatus || "assigned";
+  const status =
+    fabric.assignmentStatus || fabric?.assignment?.status || "assigned";
   const colors = statusColors[status] || statusColors.default;
   return (
     <>
@@ -109,7 +110,7 @@ export const FabricCard = ({
                     )}
                   </div>
                 ) : (
-                  <StatusBadge status={fabric.assignmentStatus} />
+                  <StatusBadge status={status} />
                 )}
               </div>
             )}
@@ -164,7 +165,7 @@ export const FabricCard = ({
                             {fabric.worker.contact}
                           </p>
                         </div>
-                        <StatusBadge status={fabric.worker.status} />
+                        <StatusBadge status={status} />
                       </div>
                     </div>
                   </div>
