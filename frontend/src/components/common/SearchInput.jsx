@@ -8,6 +8,7 @@ const SearchInput = ({ value, onChange, placeholder = "Search..." }) => {
         <FaSearch className="text-gray-400" />
       </div>
       <input
+        id="search"
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}

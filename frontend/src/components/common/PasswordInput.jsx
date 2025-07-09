@@ -2,12 +2,12 @@ import { TextInput, Label } from "flowbite-react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import React, { useState } from "react";
 
-const PasswordInput = ({ label, id, name, required = true, onChange, autoComplete = "current-password" }) => {
+const PasswordInput = ({ label, id, name, required = true, onChange, autoComplete = "current-password",placeholder }) => {
   const [visible, setVisible] = useState(false);
 
   return (
     <div>
-      {label && <Label htmlFor={id} value={label} className="mb-2 block" />}
+       <Label htmlFor={id} value={label} className="mb-2 block" />
       <div className="relative">
         <TextInput
           id={id}
@@ -16,17 +16,18 @@ const PasswordInput = ({ label, id, name, required = true, onChange, autoComplet
           required={required}
           onChange={onChange}
           autoComplete={autoComplete}
-          className="[&>div>input]:pr-[33px]"
+          placeholder={placeholder}
+          className="[&>div>input]:pr-[33px] text-text-light dark:text-text-dark "
         />
         {visible ? (
           <HiEyeOff
             onClick={() => setVisible(false)}
-            className="text-2xl cursor-pointer absolute top-[50%] translate-y-[-50%] right-[8px]"
+            className="text-2xl cursor-pointer absolute top-[50%] translate-y-[-50%] right-[8px] text-text-light dark:text-text-dark"
           />
         ) : (
           <HiEye
             onClick={() => setVisible(true)}
-            className="text-2xl cursor-pointer absolute top-[50%] translate-y-[-50%] right-[8px]"
+            className="text-2xl cursor-pointer absolute top-[50%] translate-y-[-50%] right-[8px] text-text-light dark:text-text-dark"
           />
         )}
       </div>

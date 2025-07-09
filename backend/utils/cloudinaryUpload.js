@@ -24,7 +24,7 @@ async function deleteFromCloudinary(fileNameWithExt) {
   const fileName = fileNameWithExt.split(".")[0]; // e.g., "h7xvu0qx0tudk35i6jy7"
   const publicId = `uploads/${fileName}`; // final public_id
 
-  console.log("Deleting from Cloudinary:", publicId);
+  // console.log("Deleting from Cloudinary:", publicId);
 
   try {
     return await cloudinary.uploader.destroy(publicId, {

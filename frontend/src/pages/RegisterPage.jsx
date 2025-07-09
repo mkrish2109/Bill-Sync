@@ -8,7 +8,6 @@ import bcrypt from "bcryptjs";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-import { toastInfo } from "../utils/toastHelpers";
 
 function RegisterPage() {
   const [form, setForm] = useState({

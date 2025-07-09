@@ -1,5 +1,5 @@
 const handleDisconnect = (socket, reason) => {
-  console.log(`User disconnected: ${socket.user.userId}, Reason: ${reason}`);
+  // console.log(`User disconnected: ${socket.user.userId}, Reason: ${reason}`);
 };
 
 const handleError = (socket, error) => {

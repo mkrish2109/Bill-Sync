@@ -7,6 +7,7 @@ import { FabricList } from "../../../components/fabrics/FabricList";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { toastInfo } from "../../../utils/toastHelpers";
+import toast from "react-hot-toast";
 
 const BuyerFabricList = () => {
   const [fabricData, setFabricData] = useState({
@@ -81,7 +82,14 @@ const BuyerFabricList = () => {
           label: "Yes",
           onClick: async () => {
             try {
-              await api.delete(`/buyers/fabrics/${id}`);
+              await toast.promise(
+                api.delete(`/buyers/fabrics/${id}`),
+                {
+                  pending: "Deleting fabric...",
+                  success: "Fabric deleted successfully!",
+                  error: "Failed to delete fabric.",
+                }
+              );
               setFabricData((prev) => ({
                 ...prev,
                 fabrics: prev.fabrics.filter((fabric) => fabric._id !== id),

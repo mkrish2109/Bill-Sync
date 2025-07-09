@@ -278,9 +278,13 @@ const Dashboard = ({
           {
             label: "New Items",
             data: items.reduce((acc, item) => {
-              const date = new Date(item.fabric.createdAt);
-              const dayIndex = date.getDay();
-              acc[dayIndex]++;
+              if (item.fabric && item.fabric.createdAt) {
+                const date = new Date(item.fabric.createdAt);
+                // getDay() returns 0 (Sunday) to 6 (Saturday)
+                // We want Mon-Sun, so shift: 0 (Sun) -> 6, 1 (Mon) -> 0, ..., 6 (Sat) -> 5
+                const dayIndex = (date.getDay() + 6) % 7;
+                acc[dayIndex]++;
+              }
               return acc;
             }, new Array(7).fill(0)),
             borderColor: "rgba(59, 130, 246, 1)",
@@ -289,11 +293,34 @@ const Dashboard = ({
             fill: true,
           },
           {
+            label: "In-progress",
+            data: items.reduce((acc, item) => {
+              if (
+                item.status === "in-progress" &&
+                item.fabric &&
+                item.fabric.createdAt
+              ) {
+                const date = new Date(item.fabric.createdAt);
+                const dayIndex = (date.getDay() + 6) % 7;
+                acc[dayIndex]++;
+              }
+              return acc;
+            }, new Array(7).fill(0)),
+            borderColor: "rgba(119, 29, 29, 1)",
+            backgroundColor: "rgba(119, 29, 29, 0.1)",
+            tension: 0.3,
+            fill: true,
+          },
+          {
             label: "Completed",
             data: items.reduce((acc, item) => {
-              if (item.status === "completed") {
+              if (
+                item.status === "completed" &&
+                item.fabric &&
+                item.fabric.createdAt
+              ) {
                 const date = new Date(item.fabric.createdAt);
-                const dayIndex = date.getDay();
+                const dayIndex = (date.getDay() + 6) % 7;
                 acc[dayIndex]++;
               }
               return acc;
