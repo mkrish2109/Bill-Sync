@@ -82,43 +82,6 @@ const register = async (req, res) => {
   }
 };
 
-// Verify email
-const verifyEmail = async (req, res) => {
-  try {
-    const { email, verificationToken } = req.body;
-
-    if (!email || !verificationToken) {
-      return sendErrorResponse(
-        res,
-        "Email and verification token are required.",
-        400
-      );
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (!existingUser) {
-      return sendErrorResponse(res, "No such email exists.", 404);
-    }
-
-    if (existingUser.isVerified) {
-      return sendSuccessResponse(res, "Email is already verified.");
-    }
-
-    if (existingUser.verificationToken !== verificationToken) {
-      return sendErrorResponse(res, "Invalid verification token.", 400);
-    }
-
-    existingUser.isVerified = true;
-    existingUser.verifiedAt = new Date();
-    existingUser.verificationToken = ""; // Remove token after verification
-    await existingUser.save();
-
-    sendSuccessResponse(res, "User verified successfully.");
-  } catch (error) {
-    sendErrorResponse(res, error.message);
-  }
-};
-
 // Login user
 const login = async (req, res) => {
   try {
@@ -193,6 +156,43 @@ const logout = async (req, res) => {
     });
 
     sendSuccessResponse(res, "Logged out successfully.");
+  } catch (error) {
+    sendErrorResponse(res, error.message);
+  }
+};
+
+// Verify email
+const verifyEmail = async (req, res) => {
+  try {
+    const { email, verificationToken } = req.body;
+
+    if (!email || !verificationToken) {
+      return sendErrorResponse(
+        res,
+        "Email and verification token are required.",
+        400
+      );
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      return sendErrorResponse(res, "No such email exists.", 404);
+    }
+
+    if (existingUser.isVerified) {
+      return sendSuccessResponse(res, "Email is already verified.");
+    }
+
+    if (existingUser.verificationToken !== verificationToken) {
+      return sendErrorResponse(res, "Invalid verification token.", 400);
+    }
+
+    existingUser.isVerified = true;
+    existingUser.verifiedAt = new Date();
+    existingUser.verificationToken = ""; // Remove token after verification
+    await existingUser.save();
+
+    sendSuccessResponse(res, "User verified successfully.");
   } catch (error) {
     sendErrorResponse(res, error.message);
   }

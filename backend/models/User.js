@@ -6,8 +6,8 @@ const userSchema = new mongoose.Schema(
     lname: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    phone: { type: String, required: true },
-    bio: { type: String }, // Added bio field
+    phone: { type: String, unique: true },
+    bio: { type: String },
     role: {
       type: String,
       enum: ["admin", "buyer", "worker"],

@@ -16,8 +16,9 @@ import AdminDashboard from "./features/admin/components/adminDashboard/AdminDash
 import WorkerDashboard from "./features/worker/components/WorkerDashboard";
 import UserLayout from "./layouts/userLayout/UserLayout";
 import LayoutAdmin from "./layouts/adminLayout/LayoutAdmin";
-import UserAuthGuard from "./guards/UserAuthGuard";
 import AdminAuthGuard from "./guards/AdminAuthGuard";
+import BuyerAuthGuard from "./guards/BuyerAuthGuard";
+import WorkerAuthGuard from "./guards/WorkerAuthGuard";
 import UsersListAdmin from "./features/admin/components/usersListAdmin/UsersListAdmin";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
@@ -60,8 +61,6 @@ const AppRoutes = () => {
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="verify-email" element={<VerifyEmailPage />} />
-        <Route path="bills" element={<BillList />} />
-        <Route path="create-bill" element={<BillForm />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="contact" element={<ContactPage />} />
         <Route path="*" element={<NotFoundPage />} />
@@ -85,9 +84,9 @@ const AppRoutes = () => {
       <Route
         path="/buyer"
         element={
-          <UserAuthGuard>
+          <BuyerAuthGuard>
             <LayoutUser />
-          </UserAuthGuard>
+          </BuyerAuthGuard>
         }
       >
         <Route path="dashboard" element={<BuyerDashboard />} />
@@ -98,6 +97,8 @@ const AppRoutes = () => {
         <Route path="fabrics/add" element={<AddFabricForm />} />
         <Route path="fabrics/edit/:id" element={<EditFabricForm />} />
         <Route path="fabrics/:id" element={<FabricDetails />} />
+        <Route path="bills" element={<BillList />} />
+        <Route path="create-bill" element={<BillForm />} />
         <Route path="account/profile" element={<UserProfilePage />} />
       </Route>
 
@@ -105,9 +106,9 @@ const AppRoutes = () => {
       <Route
         path="/worker"
         element={
-          <UserAuthGuard>
+          <WorkerAuthGuard>
             <LayoutUser />
-          </UserAuthGuard>
+          </WorkerAuthGuard>
         }
       >
         <Route path="dashboard" element={<WorkerDashboard />} />

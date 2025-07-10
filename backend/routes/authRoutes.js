@@ -8,7 +8,7 @@ const {
   resetPassword,
   verifyAuth,
   refreshToken,
-  getTokenExpiry
+  getTokenExpiry,
 } = require('../controllers/authController');
 
 const router = express.Router();
