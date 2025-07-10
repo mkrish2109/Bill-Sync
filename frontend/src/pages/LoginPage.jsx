@@ -74,14 +74,13 @@ function LoginPage() {
           <h1 className="text-2xl font-bold text-center mb-6 text-text-light dark:text-text-dark">
             Welcome Back
           </h1>
-
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div>
               <Label
                 htmlFor="email"
                 value="Email address"
                 className="mb-2 block text-text-light dark:text-text-dark"
-              />
+              >Email:</Label>
               <TextInput
                 id="email"
                 type="email"
@@ -101,7 +100,7 @@ function LoginPage() {
                   htmlFor="password"
                   value="Password"
                   className="text-text-light dark:text-text-dark"
-                />
+                >Password:</Label>
                 <Link
                   to="/forgot-password"
                   className="text-sm underline text-secondary-light hover:text-primary-light dark:text-text-secondaryDark dark:hover:text-primary-dark"

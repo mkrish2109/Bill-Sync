@@ -64,7 +64,7 @@ export const FabricCard = ({
             />
             <div className="flex-1 min-w-0">
               <Link
-                to={`/fabrics/${fabric._id}`}
+                to={`/${viewType}/fabrics/${fabric._id}`}
                 className="text-primary-light dark:text-primary-dark hover:text-primary-hoverLight dark:hover:text-primary-hoverDark font-medium transition-colors duration-200 block truncate"
               >
                 {fabric.name}
