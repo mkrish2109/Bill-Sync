@@ -8,15 +8,33 @@ const logoUrl = process.env.CLIENT_URL
   : "http://localhost:3000/logo/icon-512x512.png";
 const primaryColor = "#7A4F2A"; // Use your brand's primary color
 
+// Configure transporter using environment variables
 const transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
-  port: 587,
-  secure: false, // Use `true` for port 465, `false` for all other ports
+  host: process.env.SMTP_HOST,
+  port: parseInt(process.env.SMTP_PORT),
+  secure: process.env.SMTP_SECURE === 'true',
   auth: {
-    user: "makenna25@ethereal.email",
-    pass: "p4Q4rBkChW5ZCCBMKw",
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
+
+// Function to get Ethereal test credentials (for development)
+const getEtherealCredentials = async () => {
+  try {
+    const testAccount = await nodemailer.createTestAccount();
+    return {
+      user: testAccount.user,
+      pass: testAccount.pass,
+    };
+  } catch (error) {
+    console.log("Failed to create Ethereal test account:", error.message);
+    return {
+      user: "ethereal.user@ethereal.email",
+      pass: "ethereal.pass",
+    };
+  }
+};
 
 // Function to send email
 const sendMail = async ({ to, subject, html }) => {
@@ -26,6 +44,14 @@ const sendMail = async ({ to, subject, html }) => {
     subject,
     html,
   });
+
+  // Log the preview URL for Ethereal emails (useful for development)
+  if (response.messageId) {
+    const previewUrl = nodemailer.getTestMessageUrl(response);
+    if (previewUrl) {
+      console.log("Preview URL:", previewUrl);
+    }
+  }
 
   // console.log("Message sent: ", response.messageId);
 };
@@ -87,4 +113,4 @@ const sendResetPasswordEmail = async (email, token) => {
   }
 };
 
-module.exports = { sendMail, sendVerificationEmail, sendResetPasswordEmail };
+module.exports = { sendMail, sendVerificationEmail, sendResetPasswordEmail, getEtherealCredentials };
